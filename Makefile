@@ -10,7 +10,9 @@ OBJ_DIR = obj
 
 # Source files for minishell
 MINISHELL_SRC = main.c \
-tokens.c
+tokens.c \
+signals.c \
+pipe.c 
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \

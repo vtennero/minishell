@@ -6,7 +6,7 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/14 16:59:35 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/15 14:48:21 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ typedef struct {
 	char** env_vars;       	// Environment variables
 	int last_exit_status;  	// Exit status of the last executed command
 	struct sigaction* signals; // Custom signal handlers
+	int	is_interactive;
 } ShellState;
 
 
@@ -78,5 +79,14 @@ typedef struct {
 
 void ft_split_to_list(char const *s, char c, TokenNode** head);
 void freeTokenList(TokenNode* head);
+void printTokens(TokenNode* head);
+void process_pipes(TokenNode** head);
+void user_input_subfunction(TokenNode** head, TokenNode* last_pipe);
+
+void ft_split_to_list(const char *s, char c, TokenNode **head);
+
+// singals
+void sigint_handler(int sig_num);
+void sigquit_handler(int sig_num);
 
 #endif

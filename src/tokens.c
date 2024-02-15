@@ -6,7 +6,7 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:24:32 by toto              #+#    #+#             */
-/*   Updated: 2024/02/14 18:47:18 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/15 15:03:50 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void printTokens(TokenNode* head)
 {
     TokenNode* current = head;
     while (current != NULL) {
-        ft_printf("Token: %s, Type: %d\n", current->token.value, current->token.type);
+        ft_printf("Token: %s \t | Type: %d\n", current->token.value, current->token.type);
         current = current->next;
     }
 }
@@ -182,10 +182,46 @@ void printTokens(TokenNode* head)
 // 	printTokens(*head);
 // }
 
+// void identify_token_type(TokenNode** head) {
+//     TokenNode* current = *head;
 
+//     while (current != NULL) {
+//         current->token.type = get_token_type(current->token.value);
+//         current = current->next;
+//     }
+// }
 
+// Helper function to determine the type of a single token
+TokenType get_token_type(const char* token) {
+    if (strcmp(token, "<") == 0) {
+        return TOKEN_REDIR_IN;
+    } else if (strcmp(token, ">") == 0) {
+        return TOKEN_REDIR_OUT;
+    } else if (strcmp(token, ">>") == 0) {
+        return TOKEN_REDIR_APPEND;
+    } else if (strcmp(token, "|") == 0) {
+        return TOKEN_PIPE;
+    } else if (token[0] == '$') {
+        if (strcmp(token, "$?") == 0) {
+            return TOKEN_EXIT_STATUS;
+        } else {
+            return TOKEN_ENV_VAR;
+        }
+    }
+    // This is a simplified heuristic: we assume any token not recognized as a special
+    // symbol or variable is a command or argument. A more complex shell might need
+    // additional logic to distinguish between commands and arguments based on context.
+    return TOKEN_ARG; // Default case, can be TOKEN_COMMAND or TOKEN_ARG based on context
+}
 
-void ft_split_to_list(const char *s, char c, TokenNode **head) {
+void set_first_token_to_command(TokenNode** head) {
+    if (head && *head) { // Check if the head is not NULL and points to a valid node
+        (*head)->token.type = TOKEN_COMMAND; // Set the type of the first token to TOKEN_COMMAND
+    }
+}
+
+void ft_split_to_list(const char *s, char c, TokenNode **head)
+{
     while (*s) {
         while (*s == c) s++; // Skip leading delimiters
 
@@ -217,14 +253,17 @@ void ft_split_to_list(const char *s, char c, TokenNode **head) {
             if (!tokenValue) break; // Allocation check
 
             // Add the token
-            addToken(head, tokenValue, 0); // Assuming a simple type=0 for all tokens
+            addToken(head, tokenValue, get_token_type(tokenValue));
 
             free(tokenValue); // Clean up
         }
 
         if (!nextQuote && *s) s++; // If not ending with a quote, move over the delimiter
     }
-	printTokens(*head);
+    set_first_token_to_command(head);
+    process_pipes(head);
+
+	// printTokens(*head);
 }
 
 
