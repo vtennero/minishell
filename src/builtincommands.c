@@ -6,31 +6,52 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 14:10:58 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/16 14:35:03 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/16 16:43:06 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void builtin_cd(char* path)
+char* get_home_directory()
 {
-	ft_printf("builtin_cd\n");
-	if (chdir(path) == -1) {
-		perror("cd");
-	}
-	ft_printf("Current directory: %s\n", path);
-	ft_printf("Changing directory to: %s\n", path);
+    return getenv("HOME");
+}
+
+// Function to change the directory
+int change_directory(char* path) {
+    return chdir(path);
+}
+
+// The main cd function
+void builtin_cd(char** args, int n_args)
+{
+    char* path; // Path to change to
+
+    if (n_args == 0) {
+        // If no arguments, change to the home directory
+        path = get_home_directory();
+        if (path == NULL) {
+            fprintf(stderr, "cd: HOME not set\n");
+            return;
+        }
+    } else {
+        // Use the first argument as the path
+        path = args[0];
+    }
+
+    // Attempt to change the directory
+    if (change_directory(path) != 0) {
+        // If changing the directory fails, print an error message
+        perror("cd");
+    }
 }
 
 // Prints the current working directory to stdout.
 void builtin_pwd(void)
 {
-	char cwd[1024];
-	if (getcwd(cwd, sizeof(cwd)) != NULL) {
-		ft_printf("%s\n", cwd);
-	} else {
-		perror("getcwd");
-	}
+	char	*pwd;
+	pwd = getenv("PWD");
+	ft_printf("%s\n", pwd);
 }
 
 // Prints the given arguments to stdout, handling the `-n` option to not output the trailing newline.

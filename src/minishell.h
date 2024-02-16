@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/16 14:22:14 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/16 16:20:18 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "../libft/libft.h"
 # include <signal.h>
+# include <stdio.h>
 // # include <sys/types.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -108,7 +109,7 @@ void execute_command_table(CommandTable* table);
 
 
 // builtins
-void builtin_cd(char* path);
+void builtin_cd(char** args, int n_args);
 void builtin_pwd(void);
 void builtin_echo(char** args, int n_args);
 void builtin_export(char* variable, char* value);
