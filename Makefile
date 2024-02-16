@@ -12,7 +12,12 @@ OBJ_DIR = obj
 MINISHELL_SRC = main.c \
 tokens.c \
 signals.c \
-pipe.c 
+pipe.c \
+parser.c \
+commands.c \
+debug_commands.c \
+builtincommands.c \
+execution.c 
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \

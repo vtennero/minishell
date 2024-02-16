@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/15 14:48:21 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/16 14:22:14 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,24 @@ typedef enum {
     // Add other necessary token types
 } TokenType;
 
+typedef enum {
+    CMD_BUILTIN,
+    CMD_EXTERNAL
+} CommandType;
+
 typedef struct Command {
-	char* name;         	// Command name, e.g., "ls"
-	char** args;        	// Arguments array, including the command itself as args[0]
-	int argc;           	// Argument count
-	char* input_redirect;   // File name for input redirection, NULL if not used
-	char* output_redirect;  // File name for output redirection, NULL if not used
-	int append;         	// Boolean indicating if output redirection should append
-	int pipe[2];        	// File descriptors for piping, -1 if not used
+    CommandType type;
+    char* name;
+    char** args;
+    int arg_count;
+    char* redirect_in;
+    char* redirect_out;
+    char* redirect_append;
+    int fd_in;                 // File descriptor for input redirection
+    int fd_out;                // File descriptor for output redirection
+    struct Command* next;
 } Command;
+
 
 typedef enum {
 	REDIRECT_NONE,  	// No redirection
@@ -60,9 +69,10 @@ typedef enum {
 
 
 typedef struct {
-	Command* commands;  // Array of Command structures
-	int count;      	// Number of commands in the pipeline
+    Command* head;             // Head of the list of commands
+    int command_count;         // Number of commands in the table
 } CommandTable;
+
 
 typedef struct {
 	char** env_vars;       	// Environment variables
@@ -88,5 +98,22 @@ void ft_split_to_list(const char *s, char c, TokenNode **head);
 // singals
 void sigint_handler(int sig_num);
 void sigquit_handler(int sig_num);
+
+// commands
+CommandTable* create_command_table(TokenNode* tokens);
+void free_command_table(CommandTable* table);
+
+void print_command_table(const CommandTable* table);
+void execute_command_table(CommandTable* table);
+
+
+// builtins
+void builtin_cd(char* path);
+void builtin_pwd(void);
+void builtin_echo(char** args, int n_args);
+void builtin_export(char* variable, char* value);
+void builtin_unset(char* variable);
+void builtin_env(void);
+void builtin_exit(void);
 
 #endif
