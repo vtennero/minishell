@@ -17,6 +17,7 @@ parser.c \
 commands.c \
 debug_commands.c \
 builtincommands.c \
+externalcommands.c \
 execution.c 
 
 LIBFT_FILES = ft_isdigit.c \

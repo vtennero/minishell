@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 11:50:11 by toto              #+#    #+#             */
-/*   Updated: 2024/02/16 14:21:57 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/18 16:59:25 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ int main(void)
             // (Tokenize, parse, and execute commands here)
             ft_split_to_list(input, ' ', &head);
 			// ft_printf("%s\n", input);
-	        printTokens(head);
+	        // printTokens(head);
 
             free(input); // Free the input after processing
             CommandTable* command_table = create_command_table(head);
 
-            print_command_table(command_table);
+            // print_command_table(command_table);
             execute_command_table(command_table);
 
             freeTokenList(head);

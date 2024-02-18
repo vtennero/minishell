@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/16 16:20:18 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/18 14:32:29 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,11 @@
 # include "../libft/libft.h"
 # include <signal.h>
 # include <stdio.h>
+# include <fcntl.h>
 // # include <sys/types.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/wait.h>
 
 typedef struct {
 	char* value; // The actual token, e.g., "ls", "-l", ">", etc.
@@ -60,6 +62,10 @@ typedef struct Command {
     struct Command* next;
 } Command;
 
+typedef struct {
+    Command* head;             // Head of the list of commands
+    int command_count;         // Number of commands in the table
+} CommandTable;
 
 typedef enum {
 	REDIRECT_NONE,  	// No redirection
@@ -67,12 +73,6 @@ typedef enum {
 	REDIRECT_OUTPUT,	// Output redirection ('>')
 	REDIRECT_APPEND 	// Output append redirection ('>>')
 } RedirectionType;
-
-
-typedef struct {
-    Command* head;             // Head of the list of commands
-    int command_count;         // Number of commands in the table
-} CommandTable;
 
 
 typedef struct {
@@ -116,5 +116,8 @@ void builtin_export(char* variable, char* value);
 void builtin_unset(char* variable);
 void builtin_env(void);
 void builtin_exit(void);
+
+
+void execute_ext_command(Command *cmd);
 
 #endif

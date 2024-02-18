@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 14:05:16 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/16 16:20:35 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/18 14:33:15 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void execute_command(Command* command)
     } else {
         // For simplicity, we're not implementing external command execution yet.
         printf("Executing external command: %s\n", command->name);
+        execute_ext_command(command);
         // Here you would eventually include the logic to fork a process and use execvp or similar to run the command
     }
 }

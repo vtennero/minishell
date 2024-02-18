@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 14:10:58 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/16 16:43:06 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/18 14:46:14 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,31 +27,42 @@ void builtin_cd(char** args, int n_args)
 {
     char* path; // Path to change to
 
-    if (n_args == 0) {
+    if (n_args == 0)
+	{
+		ft_printf("n_args = 0\n");
         // If no arguments, change to the home directory
         path = get_home_directory();
         if (path == NULL) {
             fprintf(stderr, "cd: HOME not set\n");
             return;
         }
-    } else {
-        // Use the first argument as the path
+    }
+	else if (n_args == 1)
+	{
         path = args[0];
-    }
+		// Attempt to change the directory
+		if (change_directory(path) != 0)
+			// If changing the directory fails, print an error message
+			perror("cd");
+	}
+    else
+		ft_printf("bash: cd: too many arguments\n");
+        // Use the first argument as the path
 
-    // Attempt to change the directory
-    if (change_directory(path) != 0) {
-        // If changing the directory fails, print an error message
-        perror("cd");
-    }
 }
 
 // Prints the current working directory to stdout.
 void builtin_pwd(void)
 {
-	char	*pwd;
-	pwd = getenv("PWD");
-	ft_printf("%s\n", pwd);
+    char *pwd;
+    pwd = getcwd(NULL, 0); // Dynamically allocate buffer size
+    if (pwd != NULL) {
+        ft_printf("%s\n", pwd);
+        free(pwd); // Remember to free the memory allocated by getcwd
+    } else {
+        // Handle error, for example, if getcwd failed
+        perror("pwd: error");
+    }
 }
 
 // Prints the given arguments to stdout, handling the `-n` option to not output the trailing newline.
@@ -99,7 +110,7 @@ void builtin_env(void)
 {
 	extern char** environ;
 	for (char** env = environ; *env != NULL; env++)
-		ft_printf("%s\n", *environ);
+		ft_printf("%s\n", *env);
 }
 
 // Exits the shell.
