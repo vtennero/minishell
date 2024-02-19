@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 16:48:28 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:39:57 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ typedef enum {
     TOKEN_PIPE,     // |
     TOKEN_ENV_VAR,  // $VAR
     TOKEN_EXIT_STATUS, // $?
+    TOKEN_D_Q,
+    TOKEN_S_Q,
     // Add other necessary token types
 } TokenType;
 

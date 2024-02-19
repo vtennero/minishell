@@ -6,13 +6,13 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 13:05:41 by vitenner          #+#    #+#             */
-/*   Updated: 2024/01/10 13:05:45 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:31:24 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_strcmp(char *s1, char *s2)
+int	ft_strcmp(const char *s1, char *s2)
 {
 	int	i;
 

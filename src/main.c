@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 11:50:11 by toto              #+#    #+#             */
-/*   Updated: 2024/02/19 15:55:37 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:14:12 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int main(int argc, char **argv, char **envp)
         ft_printf("interactive mode\n");
         while (1)
         {
-            input = readline("./minishell>$ ");
+            input = readline("$ ");
             if (input == NULL) {
                 ft_printf("exit\n");
                 break ;
@@ -82,9 +82,14 @@ int main(int argc, char **argv, char **envp)
                 // Adjust the following functions to accept `shell` as a parameter and use it internally
                 create_tokens(shell, input, ' ', &head);
                 CommandTable* command_table = create_command_table(shell, head);
+
+                printTokens(head);
+                print_command_table(command_table);
+
+
                 execute_command_table(shell, command_table);
 
-                freeTokenList(head);
+                // freeTokenList(head);
                 head = NULL;
                 free(input);
                 // Assuming these functions are adjusted to use shell's memory management

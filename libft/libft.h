@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/13 12:15:55 by vitenner          #+#    #+#             */
-/*   Updated: 2024/01/25 14:27:24 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:31:33 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *str, int fd);
 void				ft_putendl_fd(char const *s, int fd);
 void				ft_putnbr_fd(int n, int fd);
-int					ft_strcmp(char *s1, char *s2);
+int					ft_strcmp(const char *s1, char *s2);
 long				ft_atol(const char *str);
 int					ft_max(int a, int b);
 int					ft_min(int a, int b);

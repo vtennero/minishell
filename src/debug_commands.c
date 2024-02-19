@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:11:36 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/16 13:12:30 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 17:37:27 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,7 @@ void print_command_table(const CommandTable* table)
         ft_printf("Command table is empty.\n");
         return;
     }
-
-    ft_printf("Command Table (Count: %d):\n", table->command_count);
+    ft_printf("\nCommand Table (Count: %d):\n", table->command_count);
 
     Command* current = table->head;
     while (current) {
@@ -59,4 +58,5 @@ void print_command_table(const CommandTable* table)
             ft_printf("----------\n"); // Separator between commands in a pipeline
         }
     }
+    ft_printf("\n");
 }

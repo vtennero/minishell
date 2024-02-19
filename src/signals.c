@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 11:27:24 by toto              #+#    #+#             */
-/*   Updated: 2024/02/15 11:29:34 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/19 18:14:26 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ void sigint_handler(int sig_num)
     signal(SIGINT, sigint_handler); // Re-register handler to handle next SIGINT
     ft_printf("\n$ "); // Display a new prompt on a new line
     // fflush(stdout); // Make sure it's displayed immediately
+
+
+    // change the display if necessary
 }
 
 void sigquit_handler(int sig_num)

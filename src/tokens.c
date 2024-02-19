@@ -6,31 +6,18 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:24:32 by toto              #+#    #+#             */
-/*   Updated: 2024/02/19 15:36:39 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:36:57 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void freeTokenList(TokenNode* head)
+void addToken(t_shell *shell, TokenNode **head, const char *value, int type)
 {
-    TokenNode* current = head;
-    while (current != NULL) {
-        TokenNode* next = current->next;
-        // Free the current node
-        free(current);
-        current = next;
-    }
-	current = NULL;
-}
-
-
-void addToken(TokenNode **head, const char *value, int type)
-{
-    TokenNode *newNode = (TokenNode *)malloc(sizeof(TokenNode));
+    TokenNode *newNode = (TokenNode *)shell_malloc(shell, sizeof(TokenNode));
     if (!newNode) return;
 
-    newNode->token.value = strdup(value); // Ensure value is copied
+    newNode->token.value = shell_strdup(shell, value); // Use shell_strdup
     newNode->token.type = type;
     newNode->next = NULL;
 
@@ -45,29 +32,34 @@ void addToken(TokenNode **head, const char *value, int type)
     }
 }
 
+
 void printTokens(TokenNode* head)
 {
     TokenNode* current = head;
+    ft_printf("\n");
     while (current != NULL) {
         ft_printf("Token: %s \t | Type: %d\n", current->token.value, current->token.type);
         current = current->next;
     }
+    ft_printf("\n");
 }
 
 // Helper function to determine the type of a single token
-TokenType get_token_type(const char* token) {
-    if (strcmp(token, "<") == 0) {
+TokenType get_token_type(const char* token_text)
+{
+    if (ft_strcmp(token_text, "<") == 0) {
         return TOKEN_REDIR_IN;
-    } else if (strcmp(token, ">") == 0) {
+    } else if (ft_strcmp(token_text, ">") == 0) {
         return TOKEN_REDIR_OUT;
-    } else if (strcmp(token, ">>") == 0) {
+    } else if (ft_strcmp(token_text, ">>") == 0) {
         return TOKEN_REDIR_APPEND;
-    } else if (strcmp(token, "|") == 0) {
+    } else if (ft_strcmp(token_text, "|") == 0) {
         return TOKEN_PIPE;
-    } else if (token[0] == '$') {
-        if (strcmp(token, "$?") == 0) {
+    } else if (token_text[0] == '$') {
+        if (ft_strcmp(token_text, "$?") == 0) {
             return TOKEN_EXIT_STATUS;
         } else {
+            ft_printf("gettokentype %s\n", token_text);
             return TOKEN_ENV_VAR;
         }
     }
@@ -83,54 +75,63 @@ void set_first_token_to_command(TokenNode** head) {
     }
 }
 
-void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head)
-{
-    (void)shell;
-    while (*s) {
-        while (*s == c) s++; // Skip leading delimiters
+const char *skip_delimiters(const char *s, char c) {
+    while (*s == c) s++;
+    return s;
+}
 
-        if (!*s) break; // End of string check
 
-        char *nextQuote = NULL;
-        if (*s == '\'') {
-            nextQuote = strchr(s + 1, '\''); // Look for the closing quote
+char *allocate_and_copy_token(const char *start, size_t length) {
+    return ft_strndup(start, length);
+}
+
+void process_token(t_shell *shell, TokenNode **head, const char *tokenStart, const char *tokenEnd) {
+    size_t tokenLength = tokenEnd - tokenStart;
+    if (tokenLength == 0) return; // Skip empty tokens
+
+    char *tokenValue = allocate_and_copy_token(tokenStart, tokenLength);
+    if (!tokenValue) return; // Allocation check
+
+    addToken(shell, head, tokenValue, get_token_type(tokenValue));
+    free(tokenValue); // Clean up after adding the token
+}
+
+// New helper function to find the next quote of the same type
+char *find_next_quote(const char *s, char quoteType) {
+    while (*s && *s != quoteType) s++;
+    return (*s == quoteType) ? (char *)s : NULL;
+}
+
+const char *find_token_end_and_adjust_start(const char **s, char c, char **nextQuote) {
+    if (**s == '\'' || **s == '"') {
+        char quoteType = **s;
+        *nextQuote = find_next_quote(*s + 1, quoteType);
+        if (*nextQuote) {
+            *s = *s + 1; // Skip the opening quote for token start
+            return *nextQuote; // Return position of closing quote
         }
-
-        const char *tokenStart = s;
-        const char *tokenEnd = s;
-
-        if (nextQuote) {
-            tokenStart = s + 1; // Start after the opening quote
-            tokenEnd = nextQuote; // End at the closing quote
-            s = nextQuote + 1; // Move past the closing quote for next iteration
-        } else {
-            // Find the next delimiter or end of string for unquoted tokens
-            while (*tokenEnd && *tokenEnd != c) tokenEnd++;
-            s = tokenEnd; // Prepare for next iteration
-        }
-
-        // Calculate token length
-        size_t tokenLength = tokenEnd - tokenStart;
-        if (tokenLength > 0) {
-            // Allocate and copy the token
-            char *tokenValue = strndup(tokenStart, tokenLength);
-            if (!tokenValue) break; // Allocation check
-
-            // Add the token
-            addToken(head, tokenValue, get_token_type(tokenValue));
-
-            free(tokenValue); // Clean up
-        }
-
-        if (!nextQuote && *s) s++; // If not ending with a quote, move over the delimiter
     }
-    set_first_token_to_command(head);
-    // process_pipes(head);
 
-	// printTokens(*head);
+    const char *end = *s;
+    while (*end && *end != c) end++;
+    return end;
 }
 
 
 
+void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head) {
+    while (*s) {
+        s = skip_delimiters(s, c);
 
+        if (!*s) break;
 
+        char *nextQuote = NULL;
+        const char *tokenStart = s;
+        const char *tokenEnd = find_token_end_and_adjust_start(&tokenStart, c, &nextQuote);
+        process_token(shell, head, tokenStart, tokenEnd);
+
+        s = nextQuote ? nextQuote + 1 : tokenEnd;
+        if (!nextQuote && *s) s++;
+    }
+    set_first_token_to_command(head);
+}

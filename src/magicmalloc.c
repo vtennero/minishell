@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 13:42:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 17:02:18 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 17:10:51 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ char* shell_strndup(t_shell* shell, const char* s, size_t n) {
 
 void* shell_malloc(t_shell* shell, size_t size)
 {
-    // void* ptr = malloc(size);
     void* ptr = ft_calloc(1, size);
     if (ptr) {
         MemNode* node = (MemNode*)malloc(sizeof(MemNode));

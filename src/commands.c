@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:01:04 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 15:59:32 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:19:28 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ Command* create_command_entry(t_shell *shell, char* name)
 
 void add_argument(t_shell *shell, Command* cmd, char* arg)
 {
+    // ft_printf("add argument %s\n", arg);
     cmd->args[cmd->arg_count++] = shell_strdup(shell, arg);
     // Assuming cmd->args has been allocated with enough space
     cmd->args[cmd->arg_count] = NULL; // Ensure NULL termination
