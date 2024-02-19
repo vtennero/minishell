@@ -3,14 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   debug_commands.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:11:36 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 17:37:27 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 22:33:49 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void printTokens(TokenNode* head)
+{
+    TokenNode* current = head;
+    ft_printf("\n");
+    while (current != NULL) {
+        ft_printf("Token: %s \t | Type: %d\n", current->token.value, current->token.type);
+        current = current->next;
+    }
+    ft_printf("\n");
+}
 
 void print_command(const Command* cmd) {
     if (!cmd) return;

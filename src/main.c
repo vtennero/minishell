@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 11:50:11 by toto              #+#    #+#             */
-/*   Updated: 2024/02/19 18:14:12 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 22:35:39 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void setup_signals(t_shell *shell)
     (void)shell;
 }
 
-t_shell* initialize_shell(char **envp)
+t_shell *initialize_shell(char **envp)
 {
     t_shell* shell = (t_shell*)ft_calloc(1, sizeof(t_shell));
     if (!shell) {
@@ -33,7 +33,7 @@ t_shell* initialize_shell(char **envp)
 
     // Initialize the memory tracker within the shell
     shell->mem_tracker.head = NULL;
-
+    shell->token_head = NULL;
     // Initialize environment variables from envp, signal handlers, etc.
     // shell->env_vars = copy_env_vars(envp); // Example initialization, you'll need to implement copy_env_vars or similar
     setup_signals(shell); // Example function to setup custom signal handlers
@@ -80,16 +80,26 @@ int main(int argc, char **argv, char **envp)
                 add_history(input);
 
                 // Adjust the following functions to accept `shell` as a parameter and use it internally
-                create_tokens(shell, input, ' ', &head);
-                CommandTable* command_table = create_command_table(shell, head);
+                // create_tokens(shell, input, ' ', &head);
+                // CommandTable* command_table = create_command_table(shell, head);
+                // printTokens(head);
 
-                printTokens(head);
+                // create_tokens(shell, input, ' ', &shell->token_head);
+                // CommandTable* command_table = create_command_table(shell, shell->token_head);
+                // printTokens(shell->token_head);
+                // print_command_table(command_table);
+                // (void)head;
+
+                create_tokens(shell, input);
+                CommandTable* command_table = create_command_table(shell, shell->token_head);
+                printTokens(shell->token_head);
                 print_command_table(command_table);
-
+                (void)head;
 
                 execute_command_table(shell, command_table);
 
                 // freeTokenList(head);
+                shell->token_head = NULL;
                 head = NULL;
                 free(input);
                 // Assuming these functions are adjusted to use shell's memory management

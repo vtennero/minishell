@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 18:39:57 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 22:35:51 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,8 @@ typedef struct s_shell {
 	int                 last_exit_status;  	// Exit status of the last executed command
 	struct sigaction    *signals; // Custom signal handlers
 	int                 is_interactive;
-    MemTracker          mem_tracker; 
+    MemTracker          mem_tracker;
+    TokenNode           *token_head;
 } t_shell;
 
 
@@ -108,7 +109,8 @@ void printTokens(TokenNode* head);
 void process_pipes(TokenNode** head);
 void user_input_subfunction(TokenNode** head, TokenNode* last_pipe);
 
-void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
+// void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
+void create_tokens(t_shell *shell, const char *s);
 
 // singals
 void sigint_handler(int sig_num);
