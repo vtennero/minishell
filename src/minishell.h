@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/18 14:32:29 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:48:28 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,18 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
+
+// memory management
+typedef struct MemNode {
+    void* ptr;                // Pointer to the allocated memory
+    struct MemNode* next;     // Next node in the list
+} MemNode;
+
+typedef struct {
+    MemNode* head;            // Head of the list of allocated memory blocks
+} MemTracker;
+
+// 
 
 typedef struct {
 	char* value; // The actual token, e.g., "ls", "-l", ">", etc.
@@ -63,8 +75,8 @@ typedef struct Command {
 } Command;
 
 typedef struct {
-    Command* head;             // Head of the list of commands
-    int command_count;         // Number of commands in the table
+    Command*    head;             // Head of the list of commands
+    int         command_count;         // Number of commands in the table
 } CommandTable;
 
 typedef enum {
@@ -75,12 +87,13 @@ typedef enum {
 } RedirectionType;
 
 
-typedef struct {
-	char** env_vars;       	// Environment variables
-	int last_exit_status;  	// Exit status of the last executed command
-	struct sigaction* signals; // Custom signal handlers
-	int	is_interactive;
-} ShellState;
+typedef struct s_shell {
+	char**              env_vars;       	// Environment variables
+	int                 last_exit_status;  	// Exit status of the last executed command
+	struct sigaction    *signals; // Custom signal handlers
+	int                 is_interactive;
+    MemTracker          mem_tracker; 
+} t_shell;
 
 
 typedef struct {
@@ -88,24 +101,23 @@ typedef struct {
 	char* value; // The value of the environment variable
 } EnvironmentVariable;
 
-void ft_split_to_list(char const *s, char c, TokenNode** head);
 void freeTokenList(TokenNode* head);
 void printTokens(TokenNode* head);
 void process_pipes(TokenNode** head);
 void user_input_subfunction(TokenNode** head, TokenNode* last_pipe);
 
-void ft_split_to_list(const char *s, char c, TokenNode **head);
+void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
 
 // singals
 void sigint_handler(int sig_num);
 void sigquit_handler(int sig_num);
 
 // commands
-CommandTable* create_command_table(TokenNode* tokens);
+CommandTable* create_command_table(t_shell *shell, TokenNode* tokens);
 void free_command_table(CommandTable* table);
 
 void print_command_table(const CommandTable* table);
-void execute_command_table(CommandTable* table);
+void execute_command_table(t_shell *shell, CommandTable* table);
 
 
 // builtins
@@ -119,5 +131,17 @@ void builtin_exit(void);
 
 
 void execute_ext_command(Command *cmd);
+
+
+// exit
+void	shexit(t_shell *shell, int exit_code);
+
+
+// shell memory allocation
+void* shell_malloc(t_shell* shell, size_t size);
+void shell_free(t_shell* shell, void* ptr);
+void shell_cleanup(t_shell* shell);
+char* shell_strdup(t_shell* shell, const char* s);
+char* shell_strndup(t_shell* shell, const char* s, size_t n);
 
 #endif

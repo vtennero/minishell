@@ -6,18 +6,19 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 14:05:16 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/18 14:33:15 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 15:35:58 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void execute_command(Command* command)
+void execute_command(t_shell *shell, Command* command)
 {
     if (!command) return;
 
+    (void)shell;
 
-	ft_printf("Executing command: %s arg count %d\n", command->name, command->arg_count);
+	// ft_printf("Executing command: %s arg count %d\n", command->name, command->arg_count);
     // Example stubs for calling built-in commands
     if (strcmp(command->name, "cd") == 0) {
         // Call built-in cd command
@@ -47,19 +48,20 @@ void execute_command(Command* command)
         builtin_exit();
     } else {
         // For simplicity, we're not implementing external command execution yet.
-        printf("Executing external command: %s\n", command->name);
+        // printf("Executing external command: %s\n", command->name);
         execute_ext_command(command);
         // Here you would eventually include the logic to fork a process and use execvp or similar to run the command
     }
 }
 
-void execute_command_table(CommandTable* table)
+void execute_command_table(t_shell *shell, CommandTable* table)
 {
     if (!table) return;
 
     Command* current = table->head;
+    (void)shell;
     while (current != NULL) {
-        execute_command(current); // Execute the current command
+        execute_command(shell, current); // Execute the current command
         current = current->next;  // Move to the next command in the list
     }
 }

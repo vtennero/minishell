@@ -18,7 +18,9 @@ commands.c \
 debug_commands.c \
 builtincommands.c \
 externalcommands.c \
-execution.c 
+execution.c \
+clean.c \
+magicmalloc.c
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \

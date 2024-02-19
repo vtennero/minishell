@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:24:32 by toto              #+#    #+#             */
-/*   Updated: 2024/02/18 16:13:56 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/19 15:36:39 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,9 @@ void set_first_token_to_command(TokenNode** head) {
     }
 }
 
-void ft_split_to_list(const char *s, char c, TokenNode **head)
+void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head)
 {
+    (void)shell;
     while (*s) {
         while (*s == c) s++; // Skip leading delimiters
 
@@ -124,7 +125,7 @@ void ft_split_to_list(const char *s, char c, TokenNode **head)
         if (!nextQuote && *s) s++; // If not ending with a quote, move over the delimiter
     }
     set_first_token_to_command(head);
-    process_pipes(head);
+    // process_pipes(head);
 
 	// printTokens(*head);
 }
