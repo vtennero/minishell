@@ -6,7 +6,7 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 22:35:51 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/20 09:40:55 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,5 +147,6 @@ void shell_free(t_shell* shell, void* ptr);
 void shell_cleanup(t_shell* shell);
 char* shell_strdup(t_shell* shell, const char* s);
 char* shell_strndup(t_shell* shell, const char* s, size_t n);
+void refine_tokens(t_shell *shell);
 
 #endif

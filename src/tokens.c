@@ -6,7 +6,7 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:24:32 by toto              #+#    #+#             */
-/*   Updated: 2024/02/19 22:51:47 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/20 10:33:06 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,7 @@ void create_tokens(t_shell *shell, const char *s)
         if (!nextQuote && *s) s++;
     }
     set_first_token_to_command(shell);
+    refine_tokens(shell);
 }
 
 
