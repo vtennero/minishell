@@ -6,7 +6,7 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 11:50:11 by toto              #+#    #+#             */
-/*   Updated: 2024/02/20 14:24:51 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/20 18:15:22 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv, char **envp)
         i = 0;
         while (arg_input[i])
         {
-            ft_printf("non interactive mode\n");
+            // ft_printf("non interactive mode\n");
             // Parse and execute arg_input[i], pass shell as needed
             i++;
         }
