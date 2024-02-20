@@ -6,7 +6,7 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 11:50:11 by toto              #+#    #+#             */
-/*   Updated: 2024/02/19 22:35:39 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/20 14:24:51 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ t_shell *initialize_shell(char **envp)
     // Initialize the memory tracker within the shell
     shell->mem_tracker.head = NULL;
     shell->token_head = NULL;
+    // change this!
+    shell->last_exit_status = 780;
     // Initialize environment variables from envp, signal handlers, etc.
     // shell->env_vars = copy_env_vars(envp); // Example initialization, you'll need to implement copy_env_vars or similar
     setup_signals(shell); // Example function to setup custom signal handlers

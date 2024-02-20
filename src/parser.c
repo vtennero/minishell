@@ -6,12 +6,27 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 12:43:47 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/20 11:24:45 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/20 15:28:42 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int intLength(int num)
+{
+	int	length;
+    if (num == 0)
+        return 1;
+    
+    length = 0;
+    while (num != 0)
+	{
+        length++;
+        num /= 10;
+    }
+
+    return (length);
+}
 
 int handleEnvVar(char **p) {
     char *start = *p + 1;
@@ -32,15 +47,24 @@ int handleEnvVar(char **p) {
     return length;
 }
 
-int handleSpecialSymbols(char **p) {
+int handleSpecialSymbols(t_shell *shell, char **p)
+{
+	int	len;
+
+	len = 0;
     if (**p == '$' && *(*p + 1) == '$')
 	{
-		ft_printf("Found a $$\n");
+		// ft_printf("Found a $$\n");
 		// Handle $$ case here if needed
+    	*p += 2; // Move past the symbol
+		len = 2;
     }
-    // Assuming each special symbol adds 2 to length for demonstration
-    *p += 2; // Move past the symbol
-    return 2; // Adjust based on actual logic for handling special symbols
+	else if ((**p == '$' && *(*p + 1) == '?'))
+	{
+		len = intLength(shell->last_exit_status);
+    	*p += 2; // Move past the symbol
+	}
+    return (len); // Adjust based on actual logic for handling special symbols
 }
 
 // this version skips an unexisting variable
@@ -72,14 +96,41 @@ int fillNewStringWithEnvVar(char **p, char *dest, t_shell *shell) {
 	(void)shell;
 }
 
-int fillNewStringWithSpecialSymbols(char **p, char *dest) {
+int fillNewStringWithSpecialSymbols(t_shell *shell, char **p, char *dest)
+{
+	int		len;
+	char	*exitcodestr;
+
+	len = 0;
+    if (**p == '$' && *(*p + 1) == '$')
+	{
+		*dest++ = **p; // Copy $
+		*dest++ = *(*p + 1); // Copy the next character ($, ?, or space)
+		*p += 2; // Advance past the symbols
+		len = 2;
+	}
+	else if (**p == '$' && *(*p + 1) == '?')
+	{
+		exitcodestr = ft_itoa(shell->last_exit_status);
+		len = ft_strlen(exitcodestr);
+		ft_strncpy(*p, exitcodestr, len);
+		// ft_printf("exitcodestr |%s| len %d p %s\n", exitcodestr, len, *p);
+		*p += 2; // Advance past the symbols
+		free(exitcodestr);
+		exitcodestr = NULL;
+	}
+	else
+	{
+		*dest++ = **p; // Copy $
+		*dest++ = *(*p + 1); // Copy the next character ($, ?, or space)
+		*p += 2; // Advance past the symbols
+		len = 2;
+	}
     // This function will handle special symbols ($$, $?, and $ followed by space)
     // The logic here will depend on how you want to treat these symbols
     // For demonstration, let's just copy them as is and advance
-    *dest++ = **p; // Copy $
-    *dest++ = *(*p + 1); // Copy the next character ($, ?, or space)
-    *p += 2; // Advance past the symbols
-    return 2; // Return the number of characters added to dest
+
+    return (len); // Return the number of characters added to dest
 }
 
 void populateNewString(t_shell *shell, TokenNode *node, char *newStr) {
@@ -90,7 +141,7 @@ void populateNewString(t_shell *shell, TokenNode *node, char *newStr) {
     while (*p) {
         if (*p == '$') {
             if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
-                dest += fillNewStringWithSpecialSymbols(&p, dest);
+                dest += fillNewStringWithSpecialSymbols(shell, &p, dest);
             } else {
                 dest += fillNewStringWithEnvVar(&p, dest, shell);
             }
@@ -98,8 +149,42 @@ void populateNewString(t_shell *shell, TokenNode *node, char *newStr) {
             *dest++ = *p++; // Copy regular character and advance
         }
     }
-	ft_printf("transformed string: |%s|\n", newStr);
+	// ft_printf("transformed string: |%s|\n", newStr);
 }
+
+void replaceTokenNode(t_shell *shell, TokenNode *oldNode, char *newStr) {
+    // Create a new TokenNode with the new string
+    TokenNode *newNode = (TokenNode *)shell_malloc(shell, sizeof(TokenNode));
+    if (!newNode) {
+        perror("Failed to allocate memory for new TokenNode");
+        return;
+    }
+    newNode->token.value = newStr; // Assign the new string to the node
+    newNode->token.type = TOKEN_ARG; // to change later, needs to be parsed to get the right argument
+    // newNode->token.type = oldNode->token.type; // Copy the type from the old node
+
+    // Special handling if oldNode is the head of the list
+    if (shell->token_head == oldNode) {
+        newNode->next = oldNode->next; // The new node takes over the position of the old node
+        shell->token_head = newNode; // Update the head of the list to be the new node
+    } else {
+        // Find the previous node to oldNode
+        TokenNode *prevNode = shell->token_head;
+        while (prevNode != NULL && prevNode->next != oldNode) {
+            prevNode = prevNode->next;
+        }
+
+        if (prevNode != NULL) {
+            prevNode->next = newNode; // Link the previous node to the new node
+            newNode->next = oldNode->next; // The new node points to the next node in the old node's place
+        }
+    }
+
+    // At this point, oldNode is effectively replaced by newNode in the list.
+    // Note: The old node is now disconnected but not freed, as required.
+}
+
+
 
 
 void processDQToken(t_shell *shell, TokenNode *node) {
@@ -110,7 +195,7 @@ void processDQToken(t_shell *shell, TokenNode *node) {
     while (*p) {
         if (*p == '$') {
             if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
-                newLength += handleSpecialSymbols(&p);
+                newLength += handleSpecialSymbols(shell, &p);
             } else {
                 newLength += handleEnvVar(&p);
             }
@@ -120,7 +205,7 @@ void processDQToken(t_shell *shell, TokenNode *node) {
         }
     }
 
-    printf("Calculated new length: %d\n", newLength);
+    // printf("Calculated new length: %d\n", newLength);
 	// (void)shell;
 	// After calculating new length
 	char *newStr = (char *)shell_malloc(shell, newLength + 1); // +1 for the null terminator
@@ -130,6 +215,7 @@ void processDQToken(t_shell *shell, TokenNode *node) {
 	}
 	newStr[newLength] = '\0'; // Ensure the string is null-terminated
 	populateNewString(shell, node, newStr);
+	replaceTokenNode(shell, node, newStr);
 }
 
 
@@ -143,9 +229,7 @@ void refine_tokens(t_shell *shell)
     while (current != NULL)
 	{
         if (current->token.type == TOKEN_D_Q)
-		{
             processDQToken(shell, current);
-        }
         // prev = current;
         current = current->next;
     }
