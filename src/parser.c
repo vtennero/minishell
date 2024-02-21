@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 12:43:47 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/20 15:28:42 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/21 11:18:53 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,18 +219,15 @@ void processDQToken(t_shell *shell, TokenNode *node) {
 }
 
 
-
-
-
-void refine_tokens(t_shell *shell)
+void expand_variables(t_shell *shell)
 {
     TokenNode *current = shell->token_head;
-    // TokenNode *prev = NULL;
     while (current != NULL)
 	{
         if (current->token.type == TOKEN_D_Q)
             processDQToken(shell, current);
-        // prev = current;
+        else if (current->token.type == TOKEN_ENV_VAR)
+            processDQToken(shell, current);
         current = current->next;
     }
 }

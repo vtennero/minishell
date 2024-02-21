@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:01:04 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 18:19:28 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/21 11:20:30 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ CommandTable* create_command_table(t_shell *shell, TokenNode* tokens)
             else if (last_command) last_command->next = current_command;
             last_command = current_command;
             table->command_count++;
-        } else if (current_token->token.type == TOKEN_ARG) {
+        } else if (current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q) {
             add_argument(shell, current_command, current_token->token.value);
         }
         // ... handle redirections and other token types ...

@@ -1,0 +1,7 @@
+
+Command Table (Count: 1):
+Command: echo
+Type: External
+Arguments: "tutuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu" 
+
+Non-interactive mode with input or output redirection.
