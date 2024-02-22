@@ -3,25 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 11:50:11 by toto              #+#    #+#             */
-/*   Updated: 2024/02/21 16:57:42 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:13:46 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// signal handler
-void setup_signals(t_shell *shell)
-	{
-    // Signal handling setup
-    // Set up signal handlers
-    signal(SIGINT, sigint_handler);  // Handle Ctrl-C
-    signal(SIGQUIT, sigquit_handler); // Handle Ctrl-\, do nothing
-    // Any other initialization
-    (void)shell;
-}
 
 t_shell *initialize_shell(char **envp)
 {
@@ -45,33 +34,65 @@ t_shell *initialize_shell(char **envp)
     return shell;
 }
 
-void process_input_into_commands(int fd, t_shell *shell) {
-    char *input;
+void process_input_into_commands(int fd, t_shell *shell)
+{
+	char	**line;
 
-    // ft_printf("Non-interactive mode with input or output redirection.\n");
-    // Loop to read each line of input using get_next_line
-    while ((input = get_next_line(fd)) != NULL) {
-        // Tokenize the input line
-        create_tokens(shell, input);
-
-        // Free the input line after tokenizing it
-        free(input);
+	line = (char**)malloc(sizeof(char*));
+    while ((old_get_next_line(fd, line)) == 1)
+    {
+        create_tokens(shell, *line);
+        free(*line);
     }
-
-    // After all lines are read and tokenized, create the command table
     CommandTable *command_table = create_command_table(shell, shell->token_head);
     // printTokens(shell->token_head);
     // print_command_table(command_table);
     execute_command_table(shell, command_table);
-
-    // Assuming create_command_table also links commands, the command_table is now ready to use
-    // Here you could execute the commands, print them for debug, etc.
-
-    // Clean up the command table and any other allocated resources if necessary
-    // This part is left out as it depends on how you manage memory and structures within your shell
 }
 
-// new
+void    process_args_input(t_shell *shell, int argc, char **argv)
+{
+    char    **line;
+    int     fd;
+    
+    if (ft_strcmp(argv[1], "-c") == 0)
+    {
+        if (argv[2] && argc == 3)
+        {
+            create_tokens(shell, argv[2]);
+            CommandTable *command_table = create_command_table(shell, shell->token_head);
+            execute_command_table(shell, command_table);
+        }
+        else
+        {
+            perror("bash: option requires an argument\n");
+            return ;
+        }
+    }
+    else
+    {
+        fd = open(argv[1], O_RDONLY);
+        if (fd == -1)
+        {
+            perror("error reading file\n");
+            return ;
+        }
+        line = (char**)malloc(sizeof(char*));
+        while ((old_get_next_line(fd, line)) == 1)
+        {
+            create_tokens(shell, *line);
+            free(*line);
+        }
+
+        // After all lines are read and tokenized, create the command table
+        CommandTable *command_table = create_command_table(shell, shell->token_head);
+        // printTokens(shell->token_head);
+        // print_command_table(command_table);
+        execute_command_table(shell, command_table);
+    }
+}
+
+
 int main(int argc, char **argv, char **envp)
 {
     char* input;
@@ -109,6 +130,7 @@ int main(int argc, char **argv, char **envp)
         {
             // Non-interactive mode but with arguments
             printf("Non-interactive mode with arguments: Execute command '%s'\n", argv[1]);
+            process_args_input(shell, argc, argv);
         } else {
             // Non-interactive mode due to input or output redirection
             process_input_into_commands(STDIN_FILENO, shell);
@@ -122,108 +144,3 @@ int main(int argc, char **argv, char **envp)
     shexit(shell, 0); // Adjust shexit if necessary
     return 0;
 }
-
-// old, works
-// int main(int argc, char **argv, char **envp)
-// {
-//     char* input;
-//     TokenNode* head = NULL;
-//     char **arg_input;
-//     int i;
-
-//     // Initialize your shell and get the shell structure
-//     int interactive_mode = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
-
-//     ft_printf("interactive mode? %d\n", interactive_mode);
-    
-//     t_shell* shell = initialize_shell(envp);
-//     (void)envp;
-//     if (argc == 3 && ft_strcmp(argv[1], "-c") == 0 && argv[2])
-//     {
-//         ft_printf("-c mode\n");
-//         arg_input = ft_split(argv[2], ';'); //this leaks 
-//         if (!arg_input)
-//             shexit(shell, 1); // Assuming shexit now also takes a shell pointer for cleanup
-
-//         i = 0;
-//         while (arg_input[i])
-//         {
-//             // ft_printf("non interactive mode\n");
-//             // Parse and execute arg_input[i], pass shell as needed
-//             i++;
-//         }
-//     }
-//     else
-//     {
-//         ft_printf("interactive mode\n");
-//         while (1)
-//         {
-//             input = readline("$ ");
-//             if (input == NULL) {
-//                 ft_printf("exit\n");
-//                 break ;
-//             }
-//             if (ft_strlen(input) > 0)
-//             {
-//                 add_history(input);
-
-//                 create_tokens(shell, input);
-//                 CommandTable* command_table = create_command_table(shell, shell->token_head);
-//                 printTokens(shell->token_head);
-//                 print_command_table(command_table);
-//                 (void)head;
-
-//                 execute_command_table(shell, command_table);
-
-//                 shell->token_head = NULL;
-//                 head = NULL;
-//                 free(input);
-//             } else
-//                 free(input); // Consider adjusting to use shell's memory management
-//         }
-//     }
-//     shexit(shell, 0); // Adjust shexit if necessary
-//     return 0;
-// }
-
-
-
-// test main
-// int main(int argc, char *argv[])
-// {
-//     // Check if both input and output are from/to a terminal
-//     int input_is_terminal = isatty(STDIN_FILENO);
-//     int output_is_terminal = isatty(STDOUT_FILENO);
-
-//     if (input_is_terminal && output_is_terminal && argc == 1)
-//     {
-//         // Interactive mode: No arguments, input and output are from/to a terminal.
-//         printf("Interactive mode: Enter commands in a readline loop.\n");
-//         perror("this is just a test error message 0\n");
-//         char *line = NULL;
-//         size_t len = 0;
-//         printf("minishell> "); // Prompt for input
-//         while (getline(&line, &len, stdin) != -1) {
-//             printf("Execute: %s", line); // Simulate command execution
-//             printf("minishell> "); // Prompt for input again
-//             perror("this is just a test error message 1\n");
-
-//         }
-//         free(line); // Cleanup
-//     } else {
-//         // For non-interactive mode or when arguments are provided
-//             perror("this is just a test error message 2\n");
-//         if (argc > 1) {
-//             // Non-interactive mode but with arguments
-//             printf("Non-interactive mode with arguments: Execute command '%s'\n", argv[1]);
-//         } else {
-//             // Non-interactive mode due to input or output redirection
-//             printf("Non-interactive mode with input or output redirection.\n");
-
-//             // If you were handling input from a file or pipe, process it here.
-//             // Since we're simulating, we'll not enter a read loop.
-//             // This is where the program would normally exit after handling the command or input.
-//         }
-//     }
-//     return 0;
-// }

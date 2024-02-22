@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/21 11:19:03 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:07:40 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ void create_tokens(t_shell *shell, const char *s);
 // singals
 void sigint_handler(int sig_num);
 void sigquit_handler(int sig_num);
+void setup_signals(t_shell *shell);
 
 // commands
 CommandTable* create_command_table(t_shell *shell, TokenNode* tokens);

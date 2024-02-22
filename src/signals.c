@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 11:27:24 by toto              #+#    #+#             */
-/*   Updated: 2024/02/19 18:14:26 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:07:30 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,15 @@ void sigquit_handler(int sig_num)
 	(void)sig_num;
     // Do nothing handler for SIGQUIT
     signal(SIGQUIT, sigquit_handler); // Re-register handler to handle next SIGQUIT
+}
+
+// signal handler
+void setup_signals(t_shell *shell)
+	{
+    // Signal handling setup
+    // Set up signal handlers
+    signal(SIGINT, sigint_handler);  // Handle Ctrl-C
+    signal(SIGQUIT, sigquit_handler); // Handle Ctrl-\, do nothing
+    // Any other initialization
+    (void)shell;
 }

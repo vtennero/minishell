@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokens.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:24:32 by toto              #+#    #+#             */
-/*   Updated: 2024/02/21 11:38:06 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:14:38 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ const char *find_token_end_and_adjust_start(const char **s, char c, char **nextQ
 
 void create_tokens(t_shell *shell, const char *s)
 {
+    // ft_printf("create tokens ft_strlen |%s| %d\n", s, ft_strlen(s));
     while (*s) {
         s = skip_delimiters(s, ' ');
 

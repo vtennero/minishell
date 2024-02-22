@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/13 12:15:55 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 18:31:33 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:01:56 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,5 +136,23 @@ t_list				*ft_lstnew(void const *content, size_t content_size);
 void				ft_lstdelone(t_list **alst, void (*del)(void *, size_t));
 void				ft_lstdel(t_list **alst, void (*del)(void *, size_t));
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
+
+# define GNL_BUFF_SIZE 256
+# define GNL_RET_OK 1
+# define GNL_RET_DONE 0
+# define GNL_RET_ERR -1
+
+#include <limits.h>
+
+typedef struct		s_buff
+{
+	char			content[GNL_BUFF_SIZE];
+	char			*ptr_newl;
+	size_t			content_size;
+	struct s_buff	*next;
+}					t_buff;
+
+void				ft_memdel(void **ap);
+int					old_get_next_line(const int fd, char **line);
 
 #endif
