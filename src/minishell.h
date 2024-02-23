@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/22 15:07:40 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/23 14:25:44 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void builtin_echo(char** args, int n_args);
 void builtin_export(char* variable, char* value);
 void builtin_unset(char* variable);
 void builtin_env(void);
-void builtin_exit(void);
+void builtin_exit(t_shell *shell);
 
 
 void execute_ext_command(Command *cmd);

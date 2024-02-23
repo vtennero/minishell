@@ -1,37 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   ft_strsub.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/13 11:28:21 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/23 10:49:10 by vitenner         ###   ########.fr       */
+/*   Created: 2024/02/23 10:47:49 by vitenner          #+#    #+#             */
+/*   Updated: 2024/02/23 10:47:58 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strnstr(const char *big, const char *litl, size_t len)
+char	*ft_strsub(char const *s, unsigned int start, size_t len)
 {
-	size_t	h;
-	size_t	n;
+	char	*subs;
+	size_t	i;
 
-	h = 0;
-	if (litl[0] == '\0')
-		return ((char *)big);
-	while (big[h] != '\0')
+	if (s == NULL)
+		return (NULL);
+	subs = ft_strnew(len);
+	if (subs == NULL)
+		return (NULL);
+	i = 0;
+	while (i < len)
 	{
-		n = 0;
-		while (big[h + n] == litl[n] && (h + n) < len)
-		{
-			if (big[h + n] == '\0' && litl[n] == '\0')
-				return ((char *)&big[h]);
-			n++;
-		}
-		if (litl[n] == '\0')
-			return ((char *)&big[h]);
-		h++;
+		subs[i] = s[start + i];
+		i++;
 	}
-	return (0);
+	return (subs);
 }

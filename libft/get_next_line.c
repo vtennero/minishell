@@ -6,16 +6,11 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 14:22:21 by vitenner          #+#    #+#             */
-/*   Updated: 2023/12/17 16:10:30 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/23 10:47:32 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-#ifndef BUFFER_SIZE 
-
-# define BUFFER_SIZE 4096
-#endif
 
 static char	*ft_fill_buffer(int fd, ssize_t *bytes_read, char *buffer)
 {

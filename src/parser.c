@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 12:43:47 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/21 11:18:53 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/23 13:51:10 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 int intLength(int num)
 {
-	int	length;
+    // ft_printf("intLength start\n");
+    int	length;
     if (num == 0)
         return 1;
     
@@ -24,7 +25,7 @@ int intLength(int num)
         length++;
         num /= 10;
     }
-
+    // ft_printf("intLength END\n");
     return (length);
 }
 
@@ -51,6 +52,7 @@ int handleSpecialSymbols(t_shell *shell, char **p)
 {
 	int	len;
 
+    // ft_printf("handleSpecialSymbols start\n");
 	len = 0;
     if (**p == '$' && *(*p + 1) == '$')
 	{
@@ -64,6 +66,9 @@ int handleSpecialSymbols(t_shell *shell, char **p)
 		len = intLength(shell->last_exit_status);
     	*p += 2; // Move past the symbol
 	}
+    else
+        len = 1;
+    // ft_printf("handleSpecialSymbols END len = %d\n", len);
     return (len); // Adjust based on actual logic for handling special symbols
 }
 
@@ -113,7 +118,7 @@ int fillNewStringWithSpecialSymbols(t_shell *shell, char **p, char *dest)
 	{
 		exitcodestr = ft_itoa(shell->last_exit_status);
 		len = ft_strlen(exitcodestr);
-		ft_strncpy(*p, exitcodestr, len);
+		ft_strncpy(dest, exitcodestr, len);
 		// ft_printf("exitcodestr |%s| len %d p %s\n", exitcodestr, len, *p);
 		*p += 2; // Advance past the symbols
 		free(exitcodestr);
@@ -133,7 +138,8 @@ int fillNewStringWithSpecialSymbols(t_shell *shell, char **p, char *dest)
     return (len); // Return the number of characters added to dest
 }
 
-void populateNewString(t_shell *shell, TokenNode *node, char *newStr) {
+void populateNewString(t_shell *shell, TokenNode *node, char *newStr)
+{
     char *value = node->token.value;
     char *p = value; // Pointer to iterate through the original string
     char *dest = newStr; // Destination pointer for the new string
@@ -187,14 +193,19 @@ void replaceTokenNode(t_shell *shell, TokenNode *oldNode, char *newStr) {
 
 
 
-void processDQToken(t_shell *shell, TokenNode *node) {
+void processDQToken(t_shell *shell, TokenNode *node)
+{
     char *value = node->token.value;
     int newLength = 0;
     char *p = value;
 
-    while (*p) {
+    // ft_printf("processDQToken START\n");
+    while (*p)
+    {
+        // ft_printf("processDQToken whil |%c|\n", *p);
         if (*p == '$') {
-            if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
+            if (*(p+1) == '$' || *(p+1) == '?') {
+            // if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
                 newLength += handleSpecialSymbols(shell, &p);
             } else {
                 newLength += handleEnvVar(&p);
@@ -215,20 +226,38 @@ void processDQToken(t_shell *shell, TokenNode *node) {
 	}
 	newStr[newLength] = '\0'; // Ensure the string is null-terminated
 	populateNewString(shell, node, newStr);
+	// ft_printf("processDQToken transformed string: |%s|\n", newStr);
+	replaceTokenNode(shell, node, newStr);
+    // ft_printf("processDQToken END\n");
+}
+
+void process_exit_code(t_shell *shell, TokenNode *node)
+{
+    // int newLength = 0;
+    char    *newStr;
+
+    // newLength = intLength(shell->last_exit_status);
+    newStr = ft_itoa(shell->last_exit_status);
+
+	// populateNewString(shell, node, newStr);
 	replaceTokenNode(shell, node, newStr);
 }
 
-
 void expand_variables(t_shell *shell)
 {
+    // ft_printf("expand_variables START\n");
     TokenNode *current = shell->token_head;
     while (current != NULL)
 	{
+        // ft_printf("expand_variables while\n");
         if (current->token.type == TOKEN_D_Q)
             processDQToken(shell, current);
         else if (current->token.type == TOKEN_ENV_VAR)
             processDQToken(shell, current);
+        else if (current->token.type == TOKEN_EXIT_STATUS)
+            process_exit_code(shell, current);
         current = current->next;
     }
+    // ft_printf("expand_variables END\n");
 }
 

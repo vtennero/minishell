@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 11:50:11 by toto              #+#    #+#             */
-/*   Updated: 2024/02/22 15:13:46 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/23 15:31:52 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_shell *initialize_shell(char **envp)
     shell->mem_tracker.head = NULL;
     shell->token_head = NULL;
     // change this!
-    shell->last_exit_status = 780;
+    shell->last_exit_status = 0;
     shell->is_interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
     // Initialize environment variables from envp, signal handlers, etc.
     // shell->env_vars = copy_env_vars(envp); // Example initialization, you'll need to implement copy_env_vars or similar
@@ -42,11 +42,13 @@ void process_input_into_commands(int fd, t_shell *shell)
     while ((old_get_next_line(fd, line)) == 1)
     {
         create_tokens(shell, *line);
+        ft_printf("process_input_into_commands: line = |%s|\n", *line);
         free(*line);
     }
+    free (line);
     CommandTable *command_table = create_command_table(shell, shell->token_head);
-    // printTokens(shell->token_head);
-    // print_command_table(command_table);
+    printTokens(shell->token_head);
+    print_command_table(command_table);
     execute_command_table(shell, command_table);
 }
 
@@ -83,11 +85,11 @@ void    process_args_input(t_shell *shell, int argc, char **argv)
             create_tokens(shell, *line);
             free(*line);
         }
-
+        free (line);
         // After all lines are read and tokenized, create the command table
         CommandTable *command_table = create_command_table(shell, shell->token_head);
-        // printTokens(shell->token_head);
-        // print_command_table(command_table);
+        printTokens(shell->token_head);
+        print_command_table(command_table);
         execute_command_table(shell, command_table);
     }
 }
@@ -129,7 +131,7 @@ int main(int argc, char **argv, char **envp)
         if (argc > 1)
         {
             // Non-interactive mode but with arguments
-            printf("Non-interactive mode with arguments: Execute command '%s'\n", argv[1]);
+            // printf("Non-interactive mode with arguments: Execute command '%s'\n", argv[1]);
             process_args_input(shell, argc, argv);
         } else {
             // Non-interactive mode due to input or output redirection
@@ -141,6 +143,6 @@ int main(int argc, char **argv, char **envp)
         }
     }
 
-    shexit(shell, 0); // Adjust shexit if necessary
+    shexit(shell, 10);
     return 0;
 }

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: toto <toto@student.42.fr>                  +#+  +:+       +#+         #
+#    By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/21 13:24:40 by vitenner          #+#    #+#              #
-#    Updated: 2024/02/22 15:02:03 by toto             ###   ########.fr        #
+#    Updated: 2024/02/23 10:50:35 by vitenner         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -100,6 +100,10 @@ ft_min.c \
 ft_max.c \
 old_gnl.c \
 ft_memdel.c \
+ft_strnew.c \
+ft_strsub.c \
+ft_strdel.c \
+ft_strdel.c
 
 # Adding directory prefix to source files
 SRC = $(addprefix $(SRC_DIR)/, $(MINISHELL_SRC)) \

@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 14:10:58 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/18 14:46:14 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/23 14:25:23 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,8 @@ void builtin_env(void)
 }
 
 // Exits the shell.
-void builtin_exit(void)
+void builtin_exit(t_shell *shell)
 {
-	ft_printf("exit\n");
-	exit(0);
+	// ft_printf("exit\n");
+	shexit(shell, 0);
 }

@@ -1,37 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   ft_strnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/13 11:28:21 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/23 10:49:10 by vitenner         ###   ########.fr       */
+/*   Created: 2024/02/23 10:45:28 by vitenner          #+#    #+#             */
+/*   Updated: 2024/02/23 10:46:00 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strnstr(const char *big, const char *litl, size_t len)
+char	*ft_strnew(size_t size)
 {
-	size_t	h;
-	size_t	n;
+	char	*str;
+	size_t	i;
 
-	h = 0;
-	if (litl[0] == '\0')
-		return ((char *)big);
-	while (big[h] != '\0')
+	i = 0;
+	str = (char *)malloc(sizeof(*str) * size + 1);
+	if (str == NULL)
+		return (NULL);
+	while (i <= size)
 	{
-		n = 0;
-		while (big[h + n] == litl[n] && (h + n) < len)
-		{
-			if (big[h + n] == '\0' && litl[n] == '\0')
-				return ((char *)&big[h]);
-			n++;
-		}
-		if (litl[n] == '\0')
-			return ((char *)&big[h]);
-		h++;
+		str[i] = '\0';
+		i++;
 	}
-	return (0);
+	return (str);
 }

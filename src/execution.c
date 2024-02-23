@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 14:05:16 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/21 16:41:47 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/23 14:25:59 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void execute_command(t_shell *shell, Command* command)
 		builtin_env();
     } else if (ft_strcmp(command->name, "exit") == 0) {
         // Call built-in exit command
-        builtin_exit();
+        builtin_exit(shell);
     } else {
         // printf("Executing external command: %s\n", command->name);
         execute_ext_command(command);

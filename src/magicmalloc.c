@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 13:42:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/19 17:10:51 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/23 14:26:28 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,6 @@ char* shell_strndup(t_shell* shell, const char* s, size_t n) {
     }
     return newStr;
 }
-
-
-
 
 void* shell_malloc(t_shell* shell, size_t size)
 {
@@ -93,9 +90,16 @@ void shell_cleanup(t_shell* shell)
 
 void	shexit(t_shell *shell, int exit_code)
 {
-	// free big struct
+    int exit_s;
+    
+    // ft_printf("shexit\n");
+    exit_s = shell->last_exit_status;
+    // ft_printf("%d\n", shell->last_exit_status);
 	shell_cleanup(shell);
-	// exit
+	// free big struct
 	free(shell);
-	exit(exit_code);
+	// exit
+	// exit(exit_code);
+    exit(exit_s);
+    (void)exit_code;
 }
