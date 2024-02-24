@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 11:50:11 by toto              #+#    #+#             */
-/*   Updated: 2024/02/23 15:31:52 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/24 15:28:03 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,8 @@ int main(int argc, char **argv, char **envp)
 
                 create_tokens(shell, input);
                 CommandTable* command_table = create_command_table(shell, shell->token_head);
-                // printTokens(shell->token_head);
-                // print_command_table(command_table);
+                printTokens(shell->token_head);
+                print_command_table(command_table);
                 execute_command_table(shell, command_table);
 
                 shell->token_head = NULL;
