@@ -9,6 +9,7 @@ Workflow (as of Feb 26)
 - unset
 - signals w global variables
 - exit codes
+- heredoc
 
 
 ✅ Done

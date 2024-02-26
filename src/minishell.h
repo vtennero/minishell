@@ -6,7 +6,7 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/26 11:35:38 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/26 15:05:30 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct Command {
     char* redirect_in;
     char* redirect_out;
     char* redirect_append;
+    char* redirect_heredoc;
     int fd_in;                 // File descriptor for input redirection
     int fd_out;                // File descriptor for output redirection
     struct Command* next;
@@ -150,5 +151,8 @@ void expand_variables(t_shell *shell);
 // debug
 void printTokens(TokenNode* head);
 void print_command_table(const CommandTable* table);
+
+// heredoc
+void parse_heredoc(t_shell *shell);
 
 #endif

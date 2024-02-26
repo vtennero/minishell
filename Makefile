@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+         #
+#    By: toto <toto@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/21 13:24:40 by vitenner          #+#    #+#              #
-#    Updated: 2024/02/23 10:50:35 by vitenner         ###   ########.fr        #
+#    Updated: 2024/02/26 15:06:24 by toto             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,8 @@ builtincommands.c \
 externalcommands.c \
 execution.c \
 clean.c \
-magicmalloc.c
+magicmalloc.c \
+heredoc.c
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \

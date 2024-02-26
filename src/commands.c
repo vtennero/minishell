@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:01:04 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/21 11:20:30 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/26 11:50:51 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void link_commands(Command* prev_cmd, Command* next_cmd) {
 }
 
 void set_redirect_in(t_shell *shell, Command* cmd, char* filename) {
-    if (cmd->redirect_in) free(cmd->redirect_in);
+    // if (cmd->redirect_in) free(cmd->redirect_in);
     cmd->redirect_in = shell_strdup(shell, filename);
 }
 
@@ -46,15 +46,15 @@ void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) 
     if (!cmd || !filename) return;
 
     // Free any existing redirection target to avoid memory leaks
-    if (cmd->redirect_out) {
-        free(cmd->redirect_out);
-        cmd->redirect_out = NULL;
-    }
+    // if (cmd->redirect_out) {
+    //     free(cmd->redirect_out);
+    //     cmd->redirect_out = NULL;
+    // }
     
-    if (cmd->redirect_append) {
-        free(cmd->redirect_append);
-        cmd->redirect_append = NULL;
-    }
+    // if (cmd->redirect_append) {
+    //     free(cmd->redirect_append);
+    //     cmd->redirect_append = NULL;
+    // }
 
     // Copy the filename to the appropriate field based on whether it's append or overwrite
     if (append) {

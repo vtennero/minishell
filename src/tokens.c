@@ -6,7 +6,7 @@
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:24:32 by toto              #+#    #+#             */
-/*   Updated: 2024/02/26 11:35:56 by toto             ###   ########.fr       */
+/*   Updated: 2024/02/26 15:48:04 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,14 @@ void process_token(t_shell *shell, const char *tokenStart, const char *tokenEnd,
     // TokenType type = quotetypeptr ? TOKEN_D_Q : get_token_type(tokenValue);
     // ft_printf("process_token get_quote_status\n");
     TokenType type = get_quote_status(quotetypeptr, tokenValue);
-    ft_printf("token type %d\n", type);
-    ft_printf("process_token addToken %d\n", shell->token_head->);
+    // here deal with heredoc
+    // check if previous one is a heredoc -> cant if list is not double linked or ID identifiable
+
+    // ft_printf("token type %d\n", type);
+    // ft_printf("process_token addToken %d\n", shell->token_head->);
     addToken(shell, tokenValue, type);
+    ft_printf("process_token: new token |%s|\n", tokenValue);
+    parse_heredoc(shell);
     // addToken(shell, head, tokenValue, type);
     free(tokenValue); // Clean up after adding the token
     tokenValue = NULL;
