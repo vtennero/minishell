@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokens.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:24:32 by toto              #+#    #+#             */
-/*   Updated: 2024/02/23 13:50:21 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/26 11:35:56 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ TokenType get_token_type(const char* token_text)
         return TOKEN_REDIR_OUT;
     } else if (ft_strcmp(token_text, ">>") == 0) {
         return TOKEN_REDIR_APPEND;
+    } else if (ft_strcmp(token_text, "<<") == 0) {
+        return TOKEN_REDIR_HEREDOC;
     } else if (ft_strcmp(token_text, "|") == 0) {
         return TOKEN_PIPE;
     } else if (token_text[0] == '$') {
@@ -111,8 +113,8 @@ void process_token(t_shell *shell, const char *tokenStart, const char *tokenEnd,
     // TokenType type = quotetypeptr ? TOKEN_D_Q : get_token_type(tokenValue);
     // ft_printf("process_token get_quote_status\n");
     TokenType type = get_quote_status(quotetypeptr, tokenValue);
-    // ft_printf("token type %d\n", type);
-    // ft_printf("process_token addToken\n");
+    ft_printf("token type %d\n", type);
+    ft_printf("process_token addToken %d\n", shell->token_head->);
     addToken(shell, tokenValue, type);
     // addToken(shell, head, tokenValue, type);
     free(tokenValue); // Clean up after adding the token

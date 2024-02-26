@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/23 14:25:44 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/02/26 11:35:38 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef enum {
     TOKEN_REDIR_IN,  // <
     TOKEN_REDIR_OUT, // >
     TOKEN_REDIR_APPEND, // >>
+    TOKEN_REDIR_HEREDOC, // <<
     TOKEN_PIPE,     // |
     TOKEN_ENV_VAR,  // $VAR
     TOKEN_EXIT_STATUS, // $?
@@ -104,10 +105,6 @@ typedef struct {
 	char* value; // The value of the environment variable
 } EnvironmentVariable;
 
-void freeTokenList(TokenNode* head);
-void printTokens(TokenNode* head);
-void process_pipes(TokenNode** head);
-void user_input_subfunction(TokenNode** head, TokenNode* last_pipe);
 
 // void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
 void create_tokens(t_shell *shell, const char *s);
@@ -121,7 +118,7 @@ void setup_signals(t_shell *shell);
 CommandTable* create_command_table(t_shell *shell, TokenNode* tokens);
 void free_command_table(CommandTable* table);
 
-void print_command_table(const CommandTable* table);
+
 void execute_command_table(t_shell *shell, CommandTable* table);
 
 
@@ -149,5 +146,9 @@ void shell_cleanup(t_shell* shell);
 char* shell_strdup(t_shell* shell, const char* s);
 char* shell_strndup(t_shell* shell, const char* s, size_t n);
 void expand_variables(t_shell *shell);
+
+// debug
+void printTokens(TokenNode* head);
+void print_command_table(const CommandTable* table);
 
 #endif

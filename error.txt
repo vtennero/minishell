@@ -1,6 +1,0 @@
-this is just a test error message 0
-: Success
-this is just a test error message 1
-: Invalid argument
-this is just a test error message 1
-: Invalid argument
