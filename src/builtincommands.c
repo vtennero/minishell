@@ -66,7 +66,7 @@ void builtin_pwd(void)
 }
 
 // Prints the given arguments to stdout, handling the `-n` option to not output the trailing newline.
-void builtin_echo(char** args, int n_args)
+void builtin_echo(t_shell *shell, char** args, int n_args)
 {
 	int i = 0;
 	int newline = 1;
@@ -87,6 +87,7 @@ void builtin_echo(char** args, int n_args)
 	}
 	if (newline)
 		ft_printf("\n");
+    shell->last_exit_status = 777;
 }
 
 // Sets or exports an environment variable with the given name to the given value.

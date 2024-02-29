@@ -31,7 +31,7 @@ void execute_command(t_shell *shell, Command* command)
         // Call built-in echo command
 		// ft_printf("Executing builtin_echo\n");
 		// ft_printf("%s\n", command->args[0]);
-        builtin_echo(command->args, command->arg_count);
+        builtin_echo(shell, command->args, command->arg_count);
     } else if (ft_strcmp(command->name, "unset") == 0) {
 		// Call built-in unset command
 		// Assuming the variable name is the first argument: command->args[1]

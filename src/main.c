@@ -24,7 +24,7 @@ t_shell *initialize_shell(char **envp)
     shell->mem_tracker.head = NULL;
     shell->token_head = NULL;
     // change this!
-    shell->last_exit_status = 0;
+    shell->last_exit_status = 2000;
     shell->is_interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
     // Initialize environment variables from envp, signal handlers, etc.
     // shell->env_vars = copy_env_vars(envp); // Example initialization, you'll need to implement copy_env_vars or similar
@@ -42,13 +42,13 @@ void process_input_into_commands(int fd, t_shell *shell)
     while ((old_get_next_line(fd, line)) == 1)
     {
         create_tokens(shell, *line);
-        ft_printf("process_input_into_commands: line = |%s|\n", *line);
+        // ft_printf("process_input_into_commands: line = |%s|\n", *line);
         free(*line);
     }
     free (line);
     CommandTable *command_table = create_command_table(shell, shell->token_head);
-    printTokens(shell->token_head);
-    print_command_table(command_table);
+    // printTokens(shell->token_head);
+    // print_command_table(command_table);
     execute_command_table(shell, command_table);
 }
 

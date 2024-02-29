@@ -119,7 +119,7 @@ void process_token(t_shell *shell, const char *tokenStart, const char *tokenEnd,
     // ft_printf("token type %d\n", type);
     // ft_printf("process_token addToken %d\n", shell->token_head->);
     addToken(shell, tokenValue, type);
-    ft_printf("process_token: new token |%s|\n", tokenValue);
+    // ft_printf("process_token: new token |%s|\n", tokenValue);
     parse_heredoc(shell);
     // addToken(shell, head, tokenValue, type);
     free(tokenValue); // Clean up after adding the token

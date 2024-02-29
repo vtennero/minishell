@@ -71,7 +71,7 @@ void write_heredoc_to_file(int fd, const char* delimiter) {
 
 char* handle_heredoc(t_shell *shell, const char* delimiter)
 {
-	ft_printf("handle heredoc\n");
+	// ft_printf("handle heredoc\n");
     char *tempFilePath;
     int fd = create_temp_file(&tempFilePath);
     
@@ -93,26 +93,26 @@ void parse_heredoc(t_shell *shell)
     TokenNode *current = shell->token_head;
     TokenNode *previous = NULL;
 
-	ft_printf("parse_heredoc START\n");
+	// ft_printf("parse_heredoc START\n");
     while (current != NULL)
 	{
-		ft_printf("parse_heredoc while current = |%s|\n", current->token.value);
+		// ft_printf("parse_heredoc while current = |%s|\n", current->token.value);
         if (previous)
-			ft_printf("parse_heredoc if previous OK |%s| previous->token.type %d\n", previous->token.value, previous->token.type);
+			// ft_printf("parse_heredoc if previous OK |%s| previous->token.type %d\n", previous->token.value, previous->token.type);
         if (previous && previous->token.type == TOKEN_REDIR_HEREDOC)
 		{
-			ft_printf("parse_heredoc: found\n");
+			// ft_printf("parse_heredoc: found\n");
             char *tempFile = handle_heredoc(shell, current->token.value);
             if (tempFile) {
                 // Here, handle the association of tempFile with the command
                 // This could involve setting the command's redirect_in field, for example
-                printf("Heredoc temporary file created: %s\n", tempFile);
+                // printf("Heredoc temporary file created: %s\n", tempFile);
                 // Depending on your cleanup strategy, you might free tempFile later
             }
         }
         previous = current;
         current = current->next;
     }
-	ft_printf("parse_heredoc END\n");
+	// ft_printf("parse_heredoc END\n");
 }
 

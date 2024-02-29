@@ -126,7 +126,7 @@ void execute_command_table(t_shell *shell, CommandTable* table);
 // builtins
 void builtin_cd(char** args, int n_args);
 void builtin_pwd(void);
-void builtin_echo(char** args, int n_args);
+void builtin_echo(t_shell *shell, char** args, int n_args);
 void builtin_export(char* variable, char* value);
 void builtin_unset(char* variable);
 void builtin_env(void);
