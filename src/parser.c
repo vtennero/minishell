@@ -74,7 +74,7 @@ int handleSpecialSymbols(t_shell *shell, char **p)
 
 // this version skips an unexisting variable
 int fillNewStringWithEnvVar(char **p, char *dest, t_shell *shell) {
-    ft_printf("fillNewStringWithEnvVar\n");
+    // ft_printf("fillNewStringWithEnvVar\n");
     char *start = *p + 1; // Skip past the $
     char *end = start;
     // Find the end of the variable name
@@ -108,8 +108,10 @@ int fillNewStringWithSpecialSymbols(t_shell *shell, char **p, char *dest)
 	char	*exitcodestr;
 
 	len = 0;
+    // ft_printf("fillNewStringWithSpecialSymbols %s\n", *p);
     if (**p == '$' && *(*p + 1) == '$')
 	{
+        // ft_printf("fillNewStringWithSpecialSymbols $$ found\n");
 		*dest++ = **p; // Copy $
 		*dest++ = *(*p + 1); // Copy the next character ($, ?, or space)
 		*p += 2; // Advance past the symbols
@@ -117,7 +119,7 @@ int fillNewStringWithSpecialSymbols(t_shell *shell, char **p, char *dest)
 	}
 	else if (**p == '$' && *(*p + 1) == '?')
 	{
-        ft_printf("fillNewStringWithSpecialSymbols $? found\n");
+        // ft_printf("fillNewStringWithSpecialSymbols $? found\n");
 		exitcodestr = ft_itoa(shell->last_exit_status);
 		len = ft_strlen(exitcodestr);
 		ft_strncpy(dest, exitcodestr, len);
@@ -147,6 +149,7 @@ void populateNewString(t_shell *shell, TokenNode *node, char *newStr)
     char *dest = newStr; // Destination pointer for the new string
 
     while (*p) {
+    // ft_printf("populateNewString %s\n", *p);
         if (*p == '$') {
             if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
                 dest += fillNewStringWithSpecialSymbols(shell, &p, dest);
@@ -204,7 +207,6 @@ void processDQToken(t_shell *shell, TokenNode *node)
     // ft_printf("processDQToken START\n");
     while (*p)
     {
-        // ft_printf("processDQToken whil |%c|\n", *p);
         if (*p == '$') {
             if (*(p+1) == '$' || *(p+1) == '?') {
             // if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
@@ -237,6 +239,7 @@ void process_exit_code(t_shell *shell, TokenNode *node)
 {
     // int newLength = 0;
     char    *newStr;
+    // ft_printf("process_exit_code START\n");
 
     // newLength = intLength(shell->last_exit_status);
     newStr = ft_itoa(shell->last_exit_status);
@@ -248,6 +251,7 @@ void process_exit_code(t_shell *shell, TokenNode *node)
 void expand_variables(t_shell *shell)
 {
     // ft_printf("expand_variables START\n");
+    // printTokens(shell->token_head);
     TokenNode *current = shell->token_head;
     while (current != NULL)
 	{

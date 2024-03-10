@@ -94,7 +94,7 @@ void	shexit(t_shell *shell, int exit_code)
     
     // ft_printf("shexit\n");
     exit_s = shell->last_exit_status;
-    // ft_printf("%d\n", shell->last_exit_status);
+    // ft_printf("shexit %d\n", shell->last_exit_status);
 	shell_cleanup(shell);
 	// free big struct
 	free(shell);

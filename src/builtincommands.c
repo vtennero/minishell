@@ -87,7 +87,8 @@ void builtin_echo(t_shell *shell, char** args, int n_args)
 	}
 	if (newline)
 		ft_printf("\n");
-    shell->last_exit_status = 777;
+	(void)shell;
+    // shell->last_exit_status = 777;
 }
 
 // Sets or exports an environment variable with the given name to the given value.
@@ -117,6 +118,6 @@ void builtin_env(void)
 // Exits the shell.
 void builtin_exit(t_shell *shell)
 {
-	// ft_printf("exit\n");
+	ft_printf("exit\n");
 	shexit(shell, 0);
 }

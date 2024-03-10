@@ -161,10 +161,46 @@ const char *find_token_end_and_adjust_start(const char **s, char c, char **nextQ
     return end;
 }
 
+void set_token_to_command(t_shell *shell, int token_list_len) {
+    if (!shell || !shell->token_head) {
+        return; // Check for null pointers
+    }
 
+    TokenNode *current = shell->token_head;
+    int i = 0;
+
+    // Skip tokens until we reach the specified index
+    while (current != NULL && i < token_list_len) {
+        current = current->next;
+        i++;
+    }
+
+    // If we haven't run off the end of the list, set the type of the current token
+    if (current != NULL) {
+        current->token.type = TOKEN_COMMAND;
+    }
+}
+
+int getTokenListLength(TokenNode* head)
+{
+    int length = 0;
+    TokenNode* current = head;
+
+    while (current != NULL) {
+        length++;
+        current = current->next; // Move to the next node
+    }
+
+    return length;
+}
 
 void create_tokens(t_shell *shell, const char *s)
 {
+    int index;
+    int token_list_len;
+
+    index = 0;
+    token_list_len = getTokenListLength(shell->token_head);
     // ft_printf("create tokens ft_strlen |%s| %d\n", s, ft_strlen(s));
     while (*s) {
         s = skip_delimiters(s, ' ');
@@ -181,8 +217,12 @@ void create_tokens(t_shell *shell, const char *s)
 
         s = nextQuote ? nextQuote + 1 : tokenEnd;
         if (!nextQuote && *s) s++;
+        if (index == 0)
+            set_token_to_command(shell, token_list_len);
+        index++;
     }
+    // printTokens(shell->token_head);
     expand_variables(shell);
-    set_first_token_to_command(shell);
+    // set_first_token_to_command(shell);
 }
 
