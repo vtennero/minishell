@@ -43,7 +43,7 @@ char* shell_strndup(t_shell* shell, const char* s, size_t n) {
     return newStr;
 }
 
-void* shell_malloc(t_shell* shell, size_t size)
+void *shell_malloc(t_shell* shell, size_t size)
 {
     void* ptr = ft_calloc(1, size);
     if (ptr) {

@@ -168,6 +168,7 @@ CommandTable* create_command_table(t_shell *shell, TokenNode* tokens)
                 current_token = current_token->next; // Skip the next token since it's part of the redirection
             }
         }
+        // add if pipe | here @eugene
         current_token = current_token->next;
     }
 

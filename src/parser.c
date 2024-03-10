@@ -74,6 +74,7 @@ int handleSpecialSymbols(t_shell *shell, char **p)
 
 // this version skips an unexisting variable
 int fillNewStringWithEnvVar(char **p, char *dest, t_shell *shell) {
+    ft_printf("fillNewStringWithEnvVar\n");
     char *start = *p + 1; // Skip past the $
     char *end = start;
     // Find the end of the variable name
@@ -116,6 +117,7 @@ int fillNewStringWithSpecialSymbols(t_shell *shell, char **p, char *dest)
 	}
 	else if (**p == '$' && *(*p + 1) == '?')
 	{
+        ft_printf("fillNewStringWithSpecialSymbols $? found\n");
 		exitcodestr = ft_itoa(shell->last_exit_status);
 		len = ft_strlen(exitcodestr);
 		ft_strncpy(dest, exitcodestr, len);
