@@ -21,6 +21,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
+#include <errno.h>
 
 // memory management
 typedef struct MemNode {
@@ -45,17 +46,18 @@ typedef struct TokenNode {
 } TokenNode;
 
 typedef enum {
-    TOKEN_COMMAND,
-    TOKEN_ARG,
-    TOKEN_REDIR_IN,  // <
-    TOKEN_REDIR_OUT, // >
-    TOKEN_REDIR_APPEND, // >>
-    TOKEN_REDIR_HEREDOC, // <<
-    TOKEN_PIPE,     // |
-    TOKEN_ENV_VAR,  // $VAR
-    TOKEN_EXIT_STATUS, // $?
-    TOKEN_D_Q,
-    TOKEN_S_Q,
+    TOKEN_COMMAND,          // 0
+    TOKEN_ARG,              // 1
+    TOKEN_REDIR_IN, // <       2
+    TOKEN_REDIR_OUT,// >       3
+    TOKEN_REDIR_APPEND, // >>  4
+    TOKEN_REDIR_HEREDOC, // << 5
+    TOKEN_PIPE,     // |        6
+    TOKEN_ENV_VAR,  // $VAR     7
+    TOKEN_EXIT_STATUS, // $?    8
+    TOKEN_D_Q,  //              9
+    TOKEN_S_Q,  //              10
+    TOKEN_S_DOL,//              11
     // Add other necessary token types
 } TokenType;
 
@@ -124,13 +126,13 @@ void execute_command_table(t_shell *shell, CommandTable* table);
 
 
 // builtins
-void builtin_cd(char** args, int n_args);
+void builtin_cd(t_shell * shell, char** args, int n_args);
 void builtin_pwd(void);
 void builtin_echo(t_shell *shell, char** args, int n_args);
 void builtin_export(char* variable, char* value);
 void builtin_unset(char* variable);
 void builtin_env(void);
-void builtin_exit(t_shell *shell);
+void builtin_exit(t_shell *shell, char** args, int n_args);
 
 
 void execute_ext_command(Command *cmd);

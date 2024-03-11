@@ -29,7 +29,9 @@ int intLength(int num)
     return (length);
 }
 
-int handleEnvVar(char **p) {
+int handleEnvVar(char **p)
+{
+    // ft_printf("handleEnvVar\n");
     char *start = *p + 1;
     char *end = start;
     while (*end && !isspace(*end) && *end != '$') end++; // Find end of env var name
@@ -142,18 +144,29 @@ int fillNewStringWithSpecialSymbols(t_shell *shell, char **p, char *dest)
     return (len); // Return the number of characters added to dest
 }
 
+// int fillNewStringWithSoloDollar(t_shell *shell, char **p, char *dest)
+// {
+
+// }
+
+
 void populateNewString(t_shell *shell, TokenNode *node, char *newStr)
 {
     char *value = node->token.value;
     char *p = value; // Pointer to iterate through the original string
     char *dest = newStr; // Destination pointer for the new string
 
+    // ft_printf("populateNewString\n");
     while (*p) {
     // ft_printf("populateNewString %s\n", *p);
         if (*p == '$') {
-            if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
+            if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1)) || (!*(p+1)))
+            {
+            // if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
                 dest += fillNewStringWithSpecialSymbols(shell, &p, dest);
-            } else {
+            }
+            else
+            {
                 dest += fillNewStringWithEnvVar(&p, dest, shell);
             }
         } else {
@@ -211,6 +224,10 @@ void processDQToken(t_shell *shell, TokenNode *node)
             if (*(p+1) == '$' || *(p+1) == '?') {
             // if (*(p+1) == '$' || *(p+1) == '?' || isspace(*(p+1))) {
                 newLength += handleSpecialSymbols(shell, &p);
+            }
+            else if (!*(p+1)) {
+                newLength++; // Regular character, just add to length
+                p++;
             } else {
                 newLength += handleEnvVar(&p);
             }

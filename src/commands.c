@@ -149,6 +149,8 @@ CommandTable* create_command_table(t_shell *shell, TokenNode* tokens)
             last_command = current_command;
             table->command_count++;
         } else if (current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q) {
+            // ft_printf("create_command_table current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q\n");
+            // ft_printf("create_command_table %d\n", current_token->token.value);
             add_argument(shell, current_command, current_token->token.value);
         }
         // ... handle redirections and other token types ...

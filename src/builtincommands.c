@@ -23,13 +23,13 @@ int change_directory(char* path) {
 }
 
 // The main cd function
-void builtin_cd(char** args, int n_args)
+void builtin_cd(t_shell * shell, char** args, int n_args)
 {
     char* path; // Path to change to
 
     if (n_args == 0)
 	{
-		ft_printf("n_args = 0\n");
+		// ft_printf("n_args = 0\n");
         // If no arguments, change to the home directory
         path = get_home_directory();
         if (path == NULL) {
@@ -46,7 +46,10 @@ void builtin_cd(char** args, int n_args)
 			perror("cd");
 	}
     else
-		ft_printf("bash: cd: too many arguments\n");
+	{
+		perror("bash: cd: too many arguments\n");
+		shell->last_exit_status = 1;
+	}
         // Use the first argument as the path
 
 }
@@ -115,9 +118,66 @@ void builtin_env(void)
 		ft_printf("%s\n", *env);
 }
 
-// Exits the shell.
-void builtin_exit(t_shell *shell)
+int adjust_exit_code(int n)
 {
+    // If n is higher than 255, subtract 256 until it's not
+    while (n > 255) {
+        n -= 256;
+    }
+
+    // If n is lower than 0, add 256 until it's between 0 and 255
+    while (n < 0) {
+        n += 256;
+    }
+
+    return n;
+}
+
+int is_valid_number(const char *str)
+{
+    // Check if the string is empty
+    if (!str || *str == '\0') {
+        return 0; // Not a valid number
+    }
+
+    // Check if the first character is +, -, or a digit
+    if (*str != '+' && *str != '-' && !ft_isdigit(*str)) {
+        return 0; // Not a valid number
+    }
+
+    // Move to the next character
+    str++;
+
+    // Check that every other character is a digit
+    while (*str != '\0') {
+        if (!ft_isdigit(*str)) {
+            return 0; // Not a valid number
+        }
+        str++;
+    }
+
+    return 1; // Valid number
+}
+
+// Exits the shell.
+void builtin_exit(t_shell *shell, char** args, int n_args)
+{
+	if (n_args >= 2)
+	{
+		perror("too many arguments ");
+		// shell->last_exit_status = 1;
+	}
+	else if (n_args == 1)
+	{
+
+		if (is_valid_number(args[0]) == 0)
+			shell->last_exit_status = 2;
+		else
+			shell->last_exit_status = adjust_exit_code(ft_atoi(args[0]));
+	}
+	(void)args;
 	ft_printf("exit\n");
+	ft_printf("builtin_exit last_exit_status %d\n", shell->last_exit_status);
+
 	shexit(shell, 0);
 }

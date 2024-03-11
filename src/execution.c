@@ -23,7 +23,7 @@ void execute_command(t_shell *shell, Command* command)
     if (ft_strcmp(command->name, "cd") == 0) {
         // Call built-in cd command
         // Assuming the path is the first argument: command->args[1]
-        builtin_cd(command->args, command->arg_count);
+        builtin_cd(shell, command->args, command->arg_count);
     } else if (ft_strcmp(command->name, "pwd") == 0) {
         // Call built-in pwd command
         builtin_pwd();
@@ -45,7 +45,7 @@ void execute_command(t_shell *shell, Command* command)
 		builtin_env();
     } else if (ft_strcmp(command->name, "exit") == 0) {
         // Call built-in exit command
-        builtin_exit(shell);
+        builtin_exit(shell, command->args, command->arg_count);
     } else {
         // printf("Executing external command: %s\n", command->name);
         execute_ext_command(command);
