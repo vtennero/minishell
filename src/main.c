@@ -12,6 +12,38 @@
 
 #include "minishell.h"
 
+
+// void    initialize_shell_env(t_shell *shell, char **envp)
+// {
+//     // int i;
+
+//     // i = 0;
+//     //     while (envp[i]) { // Loop through the environment variables passed to main
+//     //     printf("%s\n", envp[i]); // Print each environment variable
+//     //     i++;
+//     // }
+//     // (void)shell;
+//     create_env_var_list(shell, envp);
+//     // ft_printf("------------------\n");
+//     // ft_printf("------------------\n");
+//     // ft_printf("------------------\n");
+//     // ft_printf("------------------\n");
+//     // ft_printf("------------------\n");
+//     // ft_printf("------------------\n");
+//     // ft_printf("------------------\n");
+//     // list_all_variables(shell);
+
+//     // for (i = 0; envp[i] != NULL; i++) {}
+//     // Allocate space for the environment variables in the shell structure
+//     // shell->env_vars = (char **)shell_malloc(shell, (i + 1) * sizeof(char *));
+//     // for (i = 0; envp[i] != NULL; i++) {
+//     //     shell->env_vars[i] = shell_strdup(shell, envp[i]);
+//     // }
+//     // // Null-terminate the array
+//     // shell->env_vars[i] = NULL;
+// }
+
+
 t_shell *initialize_shell(char **envp)
 {
     // ft_printf("initialize_shell\n");
@@ -31,7 +63,8 @@ t_shell *initialize_shell(char **envp)
     // shell->env_vars = copy_env_vars(envp); // Example initialization, you'll need to implement copy_env_vars or similar
     setup_signals(shell); // Example function to setup custom signal handlers
     (void)envp;
-
+    // initialize_shell_env(shell, envp);
+    create_env_var_list(shell, envp);
     return shell;
 }
 
@@ -117,8 +150,8 @@ int main(int argc, char **argv, char **envp)
 
                 create_tokens(shell, input);
                 CommandTable* command_table = create_command_table(shell, shell->token_head);
-                // printTokens(shell->token_head);
-                // print_command_table(command_table);
+                printTokens(shell->token_head);
+                print_command_table(command_table);
                 execute_command_table(shell, command_table);
 
                 shell->token_head = NULL;

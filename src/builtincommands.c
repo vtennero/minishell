@@ -95,11 +95,26 @@ void builtin_echo(t_shell *shell, char** args, int n_args)
 }
 
 // Sets or exports an environment variable with the given name to the given value.
-void builtin_export(char* variable, char* value)
+void builtin_export(t_shell *shell, char** args, int n_args)
 {
-	if (setenv(variable, value, 1) == -1) {
-		perror("export");
+	int	i;
+
+	i = 0;
+	ft_printf("export\n");
+	if (n_args == 0)
+		list_all_variables(shell);
+	else
+	{
+		while (i < n_args)
+		{
+			process_env_arg(args[i]);
+			i++;
+		}
 	}
+	// if (setenv(variable, value, 1) == -1) {
+	// 	perror("export");
+	// }
+
 }
 
 // Removes the environment variable with the given name from the shell's environment.

@@ -92,9 +92,14 @@ typedef enum {
 	REDIRECT_APPEND 	// Output append redirection ('>>')
 } RedirectionType;
 
+typedef struct s_env_var {
+    char *key;                 // For storing the variable name
+    char *value;               // For storing the variable value
+    struct s_env_var *next;    // Pointer to the next node in the list
+} t_env_var;
 
 typedef struct s_shell {
-	char**              env_vars;       	// Environment variables
+    t_env_var           *env_head;       // Head of the linked list of environment variables
 	int                 last_exit_status;  	// Exit status of the last executed command
 	struct sigaction    *signals; // Custom signal handlers
 	int                 is_interactive;
@@ -103,10 +108,11 @@ typedef struct s_shell {
 } t_shell;
 
 
-typedef struct {
-	char* key;   // The name of the environment variable
-	char* value; // The value of the environment variable
-} EnvironmentVariable;
+// typedef struct {
+// 	char* key;   // The name of the environment variable
+// 	char* value; // The value of the environment variable
+// } EnvironmentVariable;
+
 
 
 // void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
@@ -129,7 +135,7 @@ void execute_command_table(t_shell *shell, CommandTable* table);
 void builtin_cd(t_shell * shell, char** args, int n_args);
 void builtin_pwd(void);
 void builtin_echo(t_shell *shell, char** args, int n_args);
-void builtin_export(char* variable, char* value);
+void builtin_export(t_shell *shell, char** args, int n_args);
 void builtin_unset(char* variable);
 void builtin_env(void);
 void builtin_exit(t_shell *shell, char** args, int n_args);
@@ -156,5 +162,11 @@ void print_command_table(const CommandTable* table);
 
 // heredoc
 void parse_heredoc(t_shell *shell);
+
+// env var
+void create_env_var_list(t_shell *shell, char **envp);
+void list_all_variables(t_shell *shell);
+int process_env_arg(const char *arg);
+
 
 #endif

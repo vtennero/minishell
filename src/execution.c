@@ -38,8 +38,7 @@ void execute_command(t_shell *shell, Command* command)
 		if (command->arg_count > 1) builtin_unset(command->args[1]);
 	} else if (ft_strcmp(command->name, "export") == 0) {
 		// Call built-in export command
-		// Assuming the variable name is the first argument and the value is the second argument
-		if (command->arg_count > 1) builtin_export(command->args[1], command->args[2]);
+		builtin_export(shell, command->args, command->arg_count);
     } else if (ft_strcmp(command->name, "env") == 0) {
 		// Call built-in env command
 		builtin_env();
