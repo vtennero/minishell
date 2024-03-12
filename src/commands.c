@@ -170,7 +170,17 @@ CommandTable* create_command_table(t_shell *shell, TokenNode* tokens)
                 current_token = current_token->next; // Skip the next token since it's part of the redirection
             }
         }
+        
         // add if pipe | here @eugene
+	    // else if (current_token->next->token.type == TOKEN_PIPE)
+		// {
+        //     if (current_token->next->next != NULL && current_token->next->next->token.type == TOKEN_COMMAND)
+		// 	{
+        //         // set_redirect_out(shell, current_command, current_token->next->token.value, current_token->token.type == TOKEN_REDIR_APPEND);
+        //         current_token = current_token->next; // Skip the next token since it's part of the redirection
+        //     }
+        // }
+        
         current_token = current_token->next;
     }
 

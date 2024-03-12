@@ -33,7 +33,9 @@ externalcommands.c \
 execution.c \
 clean.c \
 magicmalloc.c \
-heredoc.c
+heredoc.c \
+pipex.c \
+pipex_util.c
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \
