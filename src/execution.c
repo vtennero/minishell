@@ -35,7 +35,7 @@ void execute_command(t_shell *shell, Command* command)
     } else if (ft_strcmp(command->name, "unset") == 0) {
 		// Call built-in unset command
 		// Assuming the variable name is the first argument: command->args[1]
-		if (command->arg_count > 1) builtin_unset(command->args[1]);
+		builtin_unset(shell, command->args, command->arg_count);
 	} else if (ft_strcmp(command->name, "export") == 0) {
 		// Call built-in export command
 		builtin_export(shell, command->args, command->arg_count);

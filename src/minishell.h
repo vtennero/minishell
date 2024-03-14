@@ -99,7 +99,7 @@ typedef struct s_env_var {
 } t_env_var;
 
 typedef struct s_shell {
-    t_env_var           *env_head;       // Head of the linked list of environment variables
+    t_env_var           *env_head;       // Head of the linked list of environment variables for export
 	int                 last_exit_status;  	// Exit status of the last executed command
 	struct sigaction    *signals; // Custom signal handlers
 	int                 is_interactive;
@@ -136,7 +136,7 @@ void builtin_cd(t_shell * shell, char** args, int n_args);
 void builtin_pwd(void);
 void builtin_echo(t_shell *shell, char** args, int n_args);
 void builtin_export(t_shell *shell, char** args, int n_args);
-void builtin_unset(char* variable);
+void builtin_unset(t_shell *shell, char** args, int n_args);
 void builtin_env(void);
 void builtin_exit(t_shell *shell, char** args, int n_args);
 
@@ -165,8 +165,19 @@ void parse_heredoc(t_shell *shell);
 
 // env var
 void create_env_var_list(t_shell *shell, char **envp);
-void list_all_variables(t_shell *shell);
-int process_env_arg(const char *arg);
+int process_env_arg(t_shell *shell, const char *arg);
+int check_duplicates(t_shell *shell, const char *key, int nchar);
+void update_var(t_shell *shell, const char *key, const char *value);
+void add_new_var(t_shell *shell, const char *key, const char *value);
+void decl_new_var(t_shell *shell, const char *key);
+void remove_var(t_shell *shell, const char *key, int nchar);
+int find_index_char(const char *str, char c);
+void print_export(t_shell *shell);
 
+// export quotes
+char *reviewquotes(char *input);
+
+// export var expansion
+char* expandVariables(const char *input, t_env_var *envVars);
 
 #endif

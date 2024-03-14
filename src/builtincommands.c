@@ -14,58 +14,58 @@
 
 char* get_home_directory()
 {
-    return getenv("HOME");
+	return getenv("HOME");
 }
 
 // Function to change the directory
 int change_directory(char* path) {
-    return chdir(path);
+	return chdir(path);
 }
 
 // The main cd function
 void builtin_cd(t_shell * shell, char** args, int n_args)
 {
-    char* path; // Path to change to
+	char* path; // Path to change to
 
-    if (n_args == 0)
+	if (n_args == 0)
 	{
 		// ft_printf("n_args = 0\n");
-        // If no arguments, change to the home directory
-        path = get_home_directory();
-        if (path == NULL) {
-            fprintf(stderr, "cd: HOME not set\n");
-            return;
-        }
-    }
+		// If no arguments, change to the home directory
+		path = get_home_directory();
+		if (path == NULL) {
+			fprintf(stderr, "cd: HOME not set\n");
+			return;
+		}
+	}
 	else if (n_args == 1)
 	{
-        path = args[0];
+		path = args[0];
 		// Attempt to change the directory
 		if (change_directory(path) != 0)
 			// If changing the directory fails, print an error message
 			perror("cd");
 	}
-    else
+	else
 	{
 		perror("bash: cd: too many arguments\n");
 		shell->last_exit_status = 1;
 	}
-        // Use the first argument as the path
+		// Use the first argument as the path
 
 }
 
 // Prints the current working directory to stdout.
 void builtin_pwd(void)
 {
-    char *pwd;
-    pwd = getcwd(NULL, 0); // Dynamically allocate buffer size
-    if (pwd != NULL) {
-        ft_printf("%s\n", pwd);
-        free(pwd); // Remember to free the memory allocated by getcwd
-    } else {
-        // Handle error, for example, if getcwd failed
-        perror("pwd: error");
-    }
+	char *pwd;
+	pwd = getcwd(NULL, 0); // Dynamically allocate buffer size
+	if (pwd != NULL) {
+		ft_printf("%s\n", pwd);
+		free(pwd); // Remember to free the memory allocated by getcwd
+	} else {
+		// Handle error, for example, if getcwd failed
+		perror("pwd: error");
+	}
 }
 
 // Prints the given arguments to stdout, handling the `-n` option to not output the trailing newline.
@@ -91,7 +91,7 @@ void builtin_echo(t_shell *shell, char** args, int n_args)
 	if (newline)
 		ft_printf("\n");
 	(void)shell;
-    // shell->last_exit_status = 777;
+	// shell->last_exit_status = 777;
 }
 
 // Sets or exports an environment variable with the given name to the given value.
@@ -100,14 +100,14 @@ void builtin_export(t_shell *shell, char** args, int n_args)
 	int	i;
 
 	i = 0;
-	ft_printf("export\n");
+	// ft_printf("export\n");
 	if (n_args == 0)
-		list_all_variables(shell);
+		print_export(shell);
 	else
 	{
 		while (i < n_args)
 		{
-			process_env_arg(args[i]);
+			process_env_arg(shell, args[i]);
 			i++;
 		}
 	}
@@ -118,60 +118,76 @@ void builtin_export(t_shell *shell, char** args, int n_args)
 }
 
 // Removes the environment variable with the given name from the shell's environment.
-void builtin_unset(char* variable)
+void builtin_unset(t_shell *shell, char** args, int n_args)
 {
-	if (unsetenv(variable) == -1) {
-		perror("unset");
+	int	i;
+	int	nchar;
+
+	i = 0;
+	// if (unsetenv(variable) == -1) {
+	// 	perror("unset");
+	// }
+	while (i < n_args)
+	{
+		nchar = find_index_char(args[i], '=');
+		remove_var(shell, args[i], nchar);
+		i++;
 	}
+
 }
 
-// Lists all environment variables to stdout.
-void builtin_env(void)
+void	builtin_env(void)
 {
-	extern char** environ;
-	for (char** env = environ; *env != NULL; env++)
+	extern char	**environ;
+	char		**env;
+
+	env = environ;
+	while (*env != NULL)
+	{
 		ft_printf("%s\n", *env);
+		env++;
+	}
 }
 
 int adjust_exit_code(int n)
 {
-    // If n is higher than 255, subtract 256 until it's not
-    while (n > 255) {
-        n -= 256;
-    }
+	// If n is higher than 255, subtract 256 until it's not
+	while (n > 255) {
+		n -= 256;
+	}
 
-    // If n is lower than 0, add 256 until it's between 0 and 255
-    while (n < 0) {
-        n += 256;
-    }
+	// If n is lower than 0, add 256 until it's between 0 and 255
+	while (n < 0) {
+		n += 256;
+	}
 
-    return n;
+	return n;
 }
 
 int is_valid_number(const char *str)
 {
-    // Check if the string is empty
-    if (!str || *str == '\0') {
-        return 0; // Not a valid number
-    }
+	// Check if the string is empty
+	if (!str || *str == '\0') {
+		return 0; // Not a valid number
+	}
 
-    // Check if the first character is +, -, or a digit
-    if (*str != '+' && *str != '-' && !ft_isdigit(*str)) {
-        return 0; // Not a valid number
-    }
+	// Check if the first character is +, -, or a digit
+	if (*str != '+' && *str != '-' && !ft_isdigit(*str)) {
+		return 0; // Not a valid number
+	}
 
-    // Move to the next character
-    str++;
+	// Move to the next character
+	str++;
 
-    // Check that every other character is a digit
-    while (*str != '\0') {
-        if (!ft_isdigit(*str)) {
-            return 0; // Not a valid number
-        }
-        str++;
-    }
+	// Check that every other character is a digit
+	while (*str != '\0') {
+		if (!ft_isdigit(*str)) {
+			return 0; // Not a valid number
+		}
+		str++;
+	}
 
-    return 1; // Valid number
+	return 1; // Valid number
 }
 
 // Exits the shell.
