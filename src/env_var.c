@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/14 16:20:40 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/14 16:23:03 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ int process_env_arg(t_shell *shell, const char *arg)
         processedQuotes = reviewquotes(strdup(arg + nchar + 1));
         wvarexpanded = expandVariables(processedQuotes, shell->env_head);
         ft_printf("with variables expanded with |%s| %s\n", processedQuotes, wvarexpanded);
-        handle_alloc_str(shell, wvarexpanded, ft_strlen(wvarexpanded));
+        // handle_alloc_str(shell, wvarexpanded + nchar + 1, ft_strlen(wvarexpanded));
         // handle_alloc_str(shell, arg, nchar);
         return 2; // Valid and requires assignment action
     }
