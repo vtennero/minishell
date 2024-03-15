@@ -12,23 +12,6 @@
 
 #include "minishell.h"
 
-int intLength(int num)
-{
-    // ft_printf("intLength start\n");
-    int	length;
-    if (num == 0)
-        return 1;
-    
-    length = 0;
-    while (num != 0)
-	{
-        length++;
-        num /= 10;
-    }
-    // ft_printf("intLength END\n");
-    return (length);
-}
-
 int handleEnvVar(char **p)
 {
     // ft_printf("handleEnvVar\n");

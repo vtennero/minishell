@@ -14,15 +14,15 @@
 
 void printTokens(TokenNode* head)
 {
-    ft_printf("DEBUG: printTokens\n");
+    // ft_printf("DEBUG: printTokens\n");
     TokenNode* current = head;
     ft_printf("\n");
     while (current != NULL) {
         ft_printf("Token: %s \t | Type: %d\n", current->token.value, current->token.type);
         current = current->next;
     }
-    // ft_printf("\n");
-    ft_printf("DEBUG: printTokens END\n");
+    ft_printf("*********************************\n");
+    // ft_printf("DEBUG: printTokens END\n");
 }
 
 void print_command(const Command* cmd) {
@@ -71,5 +71,6 @@ void print_command_table(const CommandTable* table)
             ft_printf("----------\n"); // Separator between commands in a pipeline
         }
     }
-    ft_printf("\n");
+    ft_printf("*********************************\n\n");
+    // ft_printf("\n");
 }

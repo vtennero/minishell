@@ -149,50 +149,10 @@ void	builtin_env(void)
 	}
 }
 
-int adjust_exit_code(int n)
-{
-	// If n is higher than 255, subtract 256 until it's not
-	while (n > 255) {
-		n -= 256;
-	}
-
-	// If n is lower than 0, add 256 until it's between 0 and 255
-	while (n < 0) {
-		n += 256;
-	}
-
-	return n;
-}
-
-int is_valid_number(const char *str)
-{
-	// Check if the string is empty
-	if (!str || *str == '\0') {
-		return 0; // Not a valid number
-	}
-
-	// Check if the first character is +, -, or a digit
-	if (*str != '+' && *str != '-' && !ft_isdigit(*str)) {
-		return 0; // Not a valid number
-	}
-
-	// Move to the next character
-	str++;
-
-	// Check that every other character is a digit
-	while (*str != '\0') {
-		if (!ft_isdigit(*str)) {
-			return 0; // Not a valid number
-		}
-		str++;
-	}
-
-	return 1; // Valid number
-}
-
 // Exits the shell.
 void builtin_exit(t_shell *shell, char** args, int n_args)
 {
+	// ft_printf("exit\n");
 	if (n_args >= 2)
 	{
 		perror("too many arguments ");
@@ -206,9 +166,6 @@ void builtin_exit(t_shell *shell, char** args, int n_args)
 		else
 			shell->last_exit_status = adjust_exit_code(ft_atoi(args[0]));
 	}
-	(void)args;
-	ft_printf("exit\n");
-	ft_printf("builtin_exit last_exit_status %d\n", shell->last_exit_status);
-
+	// ft_printf("builtin_exit last_exit_status %d\n", shell->last_exit_status);
 	shexit(shell, 0);
 }

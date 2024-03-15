@@ -35,7 +35,11 @@ clean.c \
 magicmalloc.c \
 heredoc.c \
 env_var.c \
-env_var_quotes.c
+quotes.c \
+var_exp.c \
+utils.c \
+init.c \
+exit.c
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \
