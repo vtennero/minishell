@@ -36,6 +36,8 @@ magicmalloc.c \
 heredoc.c \
 env_var.c \
 env_var_quotes.c
+pipex.c \
+pipex_util.c
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \

@@ -74,12 +74,19 @@ typedef struct Command {
     int arg_count;
     char* redirect_in;
     char* redirect_out;
+
     char* redirect_append;
     char* redirect_heredoc;
     int fd_in;                 // File descriptor for input redirection
     int fd_out;                // File descriptor for output redirection
+
+    int fin;                 // File descriptor for input redirection
+    int fout;                // File descriptor for output redirection
     struct Command* next;
 } Command;
+
+
+
 
 typedef struct {
     Command*    head;             // Head of the list of commands
@@ -189,4 +196,34 @@ char    *quotevarhandlerv2(t_shell *shell, const char *s);
 const char *skip_delimiters(const char *s, char c);
 void    createtokensv2(t_shell *shell, const char *s);
 
+
+//pipex_and pipex_util
+# define ERR_INVALID_CMD "\n pipex: command not found \n"
+# define STDIN_FILENO 0
+# define STDOUT_FILENO 1
+
+typedef struct s_params
+{
+	int		fin;
+	int		fout;
+	int		argc;
+	char	**argv;
+	char	**envp;
+	int		pipefd[2];
+}			t_in;
+
+char		*check_path(char **envp);
+char		*locate_cmd(char **paths, char *cmd);
+char		*find_env_path(char **envp);
+void		free_array(char **v);
+char	*ft_strdup_ignore(const char *s, char ignore);
+int	ft_strchr_count(const char *s, int c);
+char	*ft_strjoin_nconst(char *s1, char *s2);
+int	ft_puterr(char  *s, int ret);
+int	execute_command_pipex(int prev_pipe,int fin,int fout, int pipefd[2], char *cmd, char *envp[]);
+
+char		**find_cmd_paths(char **envp);
+char		**ft_split_cmd_args(char *s);
+int			run_cmd(char *cmd, char **envp);
+int			pipex(t_in in,Command cmd);
 #endif
