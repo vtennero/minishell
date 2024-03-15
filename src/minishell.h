@@ -119,6 +119,7 @@ typedef struct s_shell {
 // void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
 void create_tokens(t_shell *shell, const char *s);
 void addToken(t_shell *shell, const char *value, int type);
+TokenType get_token_type(const char* token_text);
 
 // singals
 void sigint_handler(int sig_num);

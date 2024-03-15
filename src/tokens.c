@@ -42,7 +42,6 @@ void addToken(t_shell *shell, const char *value, int type)
 	}
 }
 
-// Helper function to determine the type of a single token
 TokenType get_token_type(const char* token_text)
 {
 	if (ft_strcmp(token_text, "<") == 0) {
@@ -55,24 +54,8 @@ TokenType get_token_type(const char* token_text)
 		return TOKEN_REDIR_HEREDOC;
 	} else if (ft_strcmp(token_text, "|") == 0) {
 		return TOKEN_PIPE;
-	} else if (token_text[0] == '$') {
-		if (ft_strcmp(token_text, "$?") == 0) {
-			// ft_printf("get_token_type TOKEN_EXIT_STATUS\n");
-			return TOKEN_EXIT_STATUS;
-		}
-		else if (ft_strcmp(token_text, "$") == 0) {
-			// ft_printf("get_token_type TOKEN_S_DOL\n");
-			// return TOKEN_S_DOL;
-			return TOKEN_ARG;
-		} else {
-			// ft_printf("gettokentype %s\n", token_text);
-			// ft_printf("get_token_type TOKEN_ENV_VAR\n");
-			return TOKEN_ENV_VAR;
-		}
-	}
-	// This is a simplified heuristic: we assume any token not recognized as a special
-	// symbol or variable is a command or argument. A more complex shell might need
-	// additional logic to distinguish between commands and arguments based on context.
+	} else if (ft_strcmp(token_text, "$?") == 0)
+        return TOKEN_EXIT_STATUS;
 	return TOKEN_ARG; // Default case, can be TOKEN_COMMAND or TOKEN_ARG based on context
 }
 
@@ -204,36 +187,8 @@ int getTokenListLength(TokenNode* head)
 
 void create_tokens(t_shell *shell, const char *s)
 {
-	// v2
 	createtokensv2(shell, s);
 
-	// int index;
-	// int token_list_len;
-	// index = 0;
-	// token_list_len = getTokenListLength(shell->token_head);
-	// // ft_printf("create tokens ft_strlen |%s| %d\n", s, ft_strlen(s));
-	// while (*s) {
-	// 	s = skip_delimiters(s, ' ');
 
-	// 	if (!*s) break;
-
-	// 	char *nextQuote = NULL;
-	// 	int quotetypeptr = 0;
-	// 	const char *tokenStart = s;
-	// 	// ft_printf("1. create tokens tokenstart |%s|\n", tokenStart);
-	// 	const char *tokenEnd = find_token_end_and_adjust_start(&tokenStart, ' ', &nextQuote, &quotetypeptr);
-	// 	// ft_printf("2. create tokens tokenstart |%s|\n", tokenStart);
-	// 	process_token(shell, tokenStart, tokenEnd, quotetypeptr);
-
-	// 	s = nextQuote ? nextQuote + 1 : tokenEnd;
-	// 	if (!nextQuote && *s)
-	// 		s++;
-	// 	if (index == 0)
-	// 		set_token_to_command(shell, token_list_len);
-	// 	index++;
-	// }
-	// // printTokens(shell->token_head);
-	// expand_variables(shell);
-	// // set_first_token_to_command(shell);
 }
 

@@ -128,10 +128,10 @@ CommandTable* create_command_table(t_shell *shell, TokenNode* tokens)
     Command* last_command = NULL;
 
     TokenNode* current_token = tokens;
-    ft_printf("create_command_table current token value |%s| type |%d| \n", current_token->token.value, current_token->token.type);
+    // ft_printf("create_command_table current token value |%s| type |%d| \n", current_token->token.value, current_token->token.type);
     while (current_token != NULL)
     {
-        ft_printf("create_command_table while (current_token != NULL) {\n");
+        // ft_printf("create_command_table while (current_token != NULL) {\n");
         if (current_token->token.type == TOKEN_COMMAND) {
                 ft_printf("create_command_table if (current_token->token.type == TOKEN_COMMAND) { \n");
             // Count arguments for the current command
