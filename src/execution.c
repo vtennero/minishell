@@ -17,7 +17,6 @@ void execute_command(t_shell *shell, Command* command)
     if (!command) return;
 
     (void)shell;
-
 	// ft_printf("Executing command: %s arg count %d\n", command->name, command->arg_count);
     // Example stubs for calling built-in commands
     if (ft_strcmp(command->name, "cd") == 0) {
@@ -44,6 +43,7 @@ void execute_command(t_shell *shell, Command* command)
 		builtin_env();
     } else if (ft_strcmp(command->name, "exit") == 0) {
         // Call built-in exit command
+
         builtin_exit(shell, command->args, command->arg_count);
     } else {
         // printf("Executing external command: %s\n", command->name);

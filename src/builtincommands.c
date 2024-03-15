@@ -166,6 +166,8 @@ void builtin_exit(t_shell *shell, char** args, int n_args)
 		else
 			shell->last_exit_status = adjust_exit_code(ft_atoi(args[0]));
 	}
+	ft_printf("exit\n");
+
 	// ft_printf("builtin_exit last_exit_status %d\n", shell->last_exit_status);
 	shexit(shell, 0);
 }

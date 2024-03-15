@@ -111,24 +111,33 @@ char    *parse_tokens(t_shell *shell, const char *s)
 void    set_commands(t_shell *shell)
 {
 	TokenNode *node = shell->token_head;
-	node->token.type=TOKEN_COMMAND;
-	while (node->next)
-	{
-		if (node->token.type == TOKEN_PIPE)
-		{
-			node=node->next;
-			node->token.type=TOKEN_COMMAND;
-		}
-		else
-			node=node->next;
+	if (node){
+		node->token.type=TOKEN_COMMAND;
+
+		while (node->next)
+			{
+				if (node->token.type == TOKEN_PIPE)
+				{
+					node=node->next;
+					node->token.type=TOKEN_COMMAND;
+				}
+				else
+					node=node->next;
+			}
+
 	}
+
 }
 
 void    createtokensv2(t_shell *shell, const char *s)
 {
 	// ft_printf("createtokensv2 START\n");
+	// printf("str ois %s \n",s);
 	parse_tokens(shell, s);
+	// printTokens(shell->token_head);
+	// printTokens(shell->token_head);
 	set_commands(shell);
+ 
 	// ft_printf("createtokensv2 END\n");
 
 }
