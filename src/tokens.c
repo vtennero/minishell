@@ -14,30 +14,30 @@
 
 void addToken(t_shell *shell, const char *value, int type)
 {
-	// ft_printf("addToken shell_malloc\n");
+	ft_printf("addToken shell_malloc\n");
 	TokenNode *newNode = (TokenNode *)shell_malloc(shell, sizeof(TokenNode));
 	if (!newNode) return;
 
-	// ft_printf("addToken shell_strdup\n");
+	ft_printf("addToken shell_strdup\n");
 	newNode->token.value = shell_strdup(shell, value); // Use shell_strdup
 	newNode->token.type = type;
-	// ft_printf("new %d\n", newNode->token.type);
+	ft_printf("addToken new token type is %d\n", newNode->token.type);
 	newNode->next = NULL;
 
-	// ft_printf("addToken token_head NULL?\n");
+	ft_printf("addToken token_head NULL?\n");
 	if (shell->token_head == NULL)
 		shell->token_head = newNode;
 	else
 	{
-		// ft_printf("addToken token_head NULL? else\n");
+		ft_printf("addToken token_head NULL? else\n");
 		TokenNode *current = shell->token_head;
-		// ft_printf("addToken while (current->next != NULL)\n");
+		ft_printf("addToken while (current->next != NULL)\n");
 		while (current->next != NULL)
 		{
-			// ft_printf("addToken while\n");
+			ft_printf("addToken while\n");
 			current = current->next;
 		}
-		// ft_printf("addToken current->next = newNode;\n");
+		ft_printf("addToken current->next = newNode;\n");
 		current->next = newNode;
 	}
 }
@@ -86,7 +86,8 @@ void set_first_token_to_command(t_shell *shell)
 }
 
 
-const char *skip_delimiters(const char *s, char c) {
+const char *skip_delimiters(const char *s, char c)
+{
 	while (*s == c) s++;
 	return s;
 }
@@ -203,33 +204,36 @@ int getTokenListLength(TokenNode* head)
 
 void create_tokens(t_shell *shell, const char *s)
 {
-	int index;
-	int token_list_len;
+	// v2
+	createtokensv2(shell, s);
 
-	index = 0;
-	token_list_len = getTokenListLength(shell->token_head);
-	// ft_printf("create tokens ft_strlen |%s| %d\n", s, ft_strlen(s));
-	while (*s) {
-		s = skip_delimiters(s, ' ');
+	// int index;
+	// int token_list_len;
+	// index = 0;
+	// token_list_len = getTokenListLength(shell->token_head);
+	// // ft_printf("create tokens ft_strlen |%s| %d\n", s, ft_strlen(s));
+	// while (*s) {
+	// 	s = skip_delimiters(s, ' ');
 
-		if (!*s) break;
+	// 	if (!*s) break;
 
-		char *nextQuote = NULL;
-		int quotetypeptr = 0;
-		const char *tokenStart = s;
-		// ft_printf("1. create tokens tokenstart |%s|\n", tokenStart);
-		const char *tokenEnd = find_token_end_and_adjust_start(&tokenStart, ' ', &nextQuote, &quotetypeptr);
-		// ft_printf("2. create tokens tokenstart |%s|\n", tokenStart);
-		process_token(shell, tokenStart, tokenEnd, quotetypeptr);
+	// 	char *nextQuote = NULL;
+	// 	int quotetypeptr = 0;
+	// 	const char *tokenStart = s;
+	// 	// ft_printf("1. create tokens tokenstart |%s|\n", tokenStart);
+	// 	const char *tokenEnd = find_token_end_and_adjust_start(&tokenStart, ' ', &nextQuote, &quotetypeptr);
+	// 	// ft_printf("2. create tokens tokenstart |%s|\n", tokenStart);
+	// 	process_token(shell, tokenStart, tokenEnd, quotetypeptr);
 
-		s = nextQuote ? nextQuote + 1 : tokenEnd;
-		if (!nextQuote && *s) s++;
-		if (index == 0)
-			set_token_to_command(shell, token_list_len);
-		index++;
-	}
-	// printTokens(shell->token_head);
-	expand_variables(shell);
-	// set_first_token_to_command(shell);
+	// 	s = nextQuote ? nextQuote + 1 : tokenEnd;
+	// 	if (!nextQuote && *s)
+	// 		s++;
+	// 	if (index == 0)
+	// 		set_token_to_command(shell, token_list_len);
+	// 	index++;
+	// }
+	// // printTokens(shell->token_head);
+	// expand_variables(shell);
+	// // set_first_token_to_command(shell);
 }
 

@@ -58,6 +58,7 @@ typedef enum {
     TOKEN_D_Q,  //              9
     TOKEN_S_Q,  //              10
     TOKEN_S_DOL,//              11
+    TOKEN_EOL,//              12
     // Add other necessary token types
 } TokenType;
 
@@ -117,6 +118,7 @@ typedef struct s_shell {
 
 // void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
 void create_tokens(t_shell *shell, const char *s);
+void addToken(t_shell *shell, const char *value, int type);
 
 // singals
 void sigint_handler(int sig_num);
@@ -179,5 +181,11 @@ char *reviewquotes(char *input);
 
 // export var expansion
 char* expandVariables(const char *input, t_env_var *envVars);
+
+
+// 
+char    *quotevarhandlerv2(t_shell *shell, const char *s);
+const char *skip_delimiters(const char *s, char c);
+void    createtokensv2(t_shell *shell, const char *s);
 
 #endif

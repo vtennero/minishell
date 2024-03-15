@@ -128,29 +128,39 @@ CommandTable* create_command_table(t_shell *shell, TokenNode* tokens)
     Command* last_command = NULL;
 
     TokenNode* current_token = tokens;
-    (void)shell;
-    while (current_token != NULL) {
+    ft_printf("create_command_table current token value |%s| type |%d| \n", current_token->token.value, current_token->token.type);
+    while (current_token != NULL)
+    {
+        ft_printf("create_command_table while (current_token != NULL) {\n");
         if (current_token->token.type == TOKEN_COMMAND) {
+                ft_printf("create_command_table if (current_token->token.type == TOKEN_COMMAND) { \n");
             // Count arguments for the current command
             int arg_count = 0;
             TokenNode* temp = current_token->next;
             while (temp && temp->token.type == TOKEN_ARG) {
+                ft_printf("create_command_table while (temp && temp->token.type == TOKEN_ARG)\n");
                 arg_count++;
                 temp = temp->next;
             }
 
             // Now, create the command entry and allocate args
             current_command = create_command_entry(shell, current_token->token.value);
+            ft_printf("create_command_table create_command_entry done\n");
             current_command->args = (char**)shell_malloc(shell, (arg_count + 1) * sizeof(char*)); // +1 for NULL terminator
 
             // Add to command table
-            if (table->head == NULL) table->head = current_command;
-            else if (last_command) last_command->next = current_command;
+            if (table->head == NULL)
+                table->head = current_command;
+            else if (last_command)
+                last_command->next = current_command;
             last_command = current_command;
             table->command_count++;
-        } else if (current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q) {
+        } else if(current_token->token.type == TOKEN_ARG)
+        // } else if(current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q)
+        {
+                ft_printf("create_command_table else if(current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q)\n");
             // ft_printf("create_command_table current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q\n");
-            // ft_printf("create_command_table %d\n", current_token->token.value);
+            ft_printf("create_command_table %d\n", current_token->token.value);
             add_argument(shell, current_command, current_token->token.value);
         }
         // ... handle redirections and other token types ...

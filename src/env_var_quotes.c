@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 14:50:47 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/14 16:08:17 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/15 12:45:33 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,8 @@ char* expandVariables(const char *input, t_env_var *envVars)
 // v2 works great for single and double quotes
 
 // Toggle the state of being inside or outside quotes
-void toggleQuoteState(int *quoteState) {
+void toggleQuoteState(int *quoteState)
+{
     *quoteState = !(*quoteState);
 }
 
@@ -274,6 +275,96 @@ char 	*reviewquotes(char *input)
     // return 0;
 }
 
+
+// for tokens
+
+TokenType get_token_type2(const char* token_text)
+{
+	if (ft_strcmp(token_text, "<") == 0) {
+		return TOKEN_REDIR_IN;
+	} else if (ft_strcmp(token_text, ">") == 0) {
+		return TOKEN_REDIR_OUT;
+	} else if (ft_strcmp(token_text, ">>") == 0) {
+		return TOKEN_REDIR_APPEND;
+	} else if (ft_strcmp(token_text, "<<") == 0) {
+		return TOKEN_REDIR_HEREDOC;
+	} else if (ft_strcmp(token_text, "|") == 0) {
+		return TOKEN_PIPE;
+	} else if (ft_strcmp(token_text, "$?") == 0)
+        // ft_printf("get_token_type TOKEN_EXIT_STATUS\n");
+        return TOKEN_EXIT_STATUS;
+	return TOKEN_ARG; // Default case, can be TOKEN_COMMAND or TOKEN_ARG based on context
+}
+
+char    *quotevarhandlerv2(t_shell *shell, const char *s)
+{
+    char    *processedQuotes;
+    char    *wvarexpanded;
+    int     type;
+    int isInSingleQuotes = 0, isInDoubleQuotes = 0; // Track quote states
+
+    ft_printf("quotevarhandlerv2 START\n");
+    while (*s)
+    {
+		s = skip_delimiters(s, ' ');
+		if (!*s)
+            break;
+        const char *start = s; // Start of the word
+        // while (*s && !(isspace(*s)) || isInSingleQuotes || isInDoubleQuotes)
+        while (*s && (!isspace(*s) || isInSingleQuotes || isInDoubleQuotes))
+        {
+            if (*s == '\'' && !isInDoubleQuotes) {
+                toggleQuoteState(&isInSingleQuotes);
+            } else if (*s == '\"' && !isInSingleQuotes) {
+                toggleQuoteState(&isInDoubleQuotes);
+            }
+            s++;
+        }
+
+        int wordLength = s - start;
+        char *word = strndup(start, wordLength); // Copy the current word
+        processedQuotes = reviewquotes(strdup(word));
+        wvarexpanded = expandVariables(processedQuotes, shell->env_head);
+        ft_printf("with quotes expanded |%s|\n", processedQuotes);
+        ft_printf("with variables expanded  |%s|\n", wvarexpanded);
+        type = get_token_type2(wvarexpanded);
+        addToken(shell, wvarexpanded, type);
+
+        while (*s == ' ')
+            s++;
+	}
+    ft_printf("quotevarhandlerv2 END\n");
+    return (NULL);
+}
+
+void    set_commands(t_shell *shell)
+{
+    TokenNode *node = shell->token_head;
+    // if (node && !node->next)
+    node->token.type=TOKEN_COMMAND;
+    while (node->next)
+    {
+        if (node->token.type == TOKEN_PIPE || node->token.type == TOKEN_EOL)
+        {
+            node=node->next;
+            node->token.type=TOKEN_COMMAND;
+        }
+        else
+            node=node->next;
+    }
+}
+
+
+
+void    createtokensv2(t_shell *shell, const char *s)
+{
+    ft_printf("createtokensv2 START\n");
+    quotevarhandlerv2(shell, s);
+    set_commands(shell);
+    ft_printf("createtokensv2 END\n");
+
+}
+
 // v1 works ok for double quotes only:
 
 // void transformQuotes(const char *input, char *output) {
@@ -305,3 +396,6 @@ char 	*reviewquotes(char *input)
 //     free(output); // Free the allocated memory
 //     return 0;
 // }
+
+
+
