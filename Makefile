@@ -35,7 +35,7 @@ clean.c \
 magicmalloc.c \
 heredoc.c \
 env_var.c \
-env_var_quotes.c
+env_var_quotes.c \
 pipex.c \
 pipex_util.c
 
