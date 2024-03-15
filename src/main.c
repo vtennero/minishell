@@ -12,62 +12,6 @@
 
 #include "minishell.h"
 
-
-// void    initialize_shell_env(t_shell *shell, char **envp)
-// {
-//     // int i;
-
-//     // i = 0;
-//     //     while (envp[i]) { // Loop through the environment variables passed to main
-//     //     printf("%s\n", envp[i]); // Print each environment variable
-//     //     i++;
-//     // }
-//     // (void)shell;
-//     create_env_var_list(shell, envp);
-//     // ft_printf("------------------\n");
-//     // ft_printf("------------------\n");
-//     // ft_printf("------------------\n");
-//     // ft_printf("------------------\n");
-//     // ft_printf("------------------\n");
-//     // ft_printf("------------------\n");
-//     // ft_printf("------------------\n");
-//     // list_all_variables(shell);
-
-//     // for (i = 0; envp[i] != NULL; i++) {}
-//     // Allocate space for the environment variables in the shell structure
-//     // shell->env_vars = (char **)shell_malloc(shell, (i + 1) * sizeof(char *));
-//     // for (i = 0; envp[i] != NULL; i++) {
-//     //     shell->env_vars[i] = shell_strdup(shell, envp[i]);
-//     // }
-//     // // Null-terminate the array
-//     // shell->env_vars[i] = NULL;
-// }
-
-
-t_shell *initialize_shell(char **envp)
-{
-    // ft_printf("initialize_shell\n");
-    t_shell* shell = (t_shell*)ft_calloc(1, sizeof(t_shell));
-    if (!shell) {
-        perror("Failed to initialize shell");
-        exit(EXIT_FAILURE);
-    }
-
-    // Initialize the memory tracker within the shell
-    shell->mem_tracker.head = NULL;
-    shell->token_head = NULL;
-    // change this!
-    shell->last_exit_status = 0;
-    shell->is_interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
-    // Initialize environment variables from envp, signal handlers, etc.
-    // shell->env_vars = copy_env_vars(envp); // Example initialization, you'll need to implement copy_env_vars or similar
-    setup_signals(shell); // Example function to setup custom signal handlers
-    (void)envp;
-    // initialize_shell_env(shell, envp);
-    create_env_var_list(shell, envp);
-    return shell;
-}
-
 void process_input_into_commands(int fd, t_shell *shell)
 {
 	char	**line;
@@ -149,7 +93,6 @@ int main(int argc, char **argv, char **envp)
                 add_history(input);
 
                 create_tokens(shell, input);
-                printTokens(shell->token_head);
                 CommandTable* command_table = create_command_table(shell, shell->token_head);
                 printTokens(shell->token_head);
                 print_command_table(command_table);

@@ -38,6 +38,11 @@ env_var.c \
 env_var_quotes.c \
 pipex.c \
 pipex_util.c
+quotes.c \
+var_exp.c \
+utils.c \
+init.c \
+exit.c
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \
