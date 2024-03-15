@@ -231,5 +231,18 @@ void create_tokens(t_shell *shell, const char *s)
 	// printTokens(shell->token_head);
 	expand_variables(shell);
 	// set_first_token_to_command(shell);
+
+	TokenNode *node = shell->token_head;
+	while (node->next)
+	{
+		if (node->token.type == TOKEN_PIPE)
+			{
+				node=node->next;
+				node->token.type=TOKEN_COMMAND;
+			}
+		else
+			node=node->next;
+	}
+
 }
 
