@@ -24,20 +24,17 @@ OBJ_DIR = obj
 MINISHELL_SRC = main.c \
 tokens.c \
 signals.c \
-pipe.c \
 parser.c \
 commands.c \
 debug_commands.c \
 builtincommands.c \
 externalcommands.c \
 execution.c \
-clean.c \
 magicmalloc.c \
 heredoc.c \
 env_var.c \
-env_var_quotes.c \
 pipex.c \
-pipex_util.c
+pipex_util.c \
 quotes.c \
 var_exp.c \
 utils.c \
