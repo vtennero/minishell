@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:55:49 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/16 16:19:39 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/16 17:36:34 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,11 @@ void toggleQuoteState(int *quoteState)
     *quoteState = !(*quoteState);
 }
 
-// void processCharacter(char c, char **output, int *isInSingleQuotes, int *isInDoubleQuotes) {
-//     if (c == '\'' && !(*isInDoubleQuotes)) {
-//         toggleQuoteState(isInSingleQuotes);
-//     } else if (c == '\"' && !(*isInSingleQuotes)) {
-//         toggleQuoteState(isInDoubleQuotes);
-//     } else {
-//         *(*output) = c;
-//         (*output)++;
-//     }
-// }
-
-void processCharacter(char c, char **output, int *isInSingleQuotes, int *isInDoubleQuotes, QuoteType *quoteType) {
+void processCharacter(char c, char **output, int *isInSingleQuotes, int *isInDoubleQuotes) {
     if (c == '\'' && !(*isInDoubleQuotes)) {
         toggleQuoteState(isInSingleQuotes);
-        if (*isInSingleQuotes) *quoteType = SINGLE_QUOTES; // Enter single quotes
-        else *quoteType = NO_QUOTES; // Exit single quotes
     } else if (c == '\"' && !(*isInSingleQuotes)) {
         toggleQuoteState(isInDoubleQuotes);
-        if (*isInDoubleQuotes) *quoteType = DOUBLE_QUOTES; // Enter double quotes
-        else *quoteType = NO_QUOTES; // Exit double quotes
     } else {
         *(*output) = c;
         (*output)++;
@@ -67,33 +52,33 @@ void processCharacter(char c, char **output, int *isInSingleQuotes, int *isInDou
 }
 
 
-void transformQuotes(const char *input, char *output, QuoteType *quoteType) {
+
+void transformQuotes(const char *input, char *output) {
     int isInSingleQuotes = 0, isInDoubleQuotes = 0;
     char *outputPtr = output;
 
     while (*input) {
-        processCharacter(*input, &outputPtr, &isInSingleQuotes, &isInDoubleQuotes, quoteType);
+        processCharacter(*input, &outputPtr, &isInSingleQuotes, &isInDoubleQuotes);
+        // ft_printf("transformQuotes: %c quoteType %d\n", *input, *quoteType);
         input++;
     }
     *outputPtr = '\0'; // Null-terminate the output string
 }
 
 
-char *reviewquotes(char *input, QuoteType *quoteType)
+char *reviewquotes(char *input)
 {
     char *output = (char *)malloc(strlen(input) + 1);
-    // int singleQuoteCount = 0; // Initialize the quote counter
 
     if (output == NULL) {
         perror("Memory allocation failed\n");
         return (NULL);
     }
 
-    transformQuotes(input, output, quoteType);
-    // Now, singleQuoteCount contains the number of single quotes encountered
-    // printf("reviewquotes Transformed string: %s\n", output);
-    // printf("Single quotes encountered: %d\n", singleQuoteCount);
+    transformQuotes(input, output);
 
     return output;
 }
+
+
 

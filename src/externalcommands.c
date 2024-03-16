@@ -12,10 +12,16 @@
 
 #include "minishell.h"
 
-void execute_ext_command(Command *cmd)
+
+void execute_ext_command(t_shell *shell, Command *cmd)
 {
     pid_t pid = fork();
 
+    if (!command_exists(cmd->name)) {
+        perror("Command not found");
+        shell->last_exit_status = 127;
+        return;
+    }
     if (pid == 0) { // Child process
         // Handle input redirection
         if (cmd->redirect_in != NULL) {
@@ -54,11 +60,11 @@ void execute_ext_command(Command *cmd)
         execvp(cmd->name, cmd->args);
         // If execvp returns, it means an error occurred
         perror("execvp");
-        exit(EXIT_FAILURE);
+        // exit(EXIT_FAILURE);
     } else if (pid < 0) {
         // Error forking
         perror("fork");
-        exit(EXIT_FAILURE);
+        // exit(EXIT_FAILURE);
     } else {
         // Parent process
         int status;

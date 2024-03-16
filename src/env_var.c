@@ -6,13 +6,31 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/16 15:16:03 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/16 18:09:24 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // process_env_arg_helpers
+
+int is_valid_var_name(const char *str, int n)
+{
+    int foundLetter = 0; // Flag to track if at least one letter has been found
+
+    for(int i = 0; i < n; i++) {
+        if(str[i] == '\0') { // If end of string is reached before n
+            break;
+        }
+        if(!ft_isalpha(str[i]) && !ft_isdigit(str[i])) { // If not a letter or digit
+            return 0; // Return 0 if any character doesn't meet the criteria
+        }
+        if(ft_isalpha(str[i])) { // If the character is a letter
+            foundLetter = 1; // Set the flag
+        }
+    }
+    return foundLetter; // Return the flag value (0 if only numbers, 1 otherwise)
+}
 
 int is_alloc_str(const char *str) {
     const char *equals_pos = strchr(str, '=');
@@ -84,9 +102,11 @@ int process_env_arg(t_shell *shell, const char *arg)
     // ft_printf("process_env_arg: |%s|\n", arg);
     nchar = find_index_char(arg, '=');
     // ft_printf("process_env_arg nchar %d strlen %d\n", nchar, (int)ft_strlen(arg) - 1);
-    if (nchar == 0 || arg[0] == '$')
+    if (nchar == 0 || is_valid_var_name(arg, nchar) == 0)
+    // if (nchar == 0 || arg[0] == '$')
     {
         shell->last_exit_status = 1;
+        perror(" not a valid identifier");
         // first char is =
 	    // printf("Invalid variable declaration: Starts with '='\n");
         return 0; // Indicate invalid argument

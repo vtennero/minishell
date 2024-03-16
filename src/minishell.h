@@ -157,8 +157,8 @@ char		*parse_tokens(t_shell *shell, const char *s);
 ** -- QUOTES --
 */
 void		toggleQuoteState(int *quoteState);
-// char		*reviewquotes(char *input);
-char *reviewquotes(char *input, QuoteType *quoteType);
+char		*reviewquotes(char *input);
+// char *reviewquotes(char *input, QuoteType *quoteType);
 int shouldExpandVariable(const char *word);
 /*
 ** -- VARIABLE EXPANSION --
@@ -177,7 +177,7 @@ void		parse_heredoc(t_shell *shell);
 CommandTable* create_command_table(t_shell *shell, TokenNode* tokens);
 void execute_command_table(t_shell *shell, CommandTable* table);
 void free_command_table(CommandTable* table);
-void execute_ext_command(Command *cmd);
+void execute_ext_command(t_shell *shell, Command *cmd);
 /*
 ** -- BUILT_IN COMMANDS --
 */

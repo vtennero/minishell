@@ -47,7 +47,7 @@ void execute_command(t_shell *shell, Command* command)
         builtin_exit(shell, command->args, command->arg_count);
     } else {
         // printf("Executing external command: %s\n", command->name);
-        execute_ext_command(command);
+        execute_ext_command(shell, command);
         // Here you would eventually include the logic to fork a process and use execvp or similar to run the command
     }
 }

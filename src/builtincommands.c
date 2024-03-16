@@ -44,10 +44,12 @@ void builtin_cd(t_shell * shell, char** args, int n_args)
 		if (change_directory(path) != 0)
 			// If changing the directory fails, print an error message
 			perror("cd");
+		shell->last_exit_status = 1;
 	}
 	else
 	{
 		perror("bash: cd: too many arguments\n");
+		ft_printf("hello\n");
 		shell->last_exit_status = 1;
 	}
 		// Use the first argument as the path
