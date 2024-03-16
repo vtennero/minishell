@@ -69,8 +69,10 @@ char    *parse_tokens(t_shell *shell, const char *s)
 	int     isInSingleQuotes = 0;
 	int		isInDoubleQuotes = 0; // Track quote states
 	int		index;
+	QuoteType		quoteType;
 
 	index = 0;
+	quoteType = NO_QUOTES;
 	while (*s)
 	{
 		s = skip_delimiters(s, ' ');
@@ -90,8 +92,14 @@ char    *parse_tokens(t_shell *shell, const char *s)
 
 		int wordLength = s - start;
 		char *word = strndup(start, wordLength); // Copy the current word
-		processedQuotes = reviewquotes(strdup(word));
-		wvarexpanded = expandVariables(shell, processedQuotes, shell->env_head);
+		// ft_printf("word |%s|\n", word);
+		processedQuotes = reviewquotes(word, &quoteType);
+		// ft_printf("shouldExpandVariable(processedQuotes) |%d|\n", shouldExpandVariable(processedQuotes));
+		if (quoteType == 1)
+		// if (shouldExpandVariable(processedQuotes))
+			wvarexpanded = expandVariables(shell, processedQuotes, shell->env_head);
+		else
+			wvarexpanded = processedQuotes;
 		// ft_printf("with quotes expanded |%s|\n", processedQuotes);
 		// ft_printf("with variables expanded  |%s|\n", wvarexpanded);
 		if (index == 0)
@@ -99,6 +107,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 		else
 			type = get_token_type(wvarexpanded);
 		addToken(shell, wvarexpanded, type);
+		quoteType = NO_QUOTES;
 		index++;
 		parse_heredoc(shell);
 		s = skip_delimiters(s, ' ');
@@ -134,7 +143,6 @@ void    createtokensv2(t_shell *shell, const char *s)
 	// ft_printf("createtokensv2 START\n");
 	// printf("str ois %s \n",s);
 	parse_tokens(shell, s);
-	// printTokens(shell->token_head);
 	// printTokens(shell->token_head);
 	set_commands(shell);
  

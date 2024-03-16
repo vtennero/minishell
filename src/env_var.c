@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/15 15:28:35 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/16 15:16:03 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ int process_env_arg(t_shell *shell, const char *arg)
     // ft_printf("process_env_arg nchar %d strlen %d\n", nchar, (int)ft_strlen(arg) - 1);
     if (nchar == 0 || arg[0] == '$')
     {
+        shell->last_exit_status = 1;
         // first char is =
 	    // printf("Invalid variable declaration: Starts with '='\n");
         return 0; // Indicate invalid argument

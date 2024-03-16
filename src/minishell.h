@@ -66,6 +66,12 @@ typedef enum {
 	TOKEN_EOL,//              12
 	// Add other necessary token types
 } TokenType;
+
+typedef enum {
+    NO_QUOTES,
+    SINGLE_QUOTES,
+    DOUBLE_QUOTES
+} QuoteType;
 /*
 ** -- COMMANDS --
 */
@@ -151,7 +157,9 @@ char		*parse_tokens(t_shell *shell, const char *s);
 ** -- QUOTES --
 */
 void		toggleQuoteState(int *quoteState);
-char		*reviewquotes(char *input);
+// char		*reviewquotes(char *input);
+char *reviewquotes(char *input, QuoteType *quoteType);
+int shouldExpandVariable(const char *word);
 /*
 ** -- VARIABLE EXPANSION --
 */
