@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/17 23:50:55 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/17 23:53:22 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,12 +177,12 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	prev_pipe = cmd->fin;
 	while (cmd->next) {
 
-		if (cmd->fin == -99)
-		{	prev_pipe=in.pipefd[0];
-		// 	close(in.pipefd[1]);
-			dup2(prev_pipe, STDIN_FILENO);
-		// 	// close(in.pipefd[1]);
-		}
+		// if (cmd->fin == -99)
+		// {	prev_pipe=in.pipefd[0];
+		// // 	close(in.pipefd[1]);
+		// 	dup2(prev_pipe, STDIN_FILENO);
+		// // 	// close(in.pipefd[1]);
+		// }
 
 		// status = execute_command_pipex(prev_pipe,cmd.fin,cmd.fout, in.pipefd, joined, in.envp);
 		status = execute_command_pipex(prev_pipe,cmd,in ,in.pipefd,shell);
