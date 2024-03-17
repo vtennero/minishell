@@ -1,0 +1,14 @@
+a
+grep
+input.txt
+libft
+ls.txt
+Makefile
+minishell
+obj
+output.txt
+README.md
+src
+testscript2.sh
+testscript.sh
+$ 

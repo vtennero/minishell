@@ -40,6 +40,8 @@ void link_commands(Command* prev_cmd, Command* next_cmd) {
 void set_redirect_in(t_shell *shell, Command* cmd, char* filename) {
     // if (cmd->redirect_in) free(cmd->redirect_in);
     cmd->redirect_in = shell_strdup(shell, filename);
+    int fd = open(filename, O_RDONLY);
+    cmd->fin = fd;
 }
 
 void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) {
@@ -60,7 +62,12 @@ void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) 
     if (append) {
         cmd->redirect_append = shell_strdup(shell, filename);
     } else {
+
         cmd->redirect_out = shell_strdup(shell, filename);
+        int fd = open(filename, O_RDWR | O_CREAT,0666);
+        cmd->fout = fd;
+
+
     }
 }
 

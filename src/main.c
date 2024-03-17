@@ -89,7 +89,7 @@ int main(int argc, char **argv, char **envp)
         {
             input = readline("$ ");
             if (input == NULL) {
-                ft_printf("exit\n");
+                // ft_printf("exit\n");
                 break ;
             }
             if (ft_strlen(input) > 0)

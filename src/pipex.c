@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/18 00:05:03 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/18 00:57:42 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,32 +139,24 @@ int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, int pipefd[2],t_s
 			close(prev_pipe);
 			
 		}
+		else if (cmd->fin !=0)
+	{
+		dup2(cmd->fin, STDIN_FILENO);
+		close(cmd->fin);
+	}
 		if (cmd->fout ==  -99)
 		{
 			dup2(pipefd[1], STDOUT_FILENO);
 			close(pipefd[1]);
-
-
 		}
-		// close(prev_pipe);
-		// close(in.pipefd[0]);
-
-
 		run_cmd(cmd, in.envp,shell);
-
-
-		_exit(status);
+		_exit(status); // Needed
 	}
 	else 
 	{
-		// close(pipefd[0]);
-
-		close(prev_pipe);
 		close(pipefd[1]);
 	}
-	// if (prev_pipe)
-	// 	printf("yes");
-	// close(in.pipefd[1]);
+
 	return (pid);
 }
 
@@ -189,19 +181,35 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 			dup2(prev_pipe, STDIN_FILENO);
 			close(in.pipefd[1]);
 	}
+	else if (cmd->fin !=0)
+	{
+		dup2(cmd->fin, STDIN_FILENO);
+		close(cmd->fin);
+	}
+	if (cmd->fout !=0 && cmd->fout !=-99)
+	{
+		dup2(cmd->fout, STDOUT_FILENO);
+		close(cmd->fout);
+	}
+
+	if (ft_strcmp(cmd->name,"exit")==0)
+	{
+		status = run_cmd(cmd, in.envp,shell);
+	}
 	int pid = fork();
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
 	{
 		status = run_cmd(cmd, in.envp,shell);
-		// close(prev_pipe);
-		// close(in.pipefd[0]);
+
 	}
 	waitpid(0, NULL, WUNTRACED);
 
+	if (prev_pipe!=STDIN_FILENO)
 		close(prev_pipe);
-		close(in.pipefd[0]);
+	close(in.pipefd[0]);
+	close(in.pipefd[1]);
 
 	// close(cmd->fin);
 	// close(cmd->fout);
