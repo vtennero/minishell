@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/17 23:14:33 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/17 23:50:55 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,53 +142,31 @@ int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, int pipefd[2],t_s
 		if (cmd->fout ==  -99)
 		{
 			dup2(pipefd[1], STDOUT_FILENO);
+			close(pipefd[1]);
+
+
 		}
 		// close(prev_pipe);
 		// close(in.pipefd[0]);
 
-		close(pipefd[0]);
-		close(pipefd[1]);
 
 		run_cmd(cmd, in.envp,shell);
 
+
 		_exit(status);
 	}
-	close(prev_pipe);
-	close(pipefd[1]);
+	else 
+	{
+		// close(pipefd[0]);
+
+		close(prev_pipe);
+		close(pipefd[1]);
+	}
 	// if (prev_pipe)
 	// 	printf("yes");
 	// close(in.pipefd[1]);
 	return (pid);
 }
-// int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, t_shell *shell)
-// {
-// 	int		status;
-// 	pid_t	pid;
-// 	status = 0;
-// 	if (pipe(in.pipefd) < 0)
-// 		return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
-// 	pid = fork();
-// 	if (pid < 0)
-// 		return (write(STDOUT_FILENO, "Error forking\n", 15));
-// 	if (pid == 0)
-// 	{
-
-
-// 		if (cmd->fout ==  -99)
-// 		{
-// 			dup2(in.pipefd[1], STDOUT_FILENO);
-// 		}
-// 		// close(prev_pipe);
-// 		// close(in.pipefd[0]);
-// 		run_cmd(cmd, in.envp,shell);
-
-// 		_exit(status);
-// 	}
-
-// 	close(prev_pipe);
-// 	// close(in.pipefd[1]);
-// 	return (pid);
-// }
 
 int pipex(t_in in,Command *cmd,t_shell *shell) {
 	int status;
@@ -221,11 +199,11 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	waitpid(0, NULL, WNOHANG | WUNTRACED);
 
 	// status = execute_command_pipex(prev_pipe,cmd,in ,shell);
-	// if (cmd->fin == -99)
-	// {
-	// 		dup2(prev_pipe, STDIN_FILENO);
-	// 		close(in.pipefd[1]);
-	// }
+	if (cmd->fin == -99)
+	{
+			dup2(prev_pipe, STDIN_FILENO);
+			close(in.pipefd[1]);
+	}
 	status = run_cmd(cmd, in.envp,shell);
 	
 	close(cmd->fin);
