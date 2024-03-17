@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/17 23:53:22 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/18 00:05:03 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,43 +171,40 @@ int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, int pipefd[2],t_s
 int pipex(t_in in,Command *cmd,t_shell *shell) {
 	int status;
 	int prev_pipe;
-	// char* joined;
 	status = 0;
-	// prev_pipe=0;
 	prev_pipe = cmd->fin;
 	while (cmd->next) {
-
-		// if (cmd->fin == -99)
-		// {	prev_pipe=in.pipefd[0];
-		// // 	close(in.pipefd[1]);
-		// 	dup2(prev_pipe, STDIN_FILENO);
-		// // 	// close(in.pipefd[1]);
-		// }
-
-		// status = execute_command_pipex(prev_pipe,cmd.fin,cmd.fout, in.pipefd, joined, in.envp);
 		status = execute_command_pipex(prev_pipe,cmd,in ,in.pipefd,shell);
 		prev_pipe = in.pipefd[0];
-
 		waitpid(0, NULL, WUNTRACED);
 		if (status < 0)
 			exit(-1);
 		*cmd = *(cmd->next);
 	}
 
-	// waitpid(0, NULL, WNOHANG | WUNTRACED);
-	// joined=ft_strjoin_nconst(cmd.name,cmd.args[0]);
 	waitpid(0, NULL, WNOHANG | WUNTRACED);
 
-	// status = execute_command_pipex(prev_pipe,cmd,in ,shell);
 	if (cmd->fin == -99)
 	{
 			dup2(prev_pipe, STDIN_FILENO);
 			close(in.pipefd[1]);
 	}
-	status = run_cmd(cmd, in.envp,shell);
-	
-	close(cmd->fin);
-	close(cmd->fout);
+	int pid = fork();
+	if (pid < 0)
+		return (write(STDOUT_FILENO, "Error forking\n", 15));
+	if (pid == 0)
+	{
+		status = run_cmd(cmd, in.envp,shell);
+		// close(prev_pipe);
+		// close(in.pipefd[0]);
+	}
+	waitpid(0, NULL, WUNTRACED);
+
+		close(prev_pipe);
+		close(in.pipefd[0]);
+
+	// close(cmd->fin);
+	// close(cmd->fout);
 
 	return status;
 }
