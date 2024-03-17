@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void process_input_into_commands(int fd, t_shell *shell)
+void process_input_into_commands(int fd, t_shell *shell,t_in in)
 {
 	char	**line;
 
@@ -27,10 +27,10 @@ void process_input_into_commands(int fd, t_shell *shell)
     CommandTable *command_table = create_command_table(shell, shell->token_head);
     // printTokens(shell->token_head);
     // print_command_table(command_table);
-    execute_command_table(shell, command_table);
+    execute_command_table(shell, command_table,in);
 }
 
-void    process_args_input(t_shell *shell, int argc, char **argv)
+void    process_args_input(t_shell *shell, int argc, char **argv,t_in in)
 {
     char    **line;
     int     fd;
@@ -41,7 +41,7 @@ void    process_args_input(t_shell *shell, int argc, char **argv)
         {
             create_tokens(shell, argv[2]);
             CommandTable *command_table = create_command_table(shell, shell->token_head);
-            execute_command_table(shell, command_table);
+            execute_command_table(shell, command_table,in);
         }
         else
         {
@@ -68,7 +68,7 @@ void    process_args_input(t_shell *shell, int argc, char **argv)
         CommandTable *command_table = create_command_table(shell, shell->token_head);
         // printTokens(shell->token_head);
         // print_command_table(command_table);
-        execute_command_table(shell, command_table);
+        execute_command_table(shell, command_table,in);
     }
 }
 
@@ -77,6 +77,10 @@ int main(int argc, char **argv, char **envp)
 {
     char* input;
     t_shell *shell;
+    t_in in;
+    in.argv = argv;
+	in.envp = envp;
+	in.argc = argc;
 
     shell = initialize_shell(envp);
     if (shell->is_interactive && argc == 1)
@@ -95,8 +99,8 @@ int main(int argc, char **argv, char **envp)
                 create_tokens(shell, input);
                 CommandTable* command_table = create_command_table(shell, shell->token_head);
                 // printTokens(shell->token_head);
+                execute_command_table(shell, command_table,in);
                 // print_command_table(command_table);
-                execute_command_table(shell, command_table);
 
                 shell->token_head = NULL;
                 free(input);
@@ -110,12 +114,12 @@ int main(int argc, char **argv, char **envp)
         {
             // Non-interactive mode but with arguments
             // ft_printf("Non-interactive mode with arguments: Execute command '%s'\n", argv[1]);
-            process_args_input(shell, argc, argv);
+            process_args_input(shell, argc, argv,in);
         } else
         {
             // Non-interactive mode due to input or output redirection
             // ft_printf("Non-interactive mode\n");
-            process_input_into_commands(STDIN_FILENO, shell);
+            process_input_into_commands(STDIN_FILENO, shell,in);
 
             // If you were handling input from a file or pipe, process it here.
             // Since we're simulating, we'll not enter a read loop.

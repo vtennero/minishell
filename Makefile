@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 # Compiler and flags
-CC = gcc
+CC = gcc -g
 CFLAGS = -Wall -Wextra -Werror -Isrc/
 LDFLAGS = -lreadline
 

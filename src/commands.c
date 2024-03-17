@@ -100,6 +100,7 @@ Command* create_command_entry(t_shell *shell, char* name)
 {
     // Use ccalloc to allocate the Command structure, initializing all fields to 0/NULL.
     Command* cmd = (Command*)shell_malloc(shell, sizeof(Command));
+    
     if (!cmd) {
         perror("Failed to allocate Command");
         exit(EXIT_FAILURE);
@@ -108,6 +109,10 @@ Command* create_command_entry(t_shell *shell, char* name)
     cmd->name = shell_strdup(shell, name); // shell_strdup allocates and copies the string, so this needs to remain as is.
     cmd->type = CMD_EXTERNAL;
 
+    cmd->fin=0;
+    // printf("Initialize cmd %s fin to %d",cmd->name,cmd->fin);
+
+    cmd->fout=0;
     return cmd;
 }
 
@@ -128,6 +133,8 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
     Command* last_command = NULL;
 
     TokenNode* current_token = tokens;
+    int pipe_exist=0;
+
     // ft_printf("create_command_table current token value |%s| type |%d| \n", current_token->token.value, current_token->token.type);
     while (current_token != NULL)
     {
@@ -145,6 +152,8 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
 
             // Now, create the command entry and allocate args
             current_command = create_command_entry(shell, current_token->token.value);
+            // printf("Initialize cmd %s fin to %d",current_command->name,current_command->fin);
+
             // ft_printf("create_command_table create_command_entry done\n");
             current_command->args = (char**)shell_malloc(shell, (arg_count + 1) * sizeof(char*)); // +1 for NULL terminator
 
@@ -182,6 +191,28 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
         }
         
         // add if pipe | here @eugene
+
+        if (pipe_exist==1 && current_token->token.type !=  TOKEN_PIPE)
+
+        {
+            //   printf("Current cmd is %s and fin is %d",current_command->name,current_command->fin);
+
+            current_command->fin=-99;
+            // printf("Current cmd %s fin to %d",current_command->name,current_command->fin);
+
+            pipe_exist =0;
+        }
+
+        if (current_token->next && current_token->next->token.type == TOKEN_PIPE)
+
+        {
+
+            current_command->fout=-99;
+                        // printf("Current cmd is %s and fout is %d",current_command->name,current_command->fout);
+
+            pipe_exist =1;
+        }
+
 	    // else if (current_token->next->token.type == TOKEN_PIPE)
 		// {
         //     if (current_token->next->next != NULL && current_token->next->next->token.type == TOKEN_COMMAND)
