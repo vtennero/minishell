@@ -203,8 +203,8 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
 
         {
             //   printf("Current cmd is %s and fin is %d",current_command->name,current_command->fin);
-
-            current_command->fin=-99;
+            if (ft_strcmp(current_command->name,"ls") != 0 && ft_strcmp(current_command->name,"echo") != 0)
+                current_command->fin=-99;
             // printf("Current cmd %s fin to %d",current_command->name,current_command->fin);
 
             pipe_exist =0;
