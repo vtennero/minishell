@@ -41,8 +41,8 @@ typedef struct {
 ** -- PARSING --
 */
 typedef struct {
-	char* value; // The actual token, e.g., "ls", "-l", ">", etc.
-	int type;	// Type of the token (command, argument, redirection, pipe, etc.)
+	char	*value; // The actual token, e.g., "ls", "-l", ">", etc.
+	int		type;	// Type of the token (command, argument, redirection, pipe, etc.)
 } Token;
 
 typedef struct TokenNode {
@@ -163,7 +163,8 @@ int shouldExpandVariable(const char *word);
 /*
 ** -- VARIABLE EXPANSION --
 */
-char* expandVariables(t_shell *shell, const char *input, t_env_var *envVars);
+// char* expandVariables(t_shell *shell, const char *input, t_env_var *envVars);
+char* expandVariables(t_shell *shell, const char *input);
 /*
 ** -- HEREDOC --
 */

@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:22 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/16 17:54:54 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/18 17:45:11 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,12 @@ void replaceVariables(t_shell *shell, const char *input, char *output, t_env_var
             } else {
                 replaceEnvVar(&input, &output, envVars); // Use the new function
             }
-        } else {
+        }
+        // added break condition for tokenizer:
+        else if (*input == '\"')
+            break ;
+        // 
+        else {
             *output++ = *input++;
         }
     }
@@ -132,17 +137,17 @@ void replaceVariables(t_shell *shell, const char *input, char *output, t_env_var
 
 
 // can refactor this by replacing envVars with shell
-char* expandVariables(t_shell *shell, const char *input, t_env_var *envVars)
+char* expandVariables(t_shell *shell, const char *input)
 {
-    int finalLength = calculateExpandedLength(shell, input, envVars);
+    int finalLength = calculateExpandedLength(shell, input, shell->env_head);
     char *expanded = (char *)malloc(finalLength);
     if (!expanded) {
         printf("Memory allocation failed\n");
         return NULL;
     }
     
-    replaceVariables(shell, input, expanded, envVars);
-    
+    replaceVariables(shell, input, expanded, shell->env_head);
+    ft_printf("expandVariables %s\n", expanded);
     return expanded;
 }
 

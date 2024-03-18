@@ -13,15 +13,18 @@
 #include "minishell.h"
 
 
+
+
 void execute_ext_command(t_shell *shell, Command *cmd)
 {
     pid_t pid = fork();
 
-    if (!command_exists(cmd->name)) {
-        perror("Command not found");
-        shell->last_exit_status = 127;
-        return;
-    }
+    (void)shell;
+    // if (!command_exists(cmd->name)) {
+    //     perror("Command not found");
+    //     shell->last_exit_status = 127;
+    //     return;
+    // }
     if (pid == 0) { // Child process
         // Handle input redirection
         if (cmd->redirect_in != NULL) {
