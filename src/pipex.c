@@ -6,55 +6,49 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/18 00:57:42 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/18 23:06:51 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**ft_split_cmd_args(char *s)
-{
-	int		size;
-	char	*p;
-	char	**cmd_args;
+// char	**ft_split_cmd_args(char *s,int count)
+// {
+// 	int		size;
+// 	char	*p;
+// 	char	**cmd_args;
 
-	if (s == NULL || *s == 0)
-		return (NULL);
-	p = s;
-	while (*p && *p != ' ')
-		p++;
-	if (*p == 0)
-		size = 2;
-	else
-		size = 3;
-	cmd_args = (char **)malloc(size * sizeof(char *));
-	cmd_args[size - 1] = 0;
-	cmd_args[0] = ft_strndup(s, p - s);
-	if (*p && p[1])
-		cmd_args[1] = ft_strdup_ignore(p + 1, '"');
-	return (cmd_args);
-}
-char* join_name_and_args(Command* cmd) {
-    char* joined_str = strdup(cmd->name); // Duplicate name
-    if (joined_str == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
+// 	if (s == NULL || *s == 0)
+// 		return (NULL);
 
-    for (int i = 0; i < cmd->arg_count; ++i) {
-        char* temp = ft_strjoin(joined_str," ");
-		temp = ft_strjoin(temp, cmd->args[i]);
+// 	cmd_args = (char **)malloc((count+1) * sizeof(char *));
+// 	cmd_args[size - 1] = 0;
+// 	cmd_args[0] = ft_strndup(s, p - s);
+// 	if (*p && p[1])
+// 		cmd_args[1] = ft_strdup_ignore(p + 1, '"');
+// 	return (cmd_args);
+// }
+// char* join_name_and_args(Command* cmd) {
+//     char* joined_str = strdup(cmd->name); // Duplicate name
+//     if (joined_str == NULL) {
+//         fprintf(stderr, "Memory allocation failed\n");
+//         exit(EXIT_FAILURE);
+//     }
 
-        if (temp == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
-            exit(EXIT_FAILURE);
-        }
-        free(joined_str);
-        joined_str = temp;
-    }
+//     for (int i = 0; i < cmd->arg_count; ++i) {
+//         char* temp = ft_strjoin(joined_str," ");
+// 		temp = ft_strjoin(temp, cmd->args[i]);
 
-    return joined_str;
-}
+//         if (temp == NULL) {
+//             fprintf(stderr, "Memory allocation failed\n");
+//             exit(EXIT_FAILURE);
+//         }
+//         free(joined_str);
+//         joined_str = temp;
+//     }
+
+//     return joined_str;
+// }
 int	run_cmd(Command *command, char **envp,t_shell* shell)
 {
 	char	**cmd_args;
@@ -62,12 +56,22 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
 	char	*cmd_path;
 	char	**paths;
 	int		status;
+	int i;
 
+	i=1;
 	paths = find_cmd_paths(envp);
 	cmd_path = locate_cmd(paths, command->name);
 	free_array(paths);
 	// printf("command name is %s", command->name);
-	cmd_args = ft_split_cmd_args(join_name_and_args(command));
+	cmd_args=(char **)malloc((command->arg_count+2) * sizeof(char *));
+	cmd_args[0]=command->name;
+	while (i <= command->arg_count)
+	{
+		cmd_args[i] = command->args[i-1];
+		i++;
+	}
+	cmd_args[i]= 0;
+	// cmd_args = ft_split_cmd_args(join_name_and_args(command),command->arg_count);
 	// cmd_name = cmd_args[0];
 
 	status = 0;
