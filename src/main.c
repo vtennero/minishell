@@ -82,10 +82,6 @@ int main(int argc, char **argv, char **envp)
 	in.envp = envp;
 	in.argc = argc;
     
-	// char	**paths = find_cmd_paths(envp);
-	// char	*cmd_path = locate_cmd(paths, "grep");
-
-    // execve(cmd_path, "grep -v SHLVL" , envp);
     shell = initialize_shell(envp);
     if (shell->is_interactive && argc == 1)
     {
