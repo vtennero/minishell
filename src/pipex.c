@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/19 01:21:52 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/19 01:36:24 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,20 +170,21 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	int original_stdin = dup(STDIN_FILENO);
 	int original_stdout = dup(STDOUT_FILENO);
 
-	status = 0;
+	status = 1;
 	prev_pipe = cmd->fin;
 	while (cmd->next) {
 		status = execute_command_pipex(prev_pipe,cmd,in ,in.pipefd,shell);
 		prev_pipe = in.pipefd[0];
 		// waitpid(0, NULL, WUNTRACED);
-		waitpid(0, NULL, WNOHANG | WUNTRACED);
-
+		// waitpid(0, NULL, WNOHANG | WUNTRACED);
+		*cmd = *(cmd->next);
 		if (status < 0)
 			exit(-1);
-		*cmd = *(cmd->next);
 	}
 
 	waitpid(0, NULL, WNOHANG | WUNTRACED);
+
+
 	// waitpid(0, NULL, WUNTRACED);
 
 	if (cmd->fin == -99)
@@ -216,7 +217,7 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 		_exit(status);
 	}
 	// waitpid(0, NULL, WUNTRACED);
-	waitpid(0, NULL, WNOHANG | WUNTRACED);
+	// waitpid(0, NULL, WNOHANG | WUNTRACED);
 
 	if (prev_pipe!=STDIN_FILENO)
 		close(prev_pipe);
