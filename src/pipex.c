@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/18 23:53:36 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/19 00:03:20 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,8 @@ int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, int pipefd[2],t_s
 int pipex(t_in in,Command *cmd,t_shell *shell) {
 	int status;
 	int prev_pipe;
+	int original_stdin = dup(STDIN_FILENO);
+
 	status = 0;
 	prev_pipe = cmd->fin;
 	while (cmd->next) {
@@ -183,8 +185,7 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	if (cmd->fin == -99)
 	{
 			dup2(prev_pipe, STDIN_FILENO);
-			// close(in.pipefd[1]);
-
+			close(prev_pipe);
 			// close(in.pipefd[1]);
 	}
 	else if (cmd->fin !=0)
@@ -219,6 +220,11 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 
 	// close(cmd->fin);
 	// close(cmd->fout);
+  if (dup2(original_stdin, STDIN_FILENO) == -1) {
+        perror("dup2");
+        exit(EXIT_FAILURE);
+    }
+    close(original_stdin);
 
 	return status;
 }
