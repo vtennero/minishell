@@ -1,5 +1,6 @@
 a
 grep
+haha
 infile_big
 input.txt
 libft
@@ -13,8 +14,3 @@ result.txt
 src
 testscript2.sh
 testscript.sh
-[?2004h$ ^C[?2004l
-$ [?2004h^C[?2004l
-$ [?2004h^C[?2004l
-$ [?2004hexit
-[?2004lexit

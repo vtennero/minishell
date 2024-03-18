@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/19 00:03:20 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/19 01:21:52 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,19 +168,23 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	int status;
 	int prev_pipe;
 	int original_stdin = dup(STDIN_FILENO);
+	int original_stdout = dup(STDOUT_FILENO);
 
 	status = 0;
 	prev_pipe = cmd->fin;
 	while (cmd->next) {
 		status = execute_command_pipex(prev_pipe,cmd,in ,in.pipefd,shell);
 		prev_pipe = in.pipefd[0];
-		waitpid(0, NULL, WUNTRACED);
+		// waitpid(0, NULL, WUNTRACED);
+		waitpid(0, NULL, WNOHANG | WUNTRACED);
+
 		if (status < 0)
 			exit(-1);
 		*cmd = *(cmd->next);
 	}
 
 	waitpid(0, NULL, WNOHANG | WUNTRACED);
+	// waitpid(0, NULL, WUNTRACED);
 
 	if (cmd->fin == -99)
 	{
@@ -211,7 +215,8 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 		status = run_cmd(cmd, in.envp,shell);
 		_exit(status);
 	}
-	waitpid(0, NULL, WUNTRACED);
+	// waitpid(0, NULL, WUNTRACED);
+	waitpid(0, NULL, WNOHANG | WUNTRACED);
 
 	if (prev_pipe!=STDIN_FILENO)
 		close(prev_pipe);
@@ -220,12 +225,16 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 
 	// close(cmd->fin);
 	// close(cmd->fout);
+	
   if (dup2(original_stdin, STDIN_FILENO) == -1) {
         perror("dup2");
         exit(EXIT_FAILURE);
     }
     close(original_stdin);
-
+  if (dup2(original_stdout, STDOUT_FILENO) == -1) {
+        perror("dup2");
+        exit(EXIT_FAILURE);
+    }
 	return status;
 }
 
