@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+volatile sig_atomic_t g_signal_received = 0;
+
 void process_input_into_commands(int fd, t_shell *shell)
 {
 	char	**line;
@@ -94,8 +96,8 @@ int main(int argc, char **argv, char **envp)
 
                 create_tokens(shell, input);
                 CommandTable* command_table = create_command_table(shell, shell->token_head);
-                printTokens(shell->token_head);
-                print_command_table(command_table);
+                // printTokens(shell->token_head);
+                // print_command_table(command_table);
                 execute_command_table(shell, command_table);
 
                 shell->token_head = NULL;

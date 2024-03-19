@@ -19,33 +19,22 @@ int isspace_not_eol(int ch)
     return (ch == ' ' || ch == '\f' || ch == '\r' || ch == '\t' || ch == '\v');
 }
 
-// Mock implementation of processVar
-char *processVar() {
-    // This function would process the variable and return its value
-    // For now, just return a duplicate of var for illustration
-	// (void)var;
-    return strdup("[VAR_PLACEHOLDER]"); // Skip the '$' character
-    // return strdup(var + 1); // Skip the '$' character
-}
-
-
-
 char *processSingleQuote(const char **s)
 {
-	ft_printf("processSingleQuote start s |%s|\n", *s);
+	// ft_printf("processSingleQuote start s |%s|\n", *s);
 	(*s)++;
     const char *start = *s; // Skip the initial quote
     while (**s && **s != '\'')
 		(*s)++;
-	ft_printf("processSingleQuote s after while |%s|\n", *s);
+	// ft_printf("processSingleQuote s after while |%s|\n", *s);
 	int len = *s - start;
-	ft_printf("processSingleQuote len |%d|\n", len);
+	// ft_printf("processSingleQuote len |%d|\n", len);
 	char *result = strndup(start, len);
-	ft_printf("processSingleQuote s before going past word |%s|\n", *s);
+	// ft_printf("processSingleQuote s before going past word |%s|\n", *s);
     // if (**s == '\'') (*s)++;
 	// (*s) += len + 1;
-	ft_printf("processSingleQuote s after going past word |%s|\n", *s);
-	ft_printf("processSingleQuote result |%s|\n", result);
+	// ft_printf("processSingleQuote s after going past word |%s|\n", *s);
+	// ft_printf("processSingleQuote result |%s|\n", result);
     return result;
 }
 
@@ -55,24 +44,30 @@ int	get_non_expanded_var_length(char *var)
     int count = 1; // Counter for valid characters
     int index = 0; // Current index in the string
     int foundLetter = 0; // Flag to track if at least one letter has been found
+    int foundDol = 1; // Flag to track if at least one letter has been found
 
-	ft_printf("get_non_expanded_var_length %s\n", var);
+	// ft_printf("get_non_expanded_var_length %s\n", var);
 	var++;
-	ft_printf("get_non_expanded_var_length %s\n", var);
+	// ft_printf("get_non_expanded_var_length %s\n", var);
     while(var[index] != '\0') {
-        if(!isalpha(var[index]) && !isdigit(var[index])) {
+		if (var[index] == '$')
+			foundDol++;
+        else if(!isalpha(var[index]) && !isdigit(var[index])) {
             // If the character is not a letter or digit, break the loop
             break;
         }
-        if(isalpha(var[index])) {
+        else if(isalpha(var[index])) {
             foundLetter = 1; // Set the flag if a letter is found
         }
         count++; // Increment the count of valid characters
         index++; // Move to the next character
     }
-	ft_printf("get_non_expanded_var_length %d\n", count);
-	if (!foundLetter)
-		count = 0;
+	// ft_printf("get_non_expanded_var_length found Dol %d count %d\n", foundDol, count);
+	if (foundDol == count)
+		return (count);
+	else if (!foundLetter)
+		count = 1;
+		// count = 0;
 	return (count);
 }
 
@@ -132,11 +127,11 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
 
     // 2. Iterate until the closing quote is reached
     while (*s < endQuote) {
-		ft_printf("processDoubleQuote while (*s < endQuote)  |%s|\n", *s);
+		// ft_printf("processDoubleQuote while (*s < endQuote)  |%s|\n", *s);
         if (**s == '$') {
             // a. Expand the variable
             char *expanded = expandVariables(shell, *s);
-			ft_printf("processDoubleQuote char *expanded = expandVariables(shell, *s); |%s|\n", expanded);
+			// ft_printf("processDoubleQuote char *expanded = expandVariables(shell, *s); |%s|\n", expanded);
 			if (!buf)
 				newBuf = expanded;
 			else
@@ -144,15 +139,16 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
             // free(buf); // Free the old buffer
             // free(expanded); // Free the expanded string
             buf = newBuf;
-			ft_printf("processDoubleQuote buf |%s|\n", buf);
+			// ft_printf("processDoubleQuote buf |%s|\n", buf);
 			textLen = get_non_expanded_var_length((char * )(*s));
-			ft_printf("processDoubleQuote s |%s|\n", *s);
+			// ft_printf("processDoubleQuote get_non_expanded_var_length |%d|\n", textLen);
+			// ft_printf("processDoubleQuote s |%s|\n", *s);
             *s += textLen;
-			ft_printf("processDoubleQuote s |%s|\n", *s);
+			// ft_printf("processDoubleQuote s |%s|\n", *s);
             // Move pointer s by n characters, where n is the length of the variable
             // Assuming expandVariables moves *s to the end of the variable
         } else {
-			ft_printf("processDoubleQuote while (*s < endQuote) else not $ |%s|\n", *s);
+			// ft_printf("processDoubleQuote while (*s < endQuote) else not $ |%s|\n", *s);
             // b. Duplicate text until the next $ or the end quote
             const char *nextDollar = strchr(*s, '$');
             if (!nextDollar || nextDollar > endQuote) {
@@ -160,7 +156,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
             }
             textLen = nextDollar - *s;
             char *duplicatedText = strndup(*s, textLen);
-			ft_printf("processDoubleQuote duplicatedText |%s|\n", duplicatedText);
+			// ft_printf("processDoubleQuote duplicatedText |%s|\n", duplicatedText);
 			if (!buf)
 				newBuf = duplicatedText;
 			else
@@ -168,7 +164,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
             // free(buf); // Free the old buffer
             // free(duplicatedText); // Free the duplicated text
             buf = newBuf;
-			ft_printf("processDoubleQuote else buf |%s|\n", buf);
+			// ft_printf("processDoubleQuote else buf |%s|\n", buf);
 
             // Move the pointer to the position of the next $ or end quote
             *s += textLen;
@@ -177,7 +173,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
 
     // Move past the closing quote for the next iteration
     if (**s == '\"') (*s)++;
-	ft_printf("processDoubleQuote end \n");
+	// ft_printf("processDoubleQuote end \n");
     return buf;
 }
 
@@ -224,47 +220,47 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
 //     return finalResult;
 // }
 
-char *quotevar1(t_shell *shell, const char **s)
-{
-	size_t advancedPosition = 0;
+// char *quotevar1(t_shell *shell, const char **s)
+// {
+// 	size_t advancedPosition = 0;
 
-    char *buffer = malloc(1024); // Initial buffer, adjust size as needed
-    char *bufPtr = buffer;
-    while (**s && !isspace((unsigned char)**s)) {
-        if (**s == '\'') {
-			ft_printf("quotevar: s before processSingle quotes |%s|\n", *s);
-            char *temp = processSingleQuote(s);
-            strcpy(bufPtr, temp);
-			ft_printf("quotevar: s after processSingle quotes |%s|\n", *s);
-			ft_printf("quotevar: if (**s == ') bufPtr  |%s|\n", bufPtr);
-            bufPtr += strlen(temp);
-            // free(temp);
-        } else if (**s == '\"') {
-            char *temp = processDoubleQuote(s, shell);
-            strcpy(bufPtr, temp);
-            bufPtr += strlen(temp);
-            // free(temp);
-		}
-		else if (**s == '$')
-		{
-			ft_printf("quotevar: found env variable\n");
-			// expand variables
-			char *temp = expandVariables2(shell, *s, &advancedPosition);
-			printf("quotevar: Expanded string: %s\n", temp);
-            strcpy(bufPtr, temp);
-    		bufPtr += advancedPosition;
-			*s += advancedPosition;
-        } else {
-            *bufPtr++ = **s;
-            (*s)++;
-        }
-    }
-    *bufPtr = '\0';
-    char *finalResult = strdup(buffer);
-    // free(buffer);
-	ft_printf("quotevar: final result |%s|\n", finalResult);
-    return finalResult;
-}
+//     char *buffer = malloc(1024); // Initial buffer, adjust size as needed
+//     char *bufPtr = buffer;
+//     while (**s && !isspace((unsigned char)**s)) {
+//         if (**s == '\'') {
+// 			ft_printf("quotevar: s before processSingle quotes |%s|\n", *s);
+//             char *temp = processSingleQuote(s);
+//             strcpy(bufPtr, temp);
+// 			ft_printf("quotevar: s after processSingle quotes |%s|\n", *s);
+// 			ft_printf("quotevar: if (**s == ') bufPtr  |%s|\n", bufPtr);
+//             bufPtr += strlen(temp);
+//             // free(temp);
+//         } else if (**s == '\"') {
+//             char *temp = processDoubleQuote(s, shell);
+//             strcpy(bufPtr, temp);
+//             bufPtr += strlen(temp);
+//             // free(temp);
+// 		}
+// 		else if (**s == '$')
+// 		{
+// 			ft_printf("quotevar: found env variable\n");
+// 			// expand variables
+// 			char *temp = expandVariables2(shell, *s, &advancedPosition);
+// 			printf("quotevar: Expanded string: %s\n", temp);
+//             strcpy(bufPtr, temp);
+//     		bufPtr += advancedPosition;
+// 			*s += advancedPosition;
+//         } else {
+//             *bufPtr++ = **s;
+//             (*s)++;
+//         }
+//     }
+//     *bufPtr = '\0';
+//     char *finalResult = strdup(buffer);
+//     // free(buffer);
+// 	ft_printf("quotevar: final result |%s|\n", finalResult);
+//     return finalResult;
+// }
 
 char *quotevar(t_shell *shell, const char **s) {
     char *result = strdup(""); // Start with an empty string
@@ -291,9 +287,10 @@ char *quotevar(t_shell *shell, const char **s) {
             free(result); // Free the old result
             result = new_result; // Update the result with the new concatenated string
             free(temp); // Free the temporary string
+			// ft_printf("quotevar: while: result = |%s|\n", result);
         }
     }
-	ft_printf("quotevar: result = |%s|\n", result);
+	// ft_printf("quotevar: returning result = |%s|\n", result);
     return result; // This is the concatenated final result
 }
 

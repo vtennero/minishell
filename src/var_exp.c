@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_exp.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:22 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/19 10:15:15 by toto             ###   ########.fr       */
+/*   Updated: 2024/03/19 16:42:05 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,17 @@ int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *envVar
             } else if (*(input + 1) == '?') {
                 length += intLength(shell->last_exit_status);
                 input += 2;
-            } else if (*(input + 1) == '\0' || *(input + 1) == '$') {
-                length += 1; // Account for $
-                input += 1;
+            // } else if (*(input + 1) == '\0' || *(input + 1) == '$') {
+            //     length += 1; // Account for $
+            //     input += 1;
+            }
+            else if (*(input + 1) == '$') {
+            length += 1; // Account for the first $
+            input++;
+            while (*input == '$') {
+                length += 1; // Correctly account for subsequent $
+                input++;
+            }
             } else {
                 input++; // Move past $ to start variable name
                 length += getEnvVarLength(&input, envVars);
@@ -107,26 +115,50 @@ char	*cpy_exit_code(char *str, int n)
 size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_var *envVars) {
         const char *startInput = input; // Keep track of the start position
 
-    while (*input) {
-        if (*input == '$') {
-            if (*(input + 1) == ' ') { // Check for space after $
-                *output++ = *input++; // Copy $ and space literally
-                *output++ = *input++;
-            } else if (*(input + 1) == '?' ) {
+    while (*input)
+    {
+        if (*input == '$')
+        {
+            if (*(input + 1) == ' ') 
+            { // Check for space after $
+                break;
+                // *output++ = *input++; // Copy $ and space literally
+                // *output++ = *input++;
+            }
+            else if (*(input + 1) == '?' )
+            {
                 cpy_exit_code(output, shell->last_exit_status);
                 output += intLength(shell->last_exit_status);
                 input += 2;
-            } else if (*(input + 1) == '\0' || *(input + 1) == '$') {
-                *output++ = *input++;
-                if (*input == '$') {
-                    *output++ = *input++;
+            // } else if (*(input + 1) == '\0' || *(input + 1) == '$') {
+            // } else if (*(input + 1) == '\0' || *(input + 1) == '$' || *(input + 1) == '\"') {
+                // ft_printf("replaceVariables  } else if (*(input + 1) == '\0' || *(input + 1) == '$') { output |%s|\n", output);
+            //     *output++ = *input++;
+            //     if (*input == '$') {
+            //         *output++ = *input++;
+            //     }
+            }
+            else if (*(input + 1) == '$' || *(input + 1) == '\"')
+            {
+                // Directly handle consecutive dollar signs here
+                *output++ = *input++; // Copy the first $ and move to the next character
+                if (*(input) == '$')
+                { // Check if the next character is also a $
+                    while (*input == '$')
+                        *output++ = *input++; // Copy and advance for each subsequent $
                 }
-            } else {
+            }
+            else if (*(input + 1) == '\0')
+            {
+                *output++ = *input++; // Just copy the $ if it's the end of the string
+            } else
+            {
+                // ft_printf("replaceVariables else input+1 |%c| output |%s|\n", *(input+1), output);
                 replaceEnvVar(&input, &output, envVars); // Use the new function
             }
         }
         // added break condition for tokenizer:
-        else if (*input == '\"' || *input == '\'')
+        else if (*input == '\"' || *input == '\'' || *input == ' ')
             break ;
         // 
         else {
@@ -134,6 +166,7 @@ size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_v
         }
     }
     *output = '\0';
+    // ft_printf("replaceVariables output |%s|\n", output);
     return input - startInput; // Return how far we advanced
 
 }
@@ -151,7 +184,7 @@ char* expandVariables(t_shell *shell, const char *input)
     }
     
     size_t advancedPosition = replaceVariables(shell, input, expanded, shell->env_head);
-    ft_printf("expandVariables returns %s\n", expanded);
+    // ft_printf("expandVariables returns %s\n", expanded);
     (void)advancedPosition;
     return expanded;
 }
@@ -169,7 +202,7 @@ char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPositi
     if (advancedPosition != NULL) {
         *advancedPosition = position; // Update the external pointer with the advanced position
     }
-    ft_printf("expandVariables2 returns %s\n", expanded);
+    // ft_printf("expandVariables2 returns %s\n", expanded);
     return expanded;
 }
 

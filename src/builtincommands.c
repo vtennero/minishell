@@ -27,6 +27,7 @@ void builtin_cd(t_shell * shell, char** args, int n_args)
 {
 	char* path; // Path to change to
 
+	// ft_printf("cd nargs %d\n", n_args);
 	if (n_args == 0)
 	{
 		// ft_printf("n_args = 0\n");
@@ -49,7 +50,6 @@ void builtin_cd(t_shell * shell, char** args, int n_args)
 	else
 	{
 		perror("bash: cd: too many arguments\n");
-		ft_printf("hello\n");
 		shell->last_exit_status = 1;
 	}
 		// Use the first argument as the path

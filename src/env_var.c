@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/16 18:09:24 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/19 16:50:01 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int process_env_arg(t_shell *shell, const char *arg)
         perror(" not a valid identifier");
         // first char is =
 	    // printf("Invalid variable declaration: Starts with '='\n");
-        return 0; // Indicate invalid argument
+        return 1; // need to return 1 for error flagging
     }
     else if (nchar == (int)ft_strlen(arg) - 1)
 	{
