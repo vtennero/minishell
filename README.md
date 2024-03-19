@@ -1,12 +1,10 @@
 # minishell
 
-Workflow (as of March 15)
+Workflow (as of March 19)
 
 ⚙ In Progress
 - pipes |
 - redirections
-- signals w global variables
-- heredoc
 - exit codes
 
 
@@ -22,3 +20,5 @@ Workflow (as of March 15)
 - memory management
 - unset
 - export
+- signals w global variables
+- heredoc
