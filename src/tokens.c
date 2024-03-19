@@ -177,7 +177,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
 
     // Move past the closing quote for the next iteration
     if (**s == '\"') (*s)++;
-    
+	ft_printf("processDoubleQuote end \n");
     return buf;
 }
 
@@ -224,8 +224,10 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
 //     return finalResult;
 // }
 
-char *quotevar(t_shell *shell, const char **s)
+char *quotevar1(t_shell *shell, const char **s)
 {
+	size_t advancedPosition = 0;
+
     char *buffer = malloc(1024); // Initial buffer, adjust size as needed
     char *bufPtr = buffer;
     while (**s && !isspace((unsigned char)**s)) {
@@ -236,16 +238,22 @@ char *quotevar(t_shell *shell, const char **s)
 			ft_printf("quotevar: s after processSingle quotes |%s|\n", *s);
 			ft_printf("quotevar: if (**s == ') bufPtr  |%s|\n", bufPtr);
             bufPtr += strlen(temp);
-            free(temp);
+            // free(temp);
         } else if (**s == '\"') {
             char *temp = processDoubleQuote(s, shell);
             strcpy(bufPtr, temp);
             bufPtr += strlen(temp);
-            free(temp);
+            // free(temp);
 		}
 		else if (**s == '$')
 		{
+			ft_printf("quotevar: found env variable\n");
 			// expand variables
+			char *temp = expandVariables2(shell, *s, &advancedPosition);
+			printf("quotevar: Expanded string: %s\n", temp);
+            strcpy(bufPtr, temp);
+    		bufPtr += advancedPosition;
+			*s += advancedPosition;
         } else {
             *bufPtr++ = **s;
             (*s)++;
@@ -253,11 +261,41 @@ char *quotevar(t_shell *shell, const char **s)
     }
     *bufPtr = '\0';
     char *finalResult = strdup(buffer);
-    free(buffer);
+    // free(buffer);
 	ft_printf("quotevar: final result |%s|\n", finalResult);
     return finalResult;
 }
 
+char *quotevar(t_shell *shell, const char **s) {
+    char *result = strdup(""); // Start with an empty string
+    while (**s && !isspace((unsigned char)**s)) {
+        char *temp = NULL;
+        if (**s == '\'') {
+            temp = processSingleQuote(s);
+        } else if (**s == '\"') {
+            temp = processDoubleQuote(s, shell);
+        } else if (**s == '$') {
+            size_t advancedPosition = 0;
+            temp = expandVariables2(shell, *s, &advancedPosition);
+            // *s += advancedPosition - 1; // Adjust for loop increment
+            *s += advancedPosition; // Adjust for loop increment
+        } else {
+            temp = malloc(2); // Allocate space for char and null terminator
+            temp[0] = **s;
+            temp[1] = '\0';
+            (*s)++;
+        }
+
+        if (temp) {
+            char *new_result = ft_strjoin(result, temp);
+            free(result); // Free the old result
+            result = new_result; // Update the result with the new concatenated string
+            free(temp); // Free the temporary string
+        }
+    }
+	ft_printf("quotevar: result = |%s|\n", result);
+    return result; // This is the concatenated final result
+}
 
 
 // int find_closing_quote(const char *str, char c)

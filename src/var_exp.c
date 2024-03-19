@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_exp.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:22 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/18 17:45:11 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/19 10:15:15 by toto             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,9 @@ char	*cpy_exit_code(char *str, int n)
 	return (str);
 }
 
-void replaceVariables(t_shell *shell, const char *input, char *output, t_env_var *envVars) {
+size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_var *envVars) {
+        const char *startInput = input; // Keep track of the start position
+
     while (*input) {
         if (*input == '$') {
             if (*(input + 1) == ' ') { // Check for space after $
@@ -124,7 +126,7 @@ void replaceVariables(t_shell *shell, const char *input, char *output, t_env_var
             }
         }
         // added break condition for tokenizer:
-        else if (*input == '\"')
+        else if (*input == '\"' || *input == '\'')
             break ;
         // 
         else {
@@ -132,6 +134,8 @@ void replaceVariables(t_shell *shell, const char *input, char *output, t_env_var
         }
     }
     *output = '\0';
+    return input - startInput; // Return how far we advanced
+
 }
 
 
@@ -146,8 +150,26 @@ char* expandVariables(t_shell *shell, const char *input)
         return NULL;
     }
     
-    replaceVariables(shell, input, expanded, shell->env_head);
-    ft_printf("expandVariables %s\n", expanded);
+    size_t advancedPosition = replaceVariables(shell, input, expanded, shell->env_head);
+    ft_printf("expandVariables returns %s\n", expanded);
+    (void)advancedPosition;
+    return expanded;
+}
+
+char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPosition)
+{
+    int finalLength = calculateExpandedLength(shell, input, shell->env_head);
+    char *expanded = (char *)malloc(finalLength);
+    if (!expanded) {
+        printf("Memory allocation failed\n");
+        return NULL;
+    }
+    
+    size_t position = replaceVariables(shell, input, expanded, shell->env_head);
+    if (advancedPosition != NULL) {
+        *advancedPosition = position; // Update the external pointer with the advanced position
+    }
+    ft_printf("expandVariables2 returns %s\n", expanded);
     return expanded;
 }
 

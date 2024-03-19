@@ -165,6 +165,7 @@ int shouldExpandVariable(const char *word);
 */
 // char* expandVariables(t_shell *shell, const char *input, t_env_var *envVars);
 char* expandVariables(t_shell *shell, const char *input);
+char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPosition);
 /*
 ** -- HEREDOC --
 */
