@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/19 23:11:56 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/20 20:25:16 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,11 +222,16 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	if (pid == 0)
 	{
 		status = run_cmd(cmd, in.envp,shell);
-		ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(status)),2);
 
 		exit(status);
 	}
 	waitpid(-1,  &status, WUNTRACED | WNOHANG);
+	shell->last_exit_status=status;
+	if (WIFEXITED(status))
+		status = WEXITSTATUS(status);
+
+	ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(shell->last_exit_status)),2);
+
 	// waitpid(-1,  &status, WNOHANG );
  	// waitpid(0, &status, 0 );
 	if (prev_pipe!=STDIN_FILENO)
@@ -251,8 +256,7 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	// if (WEXITSTATUS(status) == -1)
 	// 	exit(-1);
 
-	// shell->last_exit_status=((status));
-	return  WEXITSTATUS(status);
+		return  WEXITSTATUS(status);
 }
 
 
