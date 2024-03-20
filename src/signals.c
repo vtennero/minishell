@@ -12,39 +12,27 @@
 
 #include "minishell.h"
 
-void sigint_handler(int sig_num)
+void	sigint_handler(int sig_num)
 {
-
-    g_signal_received = sig_num;
-    // rl_replace_line("", 0);
-    // rl_redisplay();
-    // Make readline ready to receive a new input
-    // rl_done = 1;
-    // ft_printf("\n$ "); // Display a new prompt
-    write(STDOUT_FILENO, "\n", 1);
-    rl_replace_line("", 0);
-    rl_on_new_line();
-    rl_redisplay();
-    // fflush(stdout);
-    // Re-registering signal handlers is not recommended here; see below for sigaction usage.
+	g_signal_received = sig_num;
+	write(STDOUT_FILENO, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
 }
 
-void setup_signals(t_shell *shell)
+void	setup_signals(t_shell *shell)
 {
-    struct sigaction sa_int;
-    struct sigaction sa_ignore;
+	struct sigaction	sa_int;
+	struct sigaction	sa_ignore;
 
-    // Set up SIGINT handler
-    sa_int.sa_handler = sigint_handler;
-    sigemptyset(&sa_int.sa_mask);
-    sa_int.sa_flags = 0;
-    sigaction(SIGINT, &sa_int, NULL);
-
-    // Setup to ignore SIGQUIT
-    sa_ignore.sa_handler = SIG_IGN;
-    sigemptyset(&sa_ignore.sa_mask);
-    sa_ignore.sa_flags = 0;
-    sigaction(SIGQUIT, &sa_ignore, NULL);
-
-    (void)shell;
+	sa_int.sa_handler = sigint_handler;
+	sigemptyset(&sa_int.sa_mask);
+	sa_int.sa_flags = 0;
+	sigaction(SIGINT, &sa_int, NULL);
+	sa_ignore.sa_handler = SIG_IGN;
+	sigemptyset(&sa_ignore.sa_mask);
+	sa_ignore.sa_flags = 0;
+	sigaction(SIGQUIT, &sa_ignore, NULL);
+	(void)shell;
 }

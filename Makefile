@@ -27,7 +27,13 @@ signals.c \
 parser.c \
 commands.c \
 debug_commands.c \
-builtincommands.c \
+commands_cd.c \
+commands_echo.c \
+commands_env.c \
+commands_exit.c \
+commands_export.c \
+commands_pwd.c \
+commands_unset.c \
 externalcommands.c \
 execution.c \
 magicmalloc.c \
@@ -39,7 +45,7 @@ quotes.c \
 var_exp.c \
 utils.c \
 init.c \
-exit.c
+modes.c
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \

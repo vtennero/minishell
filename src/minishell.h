@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/21 15:00:40 by vitenner          #+#    #+#             */
-/*   Updated: 2024/02/26 15:05:30 by toto             ###   ########.fr       */
+/*   Created: 2024/03/20 15:57:52 by vitenner          #+#    #+#             */
+/*   Updated: 2024/03/20 15:57:52 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,11 +137,18 @@ typedef struct s_shell {
 */
 t_shell     *initialize_shell(char **envp);
 void        create_env_var_list(t_shell *shell, char **envp);
+
+/*
+** -- MODES --
+*/
+void		interactive_mode(t_shell *shell);
+void		w_arg_mode(t_shell *shell, int argc, char **argv);
+void		std_input_mode(int fd, t_shell *shell);
 /*
 ** -- SIGNALS --
 */
-void        sigint_handler(int sig_num);
-void        setup_signals(t_shell *shell);
+void	sigint_handler(int sig_num);
+void	setup_signals(t_shell *shell);
 
 /*
 ** ================== PARSING ==================
@@ -150,7 +157,7 @@ void        setup_signals(t_shell *shell);
 ** -- TOKENIZATION --
 */
 // void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
-void        createtokensv2(t_shell *shell, const char *s);
+void	createtokensv2(t_shell *shell, const char *s);
 void		create_tokens(t_shell *shell, const char *s);
 void		addToken(t_shell *shell, const char *value, int type);
 TokenType	get_token_type(const char* token_text);
@@ -224,7 +231,7 @@ char* shell_strndup(t_shell* shell, const char* s, size_t n);
 ** ================== UTILS ==================
 */
 const char  *skip_delimiters(const char *s, char c);
-int         find_index_char(const char *str, char c);
+int	 find_index_char(const char *str, char c);
 int			intLength(int num);
 /*
 ** -- DEBUG --
