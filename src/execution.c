@@ -34,16 +34,17 @@ void	execute_command(t_shell *shell, Command *command)
 		execute_ext_command(shell, command);
 }
 
-void	execute_command_table(t_shell *shell, CommandTable *table)
+void execute_command_table(t_shell *shell, CommandTable* table,t_in in)
 {
 	Command	*current;
 
-	if (!table)
-		return ;
-	current = table->head;
-	while (current != NULL)
-	{
-		execute_command(shell, current);
-		current = current->next;
-	}
+    Command* current = table->head;
+    (void)shell;
+    pipex(in,current,shell);
+
+    // while (current != NULL)
+    // {
+    //     execute_command(shell, current); // Execute the current command
+    //     current = current->next;  // Move to the next command in the list
+    // }
 }

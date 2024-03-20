@@ -38,6 +38,17 @@ void print_command(const Command* cmd) {
     }
     ft_printf("\n");
 
+    // Print fin
+    // if (cmd->fin)
+     {
+        ft_printf("Fin is: %s\n", cmd->fin);
+    }
+
+    // Print fout
+    // if (cmd->fout) 
+    {
+        ft_printf("Fout is: %s\n", cmd->fout);
+    }
     // Print redirections
     if (cmd->redirect_in) {
         ft_printf("Input redirected from: %s\n", cmd->redirect_in);
