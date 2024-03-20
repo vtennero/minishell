@@ -24,7 +24,6 @@ OBJ_DIR = obj
 MINISHELL_SRC = main.c \
 tokens.c \
 signals.c \
-parser.c \
 commands.c \
 debug_commands.c \
 commands_cd.c \

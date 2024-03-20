@@ -99,9 +99,6 @@ typedef struct Command {
 	struct Command* next;
 } Command;
 
-
-
-
 typedef struct {
 	Command*    head;             // Head of the list of commands
 	int         command_count;         // Number of commands in the table
@@ -135,20 +132,20 @@ typedef struct s_shell {
 /*
 ** ================== INITIALIZATION ==================
 */
-t_shell     *initialize_shell(char **envp);
-void        create_env_var_list(t_shell *shell, char **envp);
+t_shell  	   *initialize_shell(char **envp);
+void     	   create_env_var_list(t_shell *shell, char **envp);
 
 /*
 ** -- MODES --
 */
-void		interactive_mode(t_shell *shell);
-void		w_arg_mode(t_shell *shell, int argc, char **argv);
-void		std_input_mode(int fd, t_shell *shell);
+void			interactive_mode(t_shell *shell);
+void			w_arg_mode(t_shell *shell, int argc, char **argv);
+void			std_input_mode(int fd, t_shell *shell);
 /*
 ** -- SIGNALS --
 */
-void	sigint_handler(int sig_num);
-void	setup_signals(t_shell *shell);
+void			sigint_handler(int sig_num);
+void			setup_signals(t_shell *shell);
 
 /*
 ** ================== PARSING ==================
@@ -156,93 +153,81 @@ void	setup_signals(t_shell *shell);
 /*
 ** -- TOKENIZATION --
 */
-// void create_tokens(t_shell *shell, const char *s, char c, TokenNode **head);
-void	createtokensv2(t_shell *shell, const char *s);
-void		create_tokens(t_shell *shell, const char *s);
-void		addToken(t_shell *shell, const char *value, int type);
-TokenType	get_token_type(const char* token_text);
-char		*parse_tokens(t_shell *shell, const char *s);
+void			create_tokens(t_shell *shell, const char *s);
+void			addToken(t_shell *shell, const char *value, int type);
+TokenType		get_token_type(const char* token_text);
+char			*parse_tokens(t_shell *shell, const char *s);
 /*
 ** -- QUOTES --
 */
-void		toggleQuoteState(int *quoteState);
-char		*reviewquotes(char *input);
-// char *reviewquotes(char *input, QuoteType *quoteType);
-int shouldExpandVariable(const char *word);
+void			toggleQuoteState(int *quoteState);
+char			*reviewquotes(char *input);
+int				shouldExpandVariable(const char *word);
 /*
 ** -- VARIABLE EXPANSION --
 */
-char* expandVariables(t_shell *shell, const char *input);
-char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPosition);
+char			*expandVariables(t_shell *shell, const char *input);
+char			*expandVariables2(t_shell *shell, const char *input, size_t *advancedPosition);
 /*
 ** -- HEREDOC --
 */
-void		parse_heredoc(t_shell *shell);
+void			parse_heredoc(t_shell *shell);
 /*
 ** ================== COMMANDS ==================
 */
 /*
 ** -- COMMAND TABLE --
 */
-CommandTable* create_command_table(t_shell *shell, TokenNode* tokens);
-void execute_command_table(t_shell *shell, CommandTable* table);
-void free_command_table(CommandTable* table);
-void execute_ext_command(t_shell *shell, Command *cmd);
+CommandTable	*create_command_table(t_shell *shell, TokenNode* tokens);
+void			execute_command_table(t_shell *shell, CommandTable* table);
+void			free_command_table(CommandTable* table);
+void			execute_ext_command(t_shell *shell, Command *cmd);
 /*
 ** -- BUILT_IN COMMANDS --
 */
-void builtin_cd(t_shell * shell, char** args, int n_args);
-void builtin_pwd(void);
-void builtin_echo(t_shell *shell, char** args, int n_args);
-void builtin_unset(t_shell *shell, char** args, int n_args);
-void	builtin_env(t_shell *shell);
-
+void		builtin_cd(t_shell * shell, char** args, int n_args);
+void		builtin_pwd(void);
+void		builtin_echo(t_shell *shell, char** args, int n_args);
+void		builtin_unset(t_shell *shell, char** args, int n_args);
+void		builtin_env(t_shell *shell);
 /*
 ** :: EXIT ::
 */
-void builtin_exit(t_shell *shell, char** args, int n_args);
-char	*export_exit_code(t_shell *shell);
-int is_valid_number(const char *str);
-int adjust_exit_code(int n);
-
+void		builtin_exit(t_shell *shell, char** args, int n_args);
+char		*export_exit_code(t_shell *shell);
+int			is_valid_number(const char *str);
+int			adjust_exit_code(int n);
 /*
 ** :: EXPORT ::
 */
-void	builtin_export(t_shell *shell, char** args, int n_args);
-int		process_env_arg(t_shell *shell, const char *arg);
-int		check_duplicates(t_shell *shell, const char *key, int nchar);
-void	update_var(t_shell *shell, const char *key, const char *value);
-void	add_new_var(t_shell *shell, const char *key, const char *value);
-void	decl_new_var(t_shell *shell, const char *key);
-void	remove_var(t_shell *shell, const char *key, int nchar);
-void	print_export(t_shell *shell, int is_export);
+void		builtin_export(t_shell *shell, char** args, int n_args);
+int			process_env_arg(t_shell *shell, const char *arg);
+int			check_duplicates(t_shell *shell, const char *key, int nchar);
+void		update_var(t_shell *shell, const char *key, const char *value);
+void		add_new_var(t_shell *shell, const char *key, const char *value);
+void		decl_new_var(t_shell *shell, const char *key);
+void		remove_var(t_shell *shell, const char *key, int nchar);
+void		print_export(t_shell *shell, int is_export);
 /*
 ** ================== MEMORY ==================
 */
-void	shexit(t_shell *shell, int exit_code);
-void* shell_malloc(t_shell* shell, size_t size);
-void shell_free(t_shell* shell, void* ptr);
-void shell_cleanup(t_shell* shell);
-char* shell_strdup(t_shell* shell, const char* s);
-char* shell_strndup(t_shell* shell, const char* s, size_t n);
-
-
+void		shexit(t_shell *shell, int exit_code);
+void		*shell_malloc(t_shell* shell, size_t size);
+void		shell_free(t_shell* shell, void* ptr);
+void		shell_cleanup(t_shell* shell);
+char		*shell_strdup(t_shell* shell, const char* s);
+char		*shell_strndup(t_shell* shell, const char* s, size_t n);
 /*
 ** ================== UTILS ==================
 */
-const char  *skip_delimiters(const char *s, char c);
-int	 find_index_char(const char *str, char c);
+const char	*skip_delimiters(const char *s, char c);
+int			find_index_char(const char *str, char c);
 int			intLength(int num);
 /*
 ** -- DEBUG --
 */
-void printTokens(TokenNode* head);
-void print_command_table(const CommandTable* table);
-/*
-** -- OLD/TOREMOVE --
-*/
-void expand_variables(t_shell *shell);
-
+void		printTokens(TokenNode* head);
+void		print_command_table(const CommandTable* table);
 
 //pipex_and pipex_util
 # define ERR_INVALID_CMD "\n pipex: command not found \n"
@@ -273,4 +258,5 @@ char		**find_cmd_paths(char **envp);
 char		**ft_split_cmd_args(char *s);
 int			run_cmd(char *cmd, char **envp);
 int			pipex(t_in in,Command cmd);
+
 #endif
