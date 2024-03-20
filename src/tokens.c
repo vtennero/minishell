@@ -12,6 +12,26 @@
 
 #include "minishell.h"
 
+// v4
+
+
+int isSpecialOperator(const char *str) {
+    if (strncmp(str, "|", 1) == 0) {
+        return 1;
+    } else if (strncmp(str, "<<", 2) == 0) {
+        return 2;
+    } else if (strncmp(str, ">>", 2) == 0) {
+        return 2;
+    } else if (strncmp(str, ">", 1) == 0) {
+        return 1;
+    } else if (strncmp(str, "<", 1) == 0) {
+        return 1;
+    }
+    return 0; // Not a match
+}
+
+
+
 // v3 tokenizer
 
 int isspace_not_eol(int ch)
@@ -71,39 +91,7 @@ int	get_non_expanded_var_length(char *var)
 	return (count);
 }
 
-// char *processDoubleQuote(const char **s, t_shell *shell)
-// {
-// 	char	*result;
-// 	char	*result2;
 
-// 	ft_printf("processDoubleQuote start s |%s|\n", *s);
-// 	(*s)++;
-//     const char *start = *s; // Skip the initial quote
-// 	result2 = NULL;
-//     while (**s && **s != '\"')
-// 	{
-//         if (**s == '$')
-// 		{
-// 			result2 = expandVariables(shell, *s);
-// 			ft_printf("processDoubleQuote result2 %s\n", result2);
-// 			(*s)++;
-// 			while (**s && isalnum(**s))
-// 				(*s)++;
-// 		}
-// 		else
-// 			(*s)++;
-// 	}
-// 	ft_printf("processDoubleQuote s after while |%s|\n", *s);
-// 	int len = *s - start;
-// 	ft_printf("processDoubleQuote len |%d|\n", len);
-// 	result = strndup(start, len);
-// 	ft_printf("processDoubleQuote result |%s|\n", result);
-// 	result = ft_strjoin(result2, result);
-// 	// ft_printf("processDoubleQuote s before going past word |%s|\n", *s);
-// 	// ft_printf("processDoubleQuote s after going past word |%s|\n", *s);
-// 	ft_printf("processDoubleQuote result |%s|\n", result);
-//     return result;
-// }
 
 char *processDoubleQuote(const char **s, t_shell *shell) {
     char *buf = NULL;
@@ -177,243 +165,62 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
     return buf;
 }
 
-// char *processDoubleQuote(const char **s, t_shell *shell) {
-//     const char *start = *s + 1;
-//     char *result = malloc(strlen(start) + 1); // Allocate max needed size
-//     char *temp = result;
-// 	char	*varend;
-// 	(void)varend;
-// 	(void)shell;
-//     while (**s && **s != '\"')
-// 	{
-//         if (**s == '$')
-// 		{
-// 				(*s)++; // Move past the '$'
-// 				const char *varend = strchr(*s, ' ') ? strchr(*s, ' ') : strchr(*s, '\0');
-// 				char *varName = strndup(*s, varend - *s); // Extract variable name
-
-// 				// Assuming processVar takes the variable name and returns its value
-// 				char *varValue = processVar(varName); // Get the placeholder or actual value
-
-// 				// Ensure there's enough space in temp to append varValue
-// 				// This example directly appends, but you might need to realloc if temp isn't large enough
-// 				// strcat(temp, varValue);
-// 				temp = ft_strjoin(temp, varValue);
-
-// 				// Move temp forward by the length of varValue
-// 				temp += strlen(varValue);
-
-// 				// Free the dynamically allocated strings if necessary
-// 				free(varName);
-// 				free(varValue); // Only free if processVar returns a dynamically allocated string
-
-// 				// Advance *s to the end of the variable name
-// 				*s = varend;
-//         } else 
-//             *temp++ = **s;
-//         (*s)++;
-//     }
-//     *temp = '\0'; // Null-terminate the string
-//     if (**s == '\"') (*s)++;
-//     char *finalResult = strdup(result); // Duplicate the correctly sized string
-//     free(result);
-//     return finalResult;
-// }
-
-// char *quotevar1(t_shell *shell, const char **s)
-// {
-// 	size_t advancedPosition = 0;
-
-//     char *buffer = malloc(1024); // Initial buffer, adjust size as needed
-//     char *bufPtr = buffer;
-//     while (**s && !isspace((unsigned char)**s)) {
-//         if (**s == '\'') {
-// 			ft_printf("quotevar: s before processSingle quotes |%s|\n", *s);
-//             char *temp = processSingleQuote(s);
-//             strcpy(bufPtr, temp);
-// 			ft_printf("quotevar: s after processSingle quotes |%s|\n", *s);
-// 			ft_printf("quotevar: if (**s == ') bufPtr  |%s|\n", bufPtr);
-//             bufPtr += strlen(temp);
-//             // free(temp);
-//         } else if (**s == '\"') {
-//             char *temp = processDoubleQuote(s, shell);
-//             strcpy(bufPtr, temp);
-//             bufPtr += strlen(temp);
-//             // free(temp);
-// 		}
-// 		else if (**s == '$')
-// 		{
-// 			ft_printf("quotevar: found env variable\n");
-// 			// expand variables
-// 			char *temp = expandVariables2(shell, *s, &advancedPosition);
-// 			printf("quotevar: Expanded string: %s\n", temp);
-//             strcpy(bufPtr, temp);
-//     		bufPtr += advancedPosition;
-// 			*s += advancedPosition;
-//         } else {
-//             *bufPtr++ = **s;
-//             (*s)++;
-//         }
-//     }
-//     *bufPtr = '\0';
-//     char *finalResult = strdup(buffer);
-//     // free(buffer);
-// 	ft_printf("quotevar: final result |%s|\n", finalResult);
-//     return finalResult;
-// }
-
 char *quotevar(t_shell *shell, const char **s) {
     char *result = strdup(""); // Start with an empty string
-    while (**s && !isspace((unsigned char)**s)) {
-        char *temp = NULL;
-        if (**s == '\'') {
-            temp = processSingleQuote(s);
-        } else if (**s == '\"') {
-            temp = processDoubleQuote(s, shell);
-        } else if (**s == '$') {
-            size_t advancedPosition = 0;
-            temp = expandVariables2(shell, *s, &advancedPosition);
-            // *s += advancedPosition - 1; // Adjust for loop increment
-            *s += advancedPosition; // Adjust for loop increment
-        } else {
-            temp = malloc(2); // Allocate space for char and null terminator
-            temp[0] = **s;
-            temp[1] = '\0';
-            (*s)++;
-        }
 
-        if (temp) {
-            char *new_result = ft_strjoin(result, temp);
-            free(result); // Free the old result
-            result = new_result; // Update the result with the new concatenated string
-            free(temp); // Free the temporary string
-			// ft_printf("quotevar: while: result = |%s|\n", result);
-        }
-    }
+	if (!isSpecialOperator(*s))
+	{
+		while (**s && !isspace((unsigned char)**s) && !(isSpecialOperator(*s)))
+		{
+			char *temp = NULL;
+			int opLength = isSpecialOperator((*s));
+			if (**s == '\'') {
+				temp = processSingleQuote(s);
+			} else if (**s == '\"') {
+				temp = processDoubleQuote(s, shell);
+			} else if (**s == '$') {
+				size_t advancedPosition = 0;
+				temp = expandVariables2(shell, *s, &advancedPosition);
+				// *s += advancedPosition - 1; // Adjust for loop increment
+				*s += advancedPosition; // Adjust for loop increment
+			}
+			// else if (opLength > 0)
+			// {
+			// 	ft_printf("quotevar: operator found\n");
+			// 	// if (!temp)
+			// 	// {
+			// 		temp = ft_strndup((*s), opLength);
+			// 		result = temp;
+			// 		*s += opLength;
+			// 	// }
+			// 	break ;
+			// }
+			else {
+				// ft_printf("quotevar |%c|\n", **s);
+				temp = malloc(2); // Allocate space for char and null terminator
+				temp[0] = **s;
+				temp[1] = '\0';
+				(*s)++;
+			}
+			(void)opLength;
+			if (temp) {
+				char *new_result = ft_strjoin(result, temp);
+				free(result); // Free the old result
+				result = new_result; // Update the result with the new concatenated string
+				free(temp); // Free the temporary string
+				// ft_printf("quotevar: while: result = |%s|\n", result);
+			}
+		}
+	}
+	else
+	if (isSpecialOperator(*s))
+	{
+		result = ft_strndup((*s), isSpecialOperator(*s));
+		*s += isSpecialOperator(*s);
+	}
 	// ft_printf("quotevar: returning result = |%s|\n", result);
     return result; // This is the concatenated final result
 }
-
-
-// int find_closing_quote(const char *str, char c)
-// {
-// 	char	*ptr;
-//     int i = 1;
-//     // Find the initial occurrence of the c
-//     while (ptr[i] != '\0' && ptr[i] != c)
-//         i++;
-//     // Return the index of the next occurrence of the c
-//     if (ptr[i] == '\0')
-//         return 0;
-//     else
-//         return i;
-// }
-
-// char	*get_next_chunk(char *buf, char *newchunk)
-// {
-// 	char	*newbuf;
-
-// 	if (!buf)
-// 		newbuf = ft_strdup(newchunk);
-// 	else
-// 		newbuf = ft_strlcat(newbuf, buf, ft_strlen(newchunk) + 1);
-// 	return (newbuf);
-// }
-
-// char	*quotevar(t_shell* shell, char **s)
-// {
-// 	char	*buf;
-// 	char	*transformed;
-
-// 	while (*s && !isspace_noteol(*s))
-// 	{
-// 		if (*s == '\'')
-// 		{
-// 			transformed = processSingleQuotes(*s);
-// 			buf = get_next_chunk(buf, transformed);
-// 		}
-// 		if (*s == '\"')
-// 		{
-// 			transformed = processDoubleQuotes(*s);
-// 			buf = get_next_chunk(buf, transformed);
-// 		}
-// 		// if (*s == '$')
-// 		// {
-// 		// 	// transformed = expandVariables()
-// 		// 	buf = get_next_chunk(buf, transformed);
-
-// 		// }
-// 		(*s)++;
-// 	}
-
-// 	return (buf);
-// }
-
-// char *get_next_chunk(char *buf, const char *newchunk, size_t len)
-// {
-//     if (!buf)
-//     {
-//         buf = malloc(len + 1); // Allocate memory for new chunk
-//         if (!buf) return NULL; // Check for allocation failure
-//         strncpy(buf, newchunk, len); // Copy the chunk into buf
-//         buf[len] = '\0'; // Null-terminate the string
-//     }
-//     else
-//     {
-//         size_t buflen = strlen(buf);
-//         char *newbuf = realloc(buf, buflen + len + 1); // Resize buf to fit new chunk
-//         if (!newbuf) return NULL; // Check for allocation failure
-//         strncpy(newbuf + buflen, newchunk, len); // Copy the chunk into the new part of buf
-//         newbuf[buflen + len] = '\0'; // Null-terminate the string
-//         buf = newbuf;
-//     }
-//     return buf;
-// }
-
-// char *quotevar(t_shell *shell, const char **s)
-// {
-// 	(void)shell;
-//     char *buf = NULL;
-//     while (*s && **s && !(isspace_not_eol(**s)))
-//     {
-//         // if (isspace_not_eol(**s))
-//         // {
-//         //     // Skip spaces
-//         //     (*s)++;
-//         // }
-//         // else
-//         // {
-//             // Find the nearest quote or the end of the string
-//             char *next_single_quote = strchr(*s, '\'');
-//             char *next_double_quote = strchr(*s, '\"');
-//             char *next_quote = NULL;
-
-//             if (!next_single_quote) next_quote = next_double_quote;
-//             else if (!next_double_quote) next_quote = next_single_quote;
-//             else next_quote = (next_single_quote < next_double_quote) ? next_single_quote : next_double_quote;
-
-//             if (next_quote)
-//             {
-//                 // Copy everything up to the next quote
-//                 size_t len = next_quote - *s;
-//                 buf = get_next_chunk(buf, *s, len);
-// 				ft_printf("quotevar: nextquote buf |%s|\n", buf);
-//                 *s += len; // Move the pointer forward
-//             }
-//             else
-//             {
-//                 // No more quotes found, copy the rest of the string
-//                 size_t len = strlen(*s);
-//                 buf = get_next_chunk(buf, *s, len);
-// 				ft_printf("quotevar: else buf |%s|\n", buf);
-//                 *s += len; // Move the pointer to the end
-//                 break; // No more processing needed
-//             // }
-//         }
-//     }
-// 	ft_printf("quotevar: buf |%s|\n", buf);
-//     return buf;
-// }
 
 
 char    *parse_tokens(t_shell *shell, const char *s)
