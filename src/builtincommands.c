@@ -104,7 +104,7 @@ void builtin_export(t_shell *shell, char** args, int n_args)
 	i = 0;
 	// ft_printf("export\n");
 	if (n_args == 0)
-		print_export(shell);
+		print_export(shell, 1);
 	else
 	{
 		while (i < n_args)
@@ -138,17 +138,18 @@ void builtin_unset(t_shell *shell, char** args, int n_args)
 
 }
 
-void	builtin_env(void)
+void	builtin_env(t_shell *shell)
 {
-	extern char	**environ;
-	char		**env;
+	// extern char	**environ;
+	// char		**env;
 
-	env = environ;
-	while (*env != NULL)
-	{
-		ft_printf("%s\n", *env);
-		env++;
-	}
+	// env = environ;
+	// while (*env != NULL)
+	// {
+	// 	ft_printf("%s\n", *env);
+	// 	env++;
+	// }
+	print_export(shell, 0);
 }
 
 // Exits the shell.

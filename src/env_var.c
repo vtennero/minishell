@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/19 16:50:01 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/20 11:34:53 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,12 +227,12 @@ void update_var(t_shell *shell, const char *key, const char *value)
     }
 }
 
-void print_export(t_shell *shell)
+void print_export(t_shell *shell, int is_export)
 {
     // ft_printf("print_export\n");
     t_env_var *current = shell->env_head;
     while (current) {
-        if (shell->is_interactive == 1)
+        if (shell->is_interactive == 1 && is_export == 1)
             ft_printf("declare -x ");
         ft_printf("%s", current->key);
         if (current->value !=NULL)

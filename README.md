@@ -1,11 +1,12 @@
 # minishell
 
-Workflow (as of March 19)
+Workflow (as of March 20)
 
 ⚙ In Progress
 - pipes |
 - redirections
 - exit codes
+- memory management
 
 
 ✅ Done
@@ -17,7 +18,6 @@ Workflow (as of March 19)
 - variable expansion
 - single quotes, double quotes
 - signals, basic version
-- memory management
 - unset
 - export
 - signals w global variables

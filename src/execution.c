@@ -40,7 +40,7 @@ void execute_command(t_shell *shell, Command* command)
 		builtin_export(shell, command->args, command->arg_count);
     } else if (ft_strcmp(command->name, "env") == 0) {
 		// Call built-in env command
-		builtin_env();
+		builtin_env(shell);
     } else if (ft_strcmp(command->name, "exit") == 0) {
         // Call built-in exit command
 

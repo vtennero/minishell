@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 14:46:06 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/16 18:24:53 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/20 11:05:25 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,12 +103,13 @@ void create_env_var_list(t_shell *shell, char **envp) {
 t_shell *initialize_shell(char **envp)
 {
     // ft_printf("initialize_shell\n");
+
     t_shell* shell = (t_shell*)ft_calloc(1, sizeof(t_shell));
     if (!shell) {
         perror("Failed to initialize shell");
         exit(EXIT_FAILURE);
     }
-
+    // configure_terminal();
     // Initialize the memory tracker within the shell
     shell->mem_tracker.head = NULL;
     shell->token_head = NULL;

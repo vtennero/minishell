@@ -23,7 +23,7 @@
 # include <sys/wait.h>
 #include <errno.h>
 #include <signal.h>
-
+#include <termios.h>
 
 extern volatile sig_atomic_t g_signal_received;
 /*
@@ -71,9 +71,9 @@ typedef enum {
 } TokenType;
 
 typedef enum {
-    NO_QUOTES,
-    SINGLE_QUOTES,
-    DOUBLE_QUOTES
+	NO_QUOTES,
+	SINGLE_QUOTES,
+	DOUBLE_QUOTES
 } QuoteType;
 /*
 ** -- COMMANDS --
@@ -84,19 +84,19 @@ typedef enum {
 } CommandType;
 
 typedef struct Command {
-    CommandType type;
-    char* name;
-    char** args;
-    int arg_count;
-    char* redirect_in;
-    char* redirect_out;
-    char* redirect_append;
-    char* redirect_heredoc;
-    int fd_in;                 // File descriptor for input redirection
-    int fd_out;                // File descriptor for output redirection
-    int fin;                 // File descriptor for input redirection
-    int fout;                // File descriptor for output redirection
-    struct Command* next;
+	CommandType type;
+	char* name;
+	char** args;
+	int arg_count;
+	char* redirect_in;
+	char* redirect_out;
+	char* redirect_append;
+	char* redirect_heredoc;
+	int fd_in;                 // File descriptor for input redirection
+	int fd_out;                // File descriptor for output redirection
+	int fin;                 // File descriptor for input redirection
+	int fout;                // File descriptor for output redirection
+	struct Command* next;
 } Command;
 
 
@@ -141,7 +141,6 @@ void        create_env_var_list(t_shell *shell, char **envp);
 ** -- SIGNALS --
 */
 void        sigint_handler(int sig_num);
-void        sigquit_handler(int sig_num);
 void        setup_signals(t_shell *shell);
 
 /*
@@ -166,7 +165,6 @@ int shouldExpandVariable(const char *word);
 /*
 ** -- VARIABLE EXPANSION --
 */
-// char* expandVariables(t_shell *shell, const char *input, t_env_var *envVars);
 char* expandVariables(t_shell *shell, const char *input);
 char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPosition);
 /*
@@ -190,7 +188,7 @@ void builtin_cd(t_shell * shell, char** args, int n_args);
 void builtin_pwd(void);
 void builtin_echo(t_shell *shell, char** args, int n_args);
 void builtin_unset(t_shell *shell, char** args, int n_args);
-void builtin_env(void);
+void	builtin_env(t_shell *shell);
 
 /*
 ** :: EXIT ::
@@ -203,14 +201,14 @@ int adjust_exit_code(int n);
 /*
 ** :: EXPORT ::
 */
-void builtin_export(t_shell *shell, char** args, int n_args);
-int process_env_arg(t_shell *shell, const char *arg);
-int check_duplicates(t_shell *shell, const char *key, int nchar);
-void update_var(t_shell *shell, const char *key, const char *value);
-void add_new_var(t_shell *shell, const char *key, const char *value);
-void decl_new_var(t_shell *shell, const char *key);
-void remove_var(t_shell *shell, const char *key, int nchar);
-void print_export(t_shell *shell);
+void	builtin_export(t_shell *shell, char** args, int n_args);
+int		process_env_arg(t_shell *shell, const char *arg);
+int		check_duplicates(t_shell *shell, const char *key, int nchar);
+void	update_var(t_shell *shell, const char *key, const char *value);
+void	add_new_var(t_shell *shell, const char *key, const char *value);
+void	decl_new_var(t_shell *shell, const char *key);
+void	remove_var(t_shell *shell, const char *key, int nchar);
+void	print_export(t_shell *shell, int is_export);
 /*
 ** ================== MEMORY ==================
 */
@@ -227,7 +225,7 @@ char* shell_strndup(t_shell* shell, const char* s, size_t n);
 */
 const char  *skip_delimiters(const char *s, char c);
 int         find_index_char(const char *str, char c);
-int intLength(int num);
+int			intLength(int num);
 /*
 ** -- DEBUG --
 */

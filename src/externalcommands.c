@@ -12,19 +12,27 @@
 
 #include "minishell.h"
 
-
-
+int find_env_var(t_env_var *list, const char *key)
+{
+    while (list != NULL) {  // Iterate through the list
+        if (ft_strcmp(list->key, (char *)key) == 0) {  // Compare current node's key with the search key
+            return 1;  // Key found
+        }
+        list = list->next;  // Move to the next node
+    }
+    return 0;  // Key not found
+}
 
 void execute_ext_command(t_shell *shell, Command *cmd)
 {
     pid_t pid = fork();
 
-    (void)shell;
-    // if (!command_exists(cmd->name)) {
-    //     perror("Command not found");
-    //     shell->last_exit_status = 127;
-    //     return;
-    // }
+    if (!find_env_var(shell->env_head, "PATH"))
+    {
+        perror("Command not found");
+        shell->last_exit_status = 127;
+        return;
+    }
     if (pid == 0) { // Child process
         // Handle input redirection
         if (cmd->redirect_in != NULL) {
