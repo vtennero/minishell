@@ -61,6 +61,8 @@ void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) 
     // Copy the filename to the appropriate field based on whether it's append or overwrite
     if (append) {
         cmd->redirect_append = shell_strdup(shell, filename);
+        int fd = open(filename, O_RDWR | O_CREAT | O_APPEND,0666);
+        cmd->fout = fd;
     } else {
 
         cmd->redirect_out = shell_strdup(shell, filename);
@@ -213,8 +215,9 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
         if (current_token->next && current_token->next->token.type == TOKEN_PIPE)
 
         {
-
-            current_command->fout=-99;
+            // ft_putstr_fd(ft_strjoin_nconst("fout is",ft_itoa(current_command->fout)),2);
+            if (current_command->fout==0)
+                current_command->fout=-99;
                         // printf("Current cmd is %s and fout is %d",current_command->name,current_command->fout);
 
             pipe_exist =1;

@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/19 01:36:24 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/19 23:11:56 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,11 +106,16 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
         builtin_exit(shell, command->args, command->arg_count);
     }  else if (cmd_path)
 	{
-		status = execve(cmd_path, cmd_args, envp);
+		status=execve(cmd_path, cmd_args, envp);
+		ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa(status)),2);
+
+		// exit(status);
+
 	}
 	else
 	{
 		status = 127;
+		shell->last_exit_status=status;
 		return (ft_puterr(ERR_INVALID_CMD, 127));
 	}
 	free(cmd_path);
@@ -153,15 +158,22 @@ int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, int pipefd[2],t_s
 			dup2(pipefd[1], STDOUT_FILENO);
 			close(pipefd[1]);
 		}
-		run_cmd(cmd, in.envp,shell);
-		_exit(status); // Needed
+
+		if (cmd->fout !=0 && cmd->fout !=-99)
+		{
+			dup2(cmd->fout, STDOUT_FILENO);
+			close(cmd->fout);
+		}
+
+		status=run_cmd(cmd, in.envp,shell);
+		exit(status); // Needed
 	}
 	else 
 	{
 		close(pipefd[1]);
 	}
 
-	return (pid);
+	return (status);
 }
 
 int pipex(t_in in,Command *cmd,t_shell *shell) {
@@ -170,7 +182,7 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	int original_stdin = dup(STDIN_FILENO);
 	int original_stdout = dup(STDOUT_FILENO);
 
-	status = 1;
+	status = 0;
 	prev_pipe = cmd->fin;
 	while (cmd->next) {
 		status = execute_command_pipex(prev_pipe,cmd,in ,in.pipefd,shell);
@@ -181,12 +193,8 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 		if (status < 0)
 			exit(-1);
 	}
-
 	waitpid(0, NULL, WNOHANG | WUNTRACED);
-
-
 	// waitpid(0, NULL, WUNTRACED);
-
 	if (cmd->fin == -99)
 	{
 			dup2(prev_pipe, STDIN_FILENO);
@@ -214,11 +222,13 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 	if (pid == 0)
 	{
 		status = run_cmd(cmd, in.envp,shell);
-		_exit(status);
-	}
-	// waitpid(0, NULL, WUNTRACED);
-	// waitpid(0, NULL, WNOHANG | WUNTRACED);
+		ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(status)),2);
 
+		exit(status);
+	}
+	waitpid(-1,  &status, WUNTRACED | WNOHANG);
+	// waitpid(-1,  &status, WNOHANG );
+ 	// waitpid(0, &status, 0 );
 	if (prev_pipe!=STDIN_FILENO)
 		close(prev_pipe);
 	// close(in.pipefd[0]);
@@ -236,7 +246,13 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
         perror("dup2");
         exit(EXIT_FAILURE);
     }
-	return status;
+	 close(original_stdout);
+
+	// if (WEXITSTATUS(status) == -1)
+	// 	exit(-1);
+
+	// shell->last_exit_status=((status));
+	return  WEXITSTATUS(status);
 }
 
 
