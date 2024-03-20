@@ -110,15 +110,6 @@ typedef struct Command
 	struct Command *next;
 } Command;
 
-typedef struct s_params
-{
-	// int		fin;
-	// int		fout;
-	int argc;
-	char **argv;
-	char **envp;
-	int pipefd[2];
-} t_in;
 
 typedef struct
 {
@@ -152,6 +143,8 @@ typedef struct s_shell
 	int last_exit_status;      // Exit status of the last executed command
 	struct sigaction *signals; // Custom signal handlers
 	int is_interactive;
+	char** envp;
+	int pipefd[2];
 	MemTracker mem_tracker;
 	TokenNode *token_head;
 } t_shell;
@@ -206,9 +199,10 @@ void	parse_heredoc(t_shell *shell);
 ** -- COMMAND TABLE --
 */
 CommandTable	*create_command_table(t_shell *shell, TokenNode *tokens);
-void	execute_command_table(t_shell *shell, CommandTable *table, t_in in);
+void	execute_command_table(t_shell *shell, CommandTable *table);
 void	free_command_table(CommandTable *table);
-void	execute_ext_command(Command *cmd);
+// void	execute_ext_command(Command *cmd);
+void execute_ext_command(t_shell *shell, Command *cmd);
 /*
 ** -- BUILT_IN COMMANDS --
 */
@@ -263,6 +257,7 @@ void	print_command_table(const CommandTable *table);
 
 char	*check_path(char **envp);
 char	*locate_cmd(char **paths, char *cmd);
+int find_env_var(t_env_var *list, const char *key);
 char	*find_env_path(char **envp);
 void	free_array(char **v);
 char	*ft_strdup_ignore(const char *s, char ignore);
@@ -270,13 +265,12 @@ int	ft_strchr_count(const char *s, int c);
 char	*ft_strjoin_nconst(char *s1, char *s2);
 int	ft_puterr(char *s, int ret);
 
-int	execute_command_pipex(int prev_pipe, Command *cmd, t_in in, int pipefd[2],
-		t_shell *shell);
+int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell);
 char	**find_cmd_paths(char **envp);
 char	**ft_split_cmd_args(char *s);
 // int			run_cmd(char *cmd, char **envp);
 int	run_cmd(Command *command, char **envp, t_shell *shell);
 // int pipex(t_in in,Command cmd,t_shell *shell);
-int	pipex(t_in in, Command *cmd, t_shell *shell);
+int	pipex( Command *cmd, t_shell *shell);
 
 #endif

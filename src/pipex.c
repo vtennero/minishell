@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/20 20:25:16 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/21 00:31:31 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
 		builtin_export(shell, command->args, command->arg_count);
     } else if (ft_strcmp(command->name, "env") == 0) {
 		// Call built-in env command
-		builtin_env();
+		builtin_env(shell);
     } else if (ft_strcmp(command->name, "exit") == 0) {
         // Call built-in exit command
 
@@ -107,7 +107,10 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
     }  else if (cmd_path)
 	{
 		status=execve(cmd_path, cmd_args, envp);
-		ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa(status)),2);
+		free(cmd_path);
+		free_array(cmd_args);
+		exit(EXIT_FAILURE);
+		// ft_putstr_fd(ft_strjoin_nconst("CMD inside STATUS IS ",ft_itoa(status)),2);
 
 		// exit(status);
 
@@ -120,21 +123,21 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
 	}
 	free(cmd_path);
 	free_array(cmd_args);
+	shell->last_exit_status=status;
+
 	return (status);
 }
-
-
 
 
 // int	execute_command_pipex(int prev_pipe,int fin,int fout, int pipefd[2], char *cmd, char *envp[])
 // int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, t_shell *shell)
 
-int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, int pipefd[2],t_shell *shell)
+int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 {
 	int		status;
 	pid_t	pid;
 	status = 0;
-	if (pipe(pipefd) < 0)
+	if (pipe(shell->pipefd) < 0)
 		return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
 	pid = fork();
 	if (pid < 0)
@@ -155,8 +158,8 @@ int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, int pipefd[2],t_s
 	}
 		if (cmd->fout ==  -99)
 		{
-			dup2(pipefd[1], STDOUT_FILENO);
-			close(pipefd[1]);
+			dup2(shell->pipefd[1], STDOUT_FILENO);
+			close(shell->pipefd[1]);
 		}
 
 		if (cmd->fout !=0 && cmd->fout !=-99)
@@ -165,35 +168,44 @@ int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, int pipefd[2],t_s
 			close(cmd->fout);
 		}
 
-		status=run_cmd(cmd, in.envp,shell);
+		status=run_cmd(cmd, shell->envp,shell);
 		exit(status); // Needed
 	}
 	else 
 	{
-		close(pipefd[1]);
+		close(shell->pipefd[1]);
 	}
 
 	return (status);
 }
 
-int pipex(t_in in,Command *cmd,t_shell *shell) {
+int pipex(Command *cmd,t_shell *shell) {
 	int status;
 	int prev_pipe;
 	int original_stdin = dup(STDIN_FILENO);
 	int original_stdout = dup(STDOUT_FILENO);
 
+	if (!find_env_var(shell->env_head, "PATH"))
+    {
+        perror("Command not found");
+        shell->last_exit_status = 127;
+        return 1;
+    }
+	
 	status = 0;
 	prev_pipe = cmd->fin;
 	while (cmd->next) {
-		status = execute_command_pipex(prev_pipe,cmd,in ,in.pipefd,shell);
-		prev_pipe = in.pipefd[0];
+		status = execute_command_pipex(prev_pipe,cmd,shell);
+		prev_pipe = shell->pipefd[0];
 		// waitpid(0, NULL, WUNTRACED);
 		// waitpid(0, NULL, WNOHANG | WUNTRACED);
 		*cmd = *(cmd->next);
 		if (status < 0)
 			exit(-1);
 	}
-	waitpid(0, NULL, WNOHANG | WUNTRACED);
+	// waitpid(0, NULL, WUNTRACED);
+			waitpid(0, NULL, WNOHANG | WUNTRACED);
+
 	// waitpid(0, NULL, WUNTRACED);
 	if (cmd->fin == -99)
 	{
@@ -214,23 +226,37 @@ int pipex(t_in in,Command *cmd,t_shell *shell) {
 
 	if (ft_strcmp(cmd->name,"exit")==0)
 	{
-		status = run_cmd(cmd, in.envp,shell);
+		status = run_cmd(cmd, shell->envp,shell);
 	}
 	int pid = fork();
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
 	{
-		status = run_cmd(cmd, in.envp,shell);
+		status = run_cmd(cmd, shell->envp,shell);
 
-		exit(status);
+		exit(EXIT_FAILURE);
 	}
-	waitpid(-1,  &status, WUNTRACED | WNOHANG);
-	shell->last_exit_status=status;
-	if (WIFEXITED(status))
-		status = WEXITSTATUS(status);
+	waitpid(0,  &status, WUNTRACED );
+	// (void)shell;
 
-	ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(shell->last_exit_status)),2);
+	if (WIFEXITED(status) && ft_strcmp(cmd->name,"exit")!=0 )
+	{
+
+		// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa((status))),2);
+
+		int status2=  WEXITSTATUS(status);
+		shell->last_exit_status=status2;
+	}
+	else
+			shell->last_exit_status=status;
+
+	// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa(status)),2);
+
+	// if (WIFEXITED(status))
+	// 	status = WEXITSTATUS(status);
+
+	// ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(shell->last_exit_status)),2);
 
 	// waitpid(-1,  &status, WNOHANG );
  	// waitpid(0, &status, 0 );

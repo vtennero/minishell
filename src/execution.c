@@ -34,13 +34,13 @@ void	execute_command(t_shell *shell, Command *command)
 		execute_ext_command(shell, command);
 }
 
-void execute_command_table(t_shell *shell, CommandTable* table,t_in in)
+void execute_command_table(t_shell *shell, CommandTable* table)
 {
 	Command	*current;
 
-    Command* current = table->head;
+    current = table->head;
     (void)shell;
-    pipex(in,current,shell);
+    pipex(current,shell);
 
     // while (current != NULL)
     // {
