@@ -6,49 +6,13 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/21 00:31:31 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/22 13:42:32 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// char	**ft_split_cmd_args(char *s,int count)
-// {
-// 	int		size;
-// 	char	*p;
-// 	char	**cmd_args;
 
-// 	if (s == NULL || *s == 0)
-// 		return (NULL);
-
-// 	cmd_args = (char **)malloc((count+1) * sizeof(char *));
-// 	cmd_args[size - 1] = 0;
-// 	cmd_args[0] = ft_strndup(s, p - s);
-// 	if (*p && p[1])
-// 		cmd_args[1] = ft_strdup_ignore(p + 1, '"');
-// 	return (cmd_args);
-// }
-// char* join_name_and_args(Command* cmd) {
-//     char* joined_str = strdup(cmd->name); // Duplicate name
-//     if (joined_str == NULL) {
-//         fprintf(stderr, "Memory allocation failed\n");
-//         exit(EXIT_FAILURE);
-//     }
-
-//     for (int i = 0; i < cmd->arg_count; ++i) {
-//         char* temp = ft_strjoin(joined_str," ");
-// 		temp = ft_strjoin(temp, cmd->args[i]);
-
-//         if (temp == NULL) {
-//             fprintf(stderr, "Memory allocation failed\n");
-//             exit(EXIT_FAILURE);
-//         }
-//         free(joined_str);
-//         joined_str = temp;
-//     }
-
-//     return joined_str;
-// }
 int	run_cmd(Command *command, char **envp,t_shell* shell)
 {
 	char	**cmd_args;
@@ -119,7 +83,8 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
 	{
 		status = 127;
 		shell->last_exit_status=status;
-		return (ft_puterr(ERR_INVALID_CMD, 127));
+
+		return (ft_puterr(ft_strjoin_nconst(command->name, ERR_INVALID_CMD), 127));
 	}
 	free(cmd_path);
 	free_array(cmd_args);
@@ -173,7 +138,12 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 	}
 	else 
 	{
+				// waitpid(0, NULL, WNOHANG | WUNTRACED );
+
+		waitpid(0, NULL, WUNTRACED);
 		close(shell->pipefd[1]);
+
+
 	}
 
 	return (status);
@@ -197,92 +167,94 @@ int pipex(Command *cmd,t_shell *shell) {
 	while (cmd->next) {
 		status = execute_command_pipex(prev_pipe,cmd,shell);
 		prev_pipe = shell->pipefd[0];
-		// waitpid(0, NULL, WUNTRACED);
-		// waitpid(0, NULL, WNOHANG | WUNTRACED);
+	
 		*cmd = *(cmd->next);
 		if (status < 0)
 			exit(-1);
 	}
-	// waitpid(0, NULL, WUNTRACED);
-			waitpid(0, NULL, WNOHANG | WUNTRACED);
 
+			// waitpid(0, NULL, WNOHANG | WUNTRACED);
 	// waitpid(0, NULL, WUNTRACED);
-	if (cmd->fin == -99)
-	{
-			dup2(prev_pipe, STDIN_FILENO);
-			close(prev_pipe);
-			// close(in.pipefd[1]);
-	}
-	else if (cmd->fin !=0)
-	{
-		dup2(cmd->fin, STDIN_FILENO);
-		// close(cmd->fin);
-	}
-	if (cmd->fout !=0 && cmd->fout !=-99)
-	{
-		dup2(cmd->fout, STDOUT_FILENO);
-		close(cmd->fout);
-	}
+		if (cmd->fin == -99)
+		{
+				dup2(prev_pipe, STDIN_FILENO);
+				close(prev_pipe);
+				// close(in.pipefd[1]);
+		}
+		else if (cmd->fin !=0)
+		{
+			dup2(cmd->fin, STDIN_FILENO);
+			// close(cmd->fin);
+		}
+		if (cmd->fout !=0 && cmd->fout !=-99)
+		{
+			dup2(cmd->fout, STDOUT_FILENO);
+			close(cmd->fout);
+		}
 
-	if (ft_strcmp(cmd->name,"exit")==0)
-	{
-		status = run_cmd(cmd, shell->envp,shell);
-	}
+		if (ft_strcmp(cmd->name,"exit")==0)
+		{
+			status = run_cmd(cmd, shell->envp,shell);
+		}
+	
 	int pid = fork();
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
 	{
 		status = run_cmd(cmd, shell->envp,shell);
-
-		exit(EXIT_FAILURE);
+		exit(0);
 	}
-	waitpid(0,  &status, WUNTRACED );
 	// (void)shell;
-
-	if (WIFEXITED(status) && ft_strcmp(cmd->name,"exit")!=0 )
+	if (pid > 0)
 	{
+		// waitpid(0,  &status, WUNTRACED );
+				// waitpid(0, &status, WNOHANG | WUNTRACED );
+		// waitpid(0, &status, 0);
+		waitpid(0, &status,  WUNTRACED );
 
-		// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa((status))),2);
+		if (WIFEXITED(status) && ft_strcmp(cmd->name,"exit")!=0 )
+		{
 
-		int status2=  WEXITSTATUS(status);
-		shell->last_exit_status=status2;
+			// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa((status))),2);
+
+			int status2=  WEXITSTATUS(status);
+			shell->last_exit_status=status2;
+		}
+		else
+				shell->last_exit_status=0;
+
+		// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa(status)),2);
+
+		// if (WIFEXITED(status))
+		// 	status = WEXITSTATUS(status);
+
+		// ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(shell->last_exit_status)),2);
+
+		// waitpid(-1,  &status, WNOHANG );
+		// waitpid(0, &status, 0 );
+		if (prev_pipe!=STDIN_FILENO)
+			close(prev_pipe);
+		// close(in.pipefd[0]);
+		// close(in.pipefd[1]);
+
+		// close(cmd->fin);
+		// close(cmd->fout);
 	}
-	else
-			shell->last_exit_status=status;
+	if (dup2(original_stdin, STDIN_FILENO) == -1) {
+			perror("dup2");
+			exit(EXIT_FAILURE);
+		}
+		close(original_stdin);
+	if (dup2(original_stdout, STDOUT_FILENO) == -1) {
+			perror("dup2");
+			exit(EXIT_FAILURE);
+		}
+		close(original_stdout);
 
-	// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa(status)),2);
-
-	// if (WIFEXITED(status))
-	// 	status = WEXITSTATUS(status);
-
-	// ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(shell->last_exit_status)),2);
-
-	// waitpid(-1,  &status, WNOHANG );
- 	// waitpid(0, &status, 0 );
-	if (prev_pipe!=STDIN_FILENO)
-		close(prev_pipe);
-	// close(in.pipefd[0]);
-	// close(in.pipefd[1]);
-
-	// close(cmd->fin);
-	// close(cmd->fout);
 	
-  if (dup2(original_stdin, STDIN_FILENO) == -1) {
-        perror("dup2");
-        exit(EXIT_FAILURE);
-    }
-    close(original_stdin);
-  if (dup2(original_stdout, STDOUT_FILENO) == -1) {
-        perror("dup2");
-        exit(EXIT_FAILURE);
-    }
-	 close(original_stdout);
-
-	// if (WEXITSTATUS(status) == -1)
-	// 	exit(-1);
-
-		return  WEXITSTATUS(status);
+	
+	return  WEXITSTATUS(status);
 }
 
 

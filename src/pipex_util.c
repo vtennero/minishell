@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 17:08:33 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/12 20:48:47 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/22 09:47:22 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,5 +156,5 @@ int	ft_puterr(char *s, int ret)
 {
 	ft_putstr_fd(s, 2);
 	ft_putstr_fd("\n", 2);
-	return (ret);
+	exit (ret);
 }

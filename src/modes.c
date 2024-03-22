@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 16:07:54 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:39:33 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,33 @@ void	interactive_mode(t_shell *shell)
 {
 	char			*input;
 	CommandTable	*command_table;
-
+	// int status=0;
 	while (1)
 	{
-		input = readline("$ ");
-		if (input == NULL)
-		{
-			ft_printf("exit\n");
-			break ;
-		}
-		else if (ft_strlen(input) > 0)
-		{
-			add_history(input);
-			create_tokens(shell, input);
-			command_table = create_command_table(shell, shell->token_head);
-			// printTokens(shell->token_head);
-			// print_command_table(command_table);
-			execute_command_table(shell, command_table);
-			shell->token_head = NULL;
-			free(input);
-		}
-		else
-			free(input);
+		// while (waitpid(-1, &status, WUNTRACED) == 0 || waitpid(-1, &status,
+		// 		WUNTRACED) == -1)
+		// {
+			// shell->last_exit_status=status;
+			input = readline("$ ");
+			if (input == NULL)
+			{
+				ft_printf("exit\n");
+				break ;
+			}
+			else if (ft_strlen(input) > 0)
+			{
+				add_history(input);
+				create_tokens(shell, input);
+				command_table = create_command_table(shell, shell->token_head);
+				// printTokens(shell->token_head);
+				// print_command_table(command_table);
+				execute_command_table(shell, command_table);
+				shell->token_head = NULL;
+				free(input);
+			}
+			else
+				free(input);
+		// }
 	}
 }
 
@@ -59,7 +64,7 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 		create_tokens(shell, *line);
 		free(*line);
 	}
-	free (line);
+	free(line);
 	command_table = create_command_table(shell, shell->token_head);
 	// printTokens(shell->token_head);
 	// print_command_table(command_table);
@@ -104,7 +109,7 @@ void	std_input_mode(int fd, t_shell *shell)
 		create_tokens(shell, *line);
 		free(*line);
 	}
-	free (line);
+	free(line);
 	command_table = create_command_table(shell, shell->token_head);
 	// printTokens(shell->token_head);
 	// print_command_table(command_table);

@@ -251,7 +251,7 @@ void	printTokens(TokenNode *head);
 void	print_command_table(const CommandTable *table);
 
 // pipex_and pipex_util
-# define ERR_INVALID_CMD "\n pipex: command not found \n"
+# define ERR_INVALID_CMD " : command not found \n"
 # define STDIN_FILENO 0
 # define STDOUT_FILENO 1
 
