@@ -41,11 +41,14 @@ void set_redirect_in(t_shell *shell, Command* cmd, char* filename) {
     // if (cmd->redirect_in) free(cmd->redirect_in);
     cmd->redirect_in = shell_strdup(shell, filename);
     int fd = open(filename, O_RDONLY);
+    // if (fd ==-1)
+    //     ft_puterr(ft_strjoin_nconst(filename, " : File not exists/permission error" ), 1);
     cmd->fin = fd;
 }
 
 void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) {
     if (!cmd || !filename) return;
+    int fd = 0;
 
     // Free any existing redirection target to avoid memory leaks
     // if (cmd->redirect_out) {
@@ -60,17 +63,17 @@ void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) 
 
     // Copy the filename to the appropriate field based on whether it's append or overwrite
     if (append) {
-        cmd->redirect_append = shell_strdup(shell, filename);
-        int fd = open(filename, O_RDWR | O_CREAT | O_APPEND,0666);
-        cmd->fout = fd;
+        cmd->redirect_out = shell_strdup(shell, filename);
+        fd = open(filename, O_RDWR | O_CREAT | O_APPEND,0666);
     } else {
 
         cmd->redirect_out = shell_strdup(shell, filename);
-        int fd = open(filename, O_RDWR | O_CREAT,0666);
-        cmd->fout = fd;
-
-
+        fd = open(filename, O_RDWR | O_CREAT,0666);
     }
+    // if (fd ==-1)
+    //     ft_puterr(ft_strjoin_nconst(filename, "File not exists/permission error" ), 1);
+    cmd->fout = fd;
+
 }
 
 
@@ -206,7 +209,8 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
         {
             //   printf("Current cmd is %s and fin is %d",current_command->name,current_command->fin);
             if (ft_strcmp(current_command->name,"ls") != 0 && ft_strcmp(current_command->name,"echo") != 0)
-                current_command->fin=-99;
+                if (current_command->fin!=-1)
+                    current_command->fin=-99;
             // printf("Current cmd %s fin to %d",current_command->name,current_command->fin);
 
             pipe_exist =0;

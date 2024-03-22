@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/22 14:35:17 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/22 16:07:44 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,11 @@ int pipex(Command *cmd,t_shell *shell) {
 	while (cmd->next) {
 		status = execute_command_pipex(prev_pipe,cmd,shell);
 		prev_pipe = shell->pipefd[0];
-	
+		if (cmd ->fin ==-1)
+		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
+		if (cmd ->fout ==-1)
+		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
+
 		*cmd = *(cmd->next);
 		if (status < 0)
 			exit(-1);
@@ -175,14 +179,20 @@ int pipex(Command *cmd,t_shell *shell) {
 
 			// waitpid(0, NULL, WNOHANG | WUNTRACED);
 		// waitpid(0, NULL, WUNTRACED);
+
+
 		if (cmd->fin == -99)
 		{
 				dup2(prev_pipe, STDIN_FILENO);
 				close(prev_pipe);
 				// close(in.pipefd[1]);
 		}
+
+
+
 		else if (cmd->fin !=0)
 		{
+
 			dup2(cmd->fin, STDIN_FILENO);
 			// close(cmd->fin);
 		}
@@ -202,6 +212,10 @@ int pipex(Command *cmd,t_shell *shell) {
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid2 == 0)
 	{
+		if (cmd ->fin ==-1)
+		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
+		if (cmd ->fout ==-1)
+		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
 		status = run_cmd(cmd, shell->envp,shell);
 		exit(0);
 	}
