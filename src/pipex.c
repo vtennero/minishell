@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/22 13:42:32 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/22 13:55:25 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 	{
 				// waitpid(0, NULL, WNOHANG | WUNTRACED );
 
-		waitpid(0, NULL, WUNTRACED);
+		// waitpid(0, NULL, WUNTRACED);
 		close(shell->pipefd[1]);
 
 
@@ -174,7 +174,7 @@ int pipex(Command *cmd,t_shell *shell) {
 	}
 
 			// waitpid(0, NULL, WNOHANG | WUNTRACED);
-	// waitpid(0, NULL, WUNTRACED);
+		waitpid(0, NULL, WUNTRACED);
 		if (cmd->fin == -99)
 		{
 				dup2(prev_pipe, STDIN_FILENO);
