@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/22 13:55:25 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/22 14:35:17 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ int pipex(Command *cmd,t_shell *shell) {
 	}
 
 			// waitpid(0, NULL, WNOHANG | WUNTRACED);
-		waitpid(0, NULL, WUNTRACED);
+		// waitpid(0, NULL, WUNTRACED);
 		if (cmd->fin == -99)
 		{
 				dup2(prev_pipe, STDIN_FILENO);
@@ -197,21 +197,21 @@ int pipex(Command *cmd,t_shell *shell) {
 			status = run_cmd(cmd, shell->envp,shell);
 		}
 	
-	int pid = fork();
-	if (pid < 0)
+	int pid2 = fork();
+	if (pid2 < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
-	if (pid == 0)
+	if (pid2 == 0)
 	{
 		status = run_cmd(cmd, shell->envp,shell);
 		exit(0);
 	}
 	// (void)shell;
-	if (pid > 0)
+	if (pid2 > 0)
 	{
 		// waitpid(0,  &status, WUNTRACED );
 				// waitpid(0, &status, WNOHANG | WUNTRACED );
 		// waitpid(0, &status, 0);
-		waitpid(0, &status,  WUNTRACED );
+		waitpid(pid2, &status,  WUNTRACED );
 
 		if (WIFEXITED(status) && ft_strcmp(cmd->name,"exit")!=0 )
 		{
