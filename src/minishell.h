@@ -107,8 +107,8 @@ typedef struct Command
 
 typedef struct
 {
-	Command *head;     // Head of the list of commands
-	int command_count; // Number of commands in the table
+	Command	*head;     // Head of the list of commands
+	int		command_count; // Number of commands in the table
 } CommandTable;
 
 

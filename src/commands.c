@@ -93,6 +93,7 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
 
 void handle_command_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command)
 {
+	ft_printf("handle_command_token\n");
 	Command* current_command = create_command_entry(shell, (*current_token)->token.value);
 	int arg_count = 0;
 
@@ -108,16 +109,20 @@ void handle_command_token(t_shell* shell, CommandTable* table, TokenNode** curre
 		(*last_command)->next = current_command;
 	*last_command = current_command;
 	table->command_count++;
+	ft_printf("handle_command_token arg count %d cmd count %d \n", arg_count, table->command_count);
+	print_command_table(table);
 }
 
 void handle_arg_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command)
 {
+	ft_printf("handle_arg_token\n");
 	if (*last_command != NULL)
 		add_argument(shell, *last_command, (*current_token)->token.value);
 	(void)table;
 }
 
 void handle_redirect_in_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command) {
+	ft_printf("handle_redirect_in_token\n");
 	if ((*current_token)->next != NULL && (*current_token)->next->token.type == TOKEN_ARG) {
 		set_redirect_in(shell, *last_command, (*current_token)->next->token.value);
 		*current_token = (*current_token)->next; // Skip the next token
@@ -126,6 +131,7 @@ void handle_redirect_in_token(t_shell* shell, CommandTable* table, TokenNode** c
 }
 
 void handle_redirect_out_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command) {
+	ft_printf("handle_redirect_out_token\n");
 	if ((*current_token)->next != NULL && (*current_token)->next->token.type == TOKEN_ARG) {
 		set_redirect_out(shell, *last_command, (*current_token)->next->token.value, (*current_token)->token.type == TOKEN_REDIR_APPEND);
 		*current_token = (*current_token)->next; // Skip the next token
