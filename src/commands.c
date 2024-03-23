@@ -220,7 +220,7 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
 
         {
             // ft_putstr_fd(ft_strjoin_nconst("fout is",ft_itoa(current_command->fout)),2);
-            if (current_command->fout==0)
+            if (current_command->fout==0 )
                 current_command->fout=-99;
                         // printf("Current cmd is %s and fout is %d",current_command->name,current_command->fout);
 

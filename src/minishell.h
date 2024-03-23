@@ -98,6 +98,9 @@ typedef struct Command
 	CommandType type;
 	char *name;
 	char **args;
+	char **execv_args;
+	char	*cmd_path;
+
 	int arg_count;
 	char *redirect_in;
 	char *redirect_out;
