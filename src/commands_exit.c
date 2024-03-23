@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_exit.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:11:34 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 20:12:10 by toto             ###   ########.fr       */
+/*   Updated: 2024/03/23 16:40:19 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,4 @@ void	builtin_exit(t_shell *shell, char **args, int n_args)
 	}
 	ft_printf("exit\n");
 	shexit(shell, 0);
-	// return (0); // whatever the exit code is
 }

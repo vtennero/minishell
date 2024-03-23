@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:55:49 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/16 17:36:34 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/23 16:13:08 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@ void transformQuotes(const char *input, char *output) {
 }
 
 
-char *reviewquotes(char *input)
+char *reviewquotes(t_shell *shell, char *input)
 {
-    char *output = (char *)malloc(strlen(input) + 1);
+    char *output = (char *)shell_malloc(shell, strlen(input) + 1);
 
     if (output == NULL) {
         perror("Memory allocation failed\n");

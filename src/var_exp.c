@@ -6,17 +6,15 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:22 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/19 16:42:05 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/23 16:14:12 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-
 t_env_var *findEnvVar(t_env_var *head, const char *key) {
     while (head != NULL) {
-        if (strcmp(head->key, key) == 0) {
+        if (ft_strcmp(head->key, key) == 0) {
             return head;
         }
         head = head->next;
@@ -24,15 +22,14 @@ t_env_var *findEnvVar(t_env_var *head, const char *key) {
     return NULL;
 }
 
-
-
 // v4 testing
 int getEnvVarLength(const char **input, t_env_var *envVars) {
     const char *varStart = *input;
-    while (isalnum((unsigned char)**input) || **input == '_') (*input)++;
+    while (ft_isalnum((unsigned char)**input) || **input == '_')
+        (*input)++;
     int varNameLength = *input - varStart;
     char varName[varNameLength + 1];
-    strncpy(varName, varStart, varNameLength);
+    ft_strncpy(varName, varStart, varNameLength);
     varName[varNameLength] = '\0';
 
     t_env_var *var = findEnvVar(envVars, varName);
@@ -81,14 +78,15 @@ int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *envVar
 // can refactor this by replacing envVars with shell
 void replaceEnvVar(const char **input, char **output, t_env_var *envVars) {
     const char *varStart = ++(*input);
-    while (isalnum((unsigned char)**input) || **input == '_') (*input)++;
+    while (ft_isalnum((unsigned char)**input) || **input == '_')
+        (*input)++;
     int varNameLength = *input - varStart;
     char varName[varNameLength + 1];
-    strncpy(varName, varStart, varNameLength);
+    ft_strncpy(varName, varStart, varNameLength);
     varName[varNameLength] = '\0';
     t_env_var *var = findEnvVar(envVars, varName);
     if (var) {
-        strcpy(*output, var->value); // Replace variable with value
+        ft_strcpy(*output, var->value); // Replace variable with value
         *output += strlen(var->value);
     }
     // Note: If the variable is not found, nothing is copied. Adjust if needed.
@@ -177,9 +175,9 @@ size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_v
 char* expandVariables(t_shell *shell, const char *input)
 {
     int finalLength = calculateExpandedLength(shell, input, shell->env_head);
-    char *expanded = (char *)malloc(finalLength);
+    char *expanded = (char *)shell_malloc(shell, finalLength);
     if (!expanded) {
-        printf("Memory allocation failed\n");
+        ft_printf("Memory allocation failed\n");
         return NULL;
     }
     
@@ -192,9 +190,9 @@ char* expandVariables(t_shell *shell, const char *input)
 char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPosition)
 {
     int finalLength = calculateExpandedLength(shell, input, shell->env_head);
-    char *expanded = (char *)malloc(finalLength);
+    char *expanded = (char *)shell_malloc(shell, finalLength);
     if (!expanded) {
-        printf("Memory allocation failed\n");
+        ft_printf("Memory allocation failed\n");
         return NULL;
     }
     
@@ -205,131 +203,3 @@ char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPositi
     // ft_printf("expandVariables2 returns %s\n", expanded);
     return expanded;
 }
-
-
-
-
-// // // v3 OK
-// int getEnvVarLength(const char **input, t_env_var *envVars) {
-//     const char *varStart = *input;
-//     while (isalnum((unsigned char)**input) || **input == '_') (*input)++;
-//     int varNameLength = *input - varStart;
-//     char varName[varNameLength + 1];
-//     strncpy(varName, varStart, varNameLength);
-//     varName[varNameLength] = '\0';
-
-//     t_env_var *var = findEnvVar(envVars, varName);
-//     if (var) {
-//         return strlen(var->value); // Return length of the variable value
-//     } else {
-//         return 0; // If the variable is not found, return 0
-//     }
-// }
-
-// // can refactor this by replacing envVars with shell
-// int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *envVars)
-// {
-//     int length = 0;
-//     while (*input) {
-//         if (*input == '$') {
-//             if (*(input + 1) == '?') {
-//                 length += intLength(shell->last_exit_status);
-//                 input += 2;
-//             } else if (*(input + 1) == '\0' || *(input + 1) == '$') {
-//                 length += 1; // Account for $
-//                 input += 1;
-//             } else {
-//                 input++; // Move past $ to start variable name
-//                 length += getEnvVarLength(&input, envVars);
-//                 // No need to advance input here; getEnvVarLength does it
-//             }
-//         } else {
-//             length++;
-//             input++;
-//         }
-//     }
-//     return length + 1; // Account for null terminator
-// }
-
-
-// // can refactor this by replacing envVars with shell
-// void replaceEnvVar(const char **input, char **output, t_env_var *envVars) {
-//     const char *varStart = ++(*input);
-//     while (isalnum((unsigned char)**input) || **input == '_') (*input)++;
-//     int varNameLength = *input - varStart;
-//     char varName[varNameLength + 1];
-//     strncpy(varName, varStart, varNameLength);
-//     varName[varNameLength] = '\0';
-//     t_env_var *var = findEnvVar(envVars, varName);
-//     if (var) {
-//         strcpy(*output, var->value); // Replace variable with value
-//         *output += strlen(var->value);
-//     }
-//     // Note: If the variable is not found, nothing is copied. Adjust if needed.
-// }
-
-// char	*cpy_exit_code(char *str, int n)
-// {
-// 	int		i;
-
-// 	i = ft_intlen((n));
-// 	str[i] = '\0';
-// 	if (str)
-// 	{
-// 		while (i > 0)
-// 		{
-// 			str[--i] = ft_abs(n % 10) + 48;
-// 			n /= 10;
-// 		}
-// 	}
-//     // ft_printf("exitcode |%d| |%s|\n", n, str);
-// 	return (str);
-// }
-
-// // can refactor this by replacing envVars with shell
-// void replaceVariables(t_shell *shell, const char *input, char *output, t_env_var *envVars) {
-//     while (*input) {
-//         while (*input == '$') {
-//             if (*(input + 1) == '?' ) {
-//                 // strcpy(output, "hello");
-//                 cpy_exit_code(output, shell->last_exit_status);
-//                 // output = export_exit_code(shell);
-//                 output += intLength(shell->last_exit_status);
-//                 (void)shell;
-//                 // output += 5;
-//                 input += 2;
-//             } else if (*(input + 1) == '\0' || *(input + 1) == '$' || isspace(*(input + 1))) {
-//             // } else if (*(input + 1) == '\0' || *(input + 1) == '$') {
-//                 *output++ = *input++;
-//                 if (*input == '$') {
-//                     *output++ = *input++;
-//                 }
-//             } else {
-//                 replaceEnvVar(&input, &output, envVars); // Use the new function
-//                 // Note: input and output are already advanced in replaceEnvVar
-//             }
-//         }
-//         if (*input) {
-//             *output++ = *input++;
-//         }
-//     }
-//     *output = '\0';
-// }
-
-
-// // can refactor this by replacing envVars with shell
-// char* expandVariables(t_shell *shell, const char *input, t_env_var *envVars)
-// {
-//     int finalLength = calculateExpandedLength(shell, input, envVars);
-//     char *expanded = (char *)malloc(finalLength);
-//     if (!expanded) {
-//         printf("Memory allocation failed\n");
-//         return NULL;
-//     }
-    
-//     replaceVariables(shell, input, expanded, envVars);
-    
-//     return expanded;
-// }
-
-

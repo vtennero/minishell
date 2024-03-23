@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 14:46:06 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 21:02:47 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/23 16:15:44 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	split_key_value(const char *str, char **key, char **value)
+int	split_key_value(t_shell *shell, const char *str, char **key, char **value)
 {
 	const char	*equals_pos;
 	int			key_len;
@@ -21,10 +21,10 @@ int	split_key_value(const char *str, char **key, char **value)
 	if (equals_pos != NULL)
 	{
 		key_len = equals_pos - str;
-		*key = (char *)malloc(key_len + 1);
+		*key = (char *)shell_malloc(shell, key_len + 1);
 		ft_strncpy(*key, (char *)str, key_len);
 		(*key)[key_len] = '\0';
-		*value = ft_strdup(equals_pos + 1);
+		*value = shell_strdup(shell, equals_pos + 1);
 		return (1);
 	}
 	return (0);
@@ -35,7 +35,7 @@ void	insert_sorted_env_var(t_shell *shell, char *key, char *value)
 	t_env_var	*new_var;
 	t_env_var	*current;
 
-	new_var = malloc(sizeof(t_env_var));
+	new_var = shell_malloc(shell, sizeof(t_env_var));
 	new_var->key = key;
 	new_var->value = value;
 	new_var->next = NULL;
@@ -64,7 +64,7 @@ void	create_env_var_list(t_shell *shell, char **envp)
 	shell->env_head = NULL;
 	while (envp[i] != NULL)
 	{
-		if (split_key_value(envp[i], &key, &value))
+		if (split_key_value(shell, envp[i], &key, &value))
 			insert_sorted_env_var(shell, key, value);
 		i++;
 	}

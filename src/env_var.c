@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/23 15:03:51 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/23 16:14:36 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,6 @@ int process_env_arg(t_shell *shell, const char *arg)
         shell->last_exit_status = 1;
         perror(" not a valid identifier");
         // first char is =
-	    // printf("Invalid variable declaration: Starts with '='\n");
         return 1; // need to return 1 for error flagging
     }
     else if (nchar == (int)ft_strlen(arg) - 1)
@@ -121,23 +120,14 @@ int process_env_arg(t_shell *shell, const char *arg)
     else if (nchar == -1)
 	{
         // no = in the string
-	    // printf("Declaration without assignment\n");
         handle_decl_str(shell, arg, nchar);
         return 1; // Valid as a declaration, but no action needed
     }
     else if (is_alloc_str(arg))
 	{
-	    // printf("Valid variable assignment\n");
-        // processedQuotes = reviewquotes(strdup(arg + nchar + 1));
-        // wvarexpanded = expandVariables(processedQuotes, shell->env_head);
-        // ft_printf("with variables expanded with |%s| %s\n", processedQuotes, wvarexpanded);
-        // handle_alloc_str(shell, wvarexpanded + nchar + 1, ft_strlen(wvarexpanded));
         handle_alloc_str(shell, arg, nchar);
         return 2; // Valid and requires assignment action
     }
-    else
-    // If none of the conditions are met, it's an unrecognized format
-    // ft_printf("Unrecognized or unsupported variable format\n");
     return 0; // Indicate invalid or unsupported argument
 }
 
@@ -157,17 +147,17 @@ int check_duplicates(t_shell *shell, const char *key, int nchar)
 
 void add_new_var(t_shell *shell, const char *key, const char *value)
 {
-    t_env_var *new_var = malloc(sizeof(t_env_var));
-    new_var->key = strdup(key);
+    t_env_var *new_var = shell_malloc(shell, sizeof(t_env_var));
+    new_var->key = shell_strdup(shell, key);
     if (value)
-        new_var->value = strdup(value);
+        new_var->value = shell_strdup(shell, value);
     else
-        new_var->value = strdup("\0");
+        new_var->value = shell_strdup(shell, "\0");
     new_var->next = NULL;
 
     // Insert in alphabetical order
     t_env_var **tracer = &shell->env_head;
-    while (*tracer && strcmp((*tracer)->key, key) < 0) {
+    while (*tracer && ft_strcmp((*tracer)->key, (char *)key) < 0) {
         tracer = &(*tracer)->next;
     }
     new_var->next = *tracer;
@@ -176,14 +166,14 @@ void add_new_var(t_shell *shell, const char *key, const char *value)
 
 void decl_new_var(t_shell *shell, const char *key)
 {
-    t_env_var *new_var = malloc(sizeof(t_env_var));
-    new_var->key = strdup(key);
+    t_env_var *new_var = shell_malloc(shell, sizeof(t_env_var));
+    new_var->key = shell_strdup(shell, key);
     new_var->value = NULL;
     new_var->next = NULL;
 
     // Insert in alphabetical order
     t_env_var **tracer = &shell->env_head;
-    while (*tracer && strcmp((*tracer)->key, key) < 0) {
+    while (*tracer && ft_strcmp((*tracer)->key, (char *)key) < 0) {
         tracer = &(*tracer)->next;
     }
     new_var->next = *tracer;
@@ -196,7 +186,7 @@ void remove_var(t_shell *shell, const char *key, int nchar)
     // ft_printf("remove_var\n");
     while (*tracer) {
 
-        if (ft_strncmp((*tracer)->key, key, nchar) == 0) {
+        if (ft_strncmp((*tracer)->key, (char *)key, nchar) == 0) {
             // ft_printf("variable to unset found\n");
             t_env_var *to_delete = *tracer;
             *tracer = (*tracer)->next;
@@ -208,19 +198,18 @@ void remove_var(t_shell *shell, const char *key, int nchar)
         }
         tracer = &(*tracer)->next;
     }
-    // printf("Variable not found: %s\n", key);
 }
 
 void update_var(t_shell *shell, const char *key, const char *value)
 {
     t_env_var *current = shell->env_head;
     while (current) {
-        if (strcmp(current->key, key) == 0) {
+        if (ft_strcmp(current->key, (char *)key) == 0) {
             // ft_printf("update_var: im in the duplicat enow current->key %s, current->value %s\n", current->key, current->value);
             // free(current->value); // Free old value
             current->value = NULL;
             if (value)
-                current->value = strdup(value); // Assign new value
+                current->value = shell_strdup(shell, value); // Assign new value
             return;
         }
         current = current->next;

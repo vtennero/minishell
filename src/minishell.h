@@ -87,15 +87,9 @@ typedef enum
 /*
 ** -- COMMANDS --
 */
-typedef enum
-{
-	CMD_BUILTIN,
-	CMD_EXTERNAL
-} CommandType;
 
 typedef struct Command
 {
-	CommandType type;
 	char *name;
 	char **args;
 	int arg_count;
@@ -116,6 +110,7 @@ typedef struct
 	Command *head;     // Head of the list of commands
 	int command_count; // Number of commands in the table
 } CommandTable;
+
 
 typedef enum
 {
@@ -148,6 +143,9 @@ typedef struct s_shell
 	MemTracker mem_tracker;
 	TokenNode *token_head;
 } t_shell;
+
+typedef void (*TokenHandler)(t_shell*, CommandTable*, TokenNode**, Command**);
+
 /*
 ** ================== INITIALIZATION ==================
 */
@@ -180,7 +178,7 @@ char	*parse_tokens(t_shell *shell, const char *s);
 ** -- QUOTES --
 */
 void	toggleQuoteState(int *quoteState);
-char	*reviewquotes(char *input);
+char *reviewquotes(t_shell *shell, char *input);
 int	shouldExpandVariable(const char *word);
 /*
 ** -- VARIABLE EXPANSION --
@@ -203,6 +201,12 @@ void	execute_command_table(t_shell *shell, CommandTable *table);
 void	free_command_table(CommandTable *table);
 // void	execute_ext_command(Command *cmd);
 void execute_ext_command(t_shell *shell, Command *cmd);
+
+void handle_command_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
+void handle_arg_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
+void handle_redirect_in_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
+void handle_redirect_out_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
+
 /*
 ** -- BUILT_IN COMMANDS --
 */
@@ -238,6 +242,7 @@ void	shell_free(t_shell *shell, void *ptr);
 void	shell_cleanup(t_shell *shell);
 char	*shell_strdup(t_shell *shell, const char *s);
 char	*shell_strndup(t_shell *shell, const char *s, size_t n);
+char	*shell_strjoin(t_shell *shell, char const *s1, char const *s2);
 /*
 ** ================== UTILS ==================
 */

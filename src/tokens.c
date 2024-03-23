@@ -16,18 +16,18 @@
 
 
 int isSpecialOperator(const char *str) {
-    if (strncmp(str, "|", 1) == 0) {
+    if (ft_strncmp(str, "|", 1) == 0) {
         return 1;
-    } else if (strncmp(str, "<<", 2) == 0) {
+    } else if (ft_strncmp(str, "<<", 2) == 0) {
         return 2;
-    } else if (strncmp(str, ">>", 2) == 0) {
+    } else if (ft_strncmp(str, ">>", 2) == 0) {
         return 2;
-    } else if (strncmp(str, ">", 1) == 0) {
+    } else if (ft_strncmp(str, ">", 1) == 0) {
         return 1;
-    } else if (strncmp(str, "<", 1) == 0) {
+    } else if (ft_strncmp(str, "<", 1) == 0) {
         return 1;
     }
-    return 0; // Not a match
+    return 0;
 }
 
 
@@ -39,7 +39,7 @@ int isspace_not_eol(int ch)
     return (ch == ' ' || ch == '\f' || ch == '\r' || ch == '\t' || ch == '\v');
 }
 
-char *processSingleQuote(const char **s)
+char *processSingleQuote(t_shell *shell, const char **s)
 {
 	// ft_printf("processSingleQuote start s |%s|\n", *s);
 	(*s)++;
@@ -49,7 +49,7 @@ char *processSingleQuote(const char **s)
 	// ft_printf("processSingleQuote s after while |%s|\n", *s);
 	int len = *s - start;
 	// ft_printf("processSingleQuote len |%d|\n", len);
-	char *result = strndup(start, len);
+	char *result = shell_strndup(shell, start, len);
 	// ft_printf("processSingleQuote s before going past word |%s|\n", *s);
     // if (**s == '\'') (*s)++;
 	// (*s) += len + 1;
@@ -72,11 +72,11 @@ int	get_non_expanded_var_length(char *var)
     while(var[index] != '\0') {
 		if (var[index] == '$')
 			foundDol++;
-        else if(!isalpha(var[index]) && !isdigit(var[index])) {
+        else if(!ft_isalpha(var[index]) && !ft_isdigit(var[index])) {
             // If the character is not a letter or digit, break the loop
             break;
         }
-        else if(isalpha(var[index])) {
+        else if(ft_isalpha(var[index])) {
             foundLetter = 1; // Set the flag if a letter is found
         }
         count++; // Increment the count of valid characters
@@ -104,7 +104,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
     
     // a. If a closing quote is not found
     if (!endQuote) {
-        buf = malloc(2); // for the quote and the null terminator
+        buf = shell_malloc(shell, 2); // for the quote and the null terminator
         if (buf) {
             buf[0] = **s; // Copy the opening quote
             buf[1] = '\0'; // Null-terminate the string
@@ -123,7 +123,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
 			if (!buf)
 				newBuf = expanded;
 			else
-            	newBuf = ft_strjoin(buf, expanded);
+            	newBuf = shell_strjoin(shell, buf, expanded);
             // free(buf); // Free the old buffer
             // free(expanded); // Free the expanded string
             buf = newBuf;
@@ -143,12 +143,12 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
                 nextDollar = endQuote; // If no $ is found, copy until the end quote
             }
             textLen = nextDollar - *s;
-            char *duplicatedText = strndup(*s, textLen);
+            char *duplicatedText = shell_strndup(shell, (*s), textLen);
 			// ft_printf("processDoubleQuote duplicatedText |%s|\n", duplicatedText);
 			if (!buf)
 				newBuf = duplicatedText;
 			else
-            	newBuf = ft_strjoin(buf, duplicatedText);
+            	newBuf = shell_strjoin(shell, buf, duplicatedText);
             // free(buf); // Free the old buffer
             // free(duplicatedText); // Free the duplicated text
             buf = newBuf;
@@ -165,8 +165,9 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
     return buf;
 }
 
-char *quotevar(t_shell *shell, const char **s) {
-    char *result = strdup(""); // Start with an empty string
+char *quotevar(t_shell *shell, const char **s)
+{
+    char *result = shell_strdup(shell, ""); // Start with an empty string
 
 	if (!isSpecialOperator(*s))
 	{
@@ -175,7 +176,7 @@ char *quotevar(t_shell *shell, const char **s) {
 			char *temp = NULL;
 			int opLength = isSpecialOperator((*s));
 			if (**s == '\'') {
-				temp = processSingleQuote(s);
+				temp = processSingleQuote(shell, s);
 			} else if (**s == '\"') {
 				temp = processDoubleQuote(s, shell);
 			} else if (**s == '$') {
@@ -189,7 +190,7 @@ char *quotevar(t_shell *shell, const char **s) {
 			// 	ft_printf("quotevar: operator found\n");
 			// 	// if (!temp)
 			// 	// {
-			// 		temp = ft_strndup((*s), opLength);
+			// 		temp = shell_strndup(shell, ((*s), opLength);
 			// 		result = temp;
 			// 		*s += opLength;
 			// 	// }
@@ -197,17 +198,18 @@ char *quotevar(t_shell *shell, const char **s) {
 			// }
 			else {
 				// ft_printf("quotevar |%c|\n", **s);
-				temp = malloc(2); // Allocate space for char and null terminator
+				temp = shell_malloc(shell, 2); // Allocate space for char and null terminator
 				temp[0] = **s;
 				temp[1] = '\0';
 				(*s)++;
 			}
 			(void)opLength;
 			if (temp) {
-				char *new_result = ft_strjoin(result, temp);
-				free(result); // Free the old result
+				// char *new_result = ft_strjoin(result, temp);
+				char *new_result = shell_strjoin(shell, result, temp);
+				// free(result); // Free the old result
 				result = new_result; // Update the result with the new concatenated string
-				free(temp); // Free the temporary string
+				// free(temp); // Free the temporary string
 				// ft_printf("quotevar: while: result = |%s|\n", result);
 			}
 		}
@@ -215,7 +217,7 @@ char *quotevar(t_shell *shell, const char **s) {
 	else
 	if (isSpecialOperator(*s))
 	{
-		result = ft_strndup((*s), isSpecialOperator(*s));
+		result = shell_strndup(shell, (*s), isSpecialOperator(*s));
 		*s += isSpecialOperator(*s);
 	}
 	// ft_printf("quotevar: returning result = |%s|\n", result);

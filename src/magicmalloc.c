@@ -12,10 +12,39 @@
 
 #include "minishell.h"
 
+char	*shell_strjoin(t_shell *shell, char const *s1, char const *s2)
+{
+	int		i;
+	int		j;
+	char	*str;
+
+	i = 0;
+	j = 0;
+	str = NULL;
+	if (s1 && s2)
+	{
+		str = shell_malloc(shell, \
+		(ft_strlen(s1) + ft_strlen(s2) + 1));
+		if (!str)
+			return (NULL);
+		while (s1[i])
+		{
+			str[i] = s1[i];
+			i++;
+		}
+		while (s2[j])
+		{
+			str[i++] = s2[j++];
+		}
+		str[i] = '\0';
+	}
+	return (str);
+}
+
 char* shell_strdup(t_shell* shell, const char* s)
 {
     size_t len = ft_strlen(s) + 1; // +1 for the null terminator
-    char* newStr = (char*)shell_malloc(shell, len);
+    char* newStr = (char *)shell_malloc(shell, len);
     if (newStr) {
         ft_strncpy(newStr, (char *)s, len);
         newStr[len - 1] = '\0'; // Ensure null termination
@@ -36,7 +65,7 @@ char* shell_strndup(t_shell* shell, const char* s, size_t n) {
     char* newStr = (char*)shell_malloc(shell, len + 1);
     if (newStr) {
         // Copy up to len characters
-        strncpy(newStr, s, len);
+        ft_strncpy(newStr, s, len);
         // Explicitly null-terminate the new string
         newStr[len] = '\0';
     }

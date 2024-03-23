@@ -1,37 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   commands_echo.c                                    :+:      :+:    :+:   */
+/*   ft_strcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/20 16:11:32 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/23 15:39:05 by vitenner         ###   ########.fr       */
+/*   Created: 2024/03/23 15:45:43 by vitenner          #+#    #+#             */
+/*   Updated: 2024/03/23 15:47:00 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-void	builtin_echo(t_shell *shell, char **args, int n_args)
+char	*ft_strcpy(char *dest, const char *src)
 {
-	int	i;
-	int	newline;
+	unsigned int	i;
 
 	i = 0;
-	newline = 1;
-	if (n_args > 1 && ft_strcmp(args[0], "-n") == 0)
+	while (src[i] != '\0')
 	{
-		newline = 0;
+		dest[i] = src[i];
 		i++;
 	}
-	while (i < n_args)
-	{
-		ft_printf("%s", args[i]);
-		if (i < n_args - 1)
-			ft_printf(" ");
-		i++;
-	}
-	if (newline)
-		ft_printf("\n");
-	(void)shell;
+	dest[i] = '\0';
+	return (dest);
 }
