@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:11:34 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/23 22:20:19 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/23 22:38:03 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,6 @@ int	builtin_exit(t_shell *shell, char **args, int n_args)
 	}
 	ft_printf("exit\n");
 	shexit(shell, 0);
+	return 0;
 	// return (0); // whatever the exit code is
 }

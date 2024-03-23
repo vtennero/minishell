@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:10:53 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/23 22:17:08 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/23 22:35:05 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	builtin_cd(t_shell *shell, char **args, int n_args)
 	{
 		perror("bash: cd: too many arguments\n");
 		return 1;
-		// shell->last_exit_status = 1;
+		shell->last_exit_status = -255;
 	}
 	return 0;
 }

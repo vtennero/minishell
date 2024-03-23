@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/23 22:34:06 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/23 22:50:13 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,11 +152,9 @@
 
 int builtin_cmd(Command *command,t_shell* shell,char** cmd_args,char* cmd_path)
 {
-	int match;
 	int exit_code; 
 
-	exit_code=NULL;
-	match = 0; 
+	exit_code=-99999;
 	if (ft_strcmp(command->name, "cd") == 0) {
         exit_code=builtin_cd(shell, command->args, command->arg_count);
     } else if (ft_strcmp(command->name, "pwd") == 0) {
@@ -171,7 +169,7 @@ int builtin_cmd(Command *command,t_shell* shell,char** cmd_args,char* cmd_path)
 		exit_code=builtin_env(shell);
     } else if (ft_strcmp(command->name, "exit") == 0) {
         exit_code=builtin_exit(shell, command->args, command->arg_count);}
-	if (exit_code==NULL)
+	if (exit_code==-99999)
 		return 0;
 	free(cmd_path);
 	free_array(cmd_args);
@@ -209,19 +207,20 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
 	while (i <= command->arg_count)
 	{
 		cmd_args[i] = command->args[i-1];
-		i++;
+		i++;	
 	}
 	cmd_args[i]= 0;
 	status = 0;
-	if (!builtin_cmd(command,shell,cmd_args,cmd_path)|| !custom_cmd(cmd_args,cmd_path,envp))  // If succed,, wont come back out. If fail, exit from insidebuiltin.custom
+	if (!builtin_cmd(command,shell,cmd_args,cmd_path) && !custom_cmd(cmd_args,cmd_path,envp))  // If succed,, wont come back out. If fail, exit from insidebuiltin.custom
 	{
 		shell->last_exit_status=status;
 		return (ft_puterr(ft_strjoin_nconst(command->name, ERR_INVALID_CMD), 127));
 	}
+	return 0;
 }
  
 
-int check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
+void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 {
 	if (cmd->fin ==  -99 && prev_pipe != STDIN_FILENO)
 		{
@@ -243,15 +242,15 @@ int check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 			dup2(cmd->fout, STDOUT_FILENO);
 			close(cmd->fout);
 		}
-	if (prev_pipe != STDIN_FILENO)
-		close(prev_pipe);		
-	if (shell->pipefd[1] != STDOUT_FILENO)
-		close(shell->pipefd[1]);		
-	close(shell->pipefd[0]);		
+	// if (prev_pipe != STDIN_FILENO)
+	// 	close(prev_pipe);		
+	// if (shell->pipefd[1] != STDOUT_FILENO)
+	// 	close(shell->pipefd[1]);		
+	// close(shell->pipefd[0]);		
 }
 
 
-int clean_fd(Command *cmd,t_shell *shell,int std_in,int std_out)
+void clean_fd(t_shell *shell,int std_in,int std_out)
 {
 	dup2(std_in, STDIN_FILENO);
 	dup2(std_out, STDOUT_FILENO) ;
@@ -277,7 +276,6 @@ void handle_status_error(int status,Command *cmd,t_shell *shell)
 
 int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 {
-	int		status;
 	pid_t	pid;
 	pid = fork();
 	if (pid < 0)
@@ -294,14 +292,14 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 	}
 
 	else
-		return;
+		return 0;
 
 }
 
 
 
 
-int new_pipex(Command *cmd,t_shell *shell) {
+int pipex(Command *cmd,t_shell *shell) {
 	int status;
 	int prev_pipe;
 	int std_in;
@@ -321,13 +319,14 @@ int new_pipex(Command *cmd,t_shell *shell) {
 	}
 	if (ft_strcmp(cmd->name,"exit")==0)
 	{
-		clean_fd(cmd,shell,std_in,std_out);
+		clean_fd(shell,std_in,std_out);
 		run_cmd(cmd, shell->envp,shell);
 	}
 	execute_command_pipex(prev_pipe,cmd,shell);
 	waitpid(0,&status,WUNTRACED);
 	handle_status_error(status,cmd,shell);
-	clean_fd(cmd,shell,std_in,std_out);
+	clean_fd(shell,std_in,std_out);
+	return 0;
 }
 
 
