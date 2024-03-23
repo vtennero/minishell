@@ -6,13 +6,13 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:11:32 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/21 00:11:27 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/23 22:17:54 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_echo(t_shell *shell, char **args, int n_args)
+int	builtin_echo(t_shell *shell, char **args, int n_args)
 {
 	int	i;
 	int	newline;
@@ -34,4 +34,5 @@ void	builtin_echo(t_shell *shell, char **args, int n_args)
 	if (newline)
 		ft_printf("\n");
 	(void)shell;
+	return 0;
 }

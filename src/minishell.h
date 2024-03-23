@@ -206,22 +206,22 @@ void execute_ext_command(t_shell *shell, Command *cmd);
 /*
 ** -- BUILT_IN COMMANDS --
 */
-void	builtin_cd(t_shell *shell, char **args, int n_args);
-void	builtin_pwd(void);
-void	builtin_echo(t_shell *shell, char **args, int n_args);
-void	builtin_unset(t_shell *shell, char **args, int n_args);
-void	builtin_env(t_shell *shell);
+int	builtin_cd(t_shell *shell, char **args, int n_args);
+int	builtin_pwd(void);
+int	builtin_echo(t_shell *shell, char **args, int n_args);
+int	builtin_unset(t_shell *shell, char **args, int n_args);
+int	builtin_env(t_shell *shell);
 /*
 ** :: EXIT ::
 */
-void	builtin_exit(t_shell *shell, char **args, int n_args);
+int	builtin_exit(t_shell *shell, char **args, int n_args);
 char	*export_exit_code(t_shell *shell);
 int	is_valid_number(const char *str);
 int	adjust_exit_code(int n);
 /*
 ** :: EXPORT ::
 */
-void	builtin_export(t_shell *shell, char **args, int n_args);
+int	builtin_export(t_shell *shell, char **args, int n_args);
 int	process_env_arg(t_shell *shell, const char *arg);
 int	check_duplicates(t_shell *shell, const char *key, int nchar);
 void	update_var(t_shell *shell, const char *key, const char *value);

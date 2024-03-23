@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands_exit.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:11:34 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 20:12:10 by toto             ###   ########.fr       */
+/*   Updated: 2024/03/23 22:20:19 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	is_valid_number(const char *str)
 	return (1);
 }
 
-void	builtin_exit(t_shell *shell, char **args, int n_args)
+int	builtin_exit(t_shell *shell, char **args, int n_args)
 {
 	if (n_args >= 2)
 	{

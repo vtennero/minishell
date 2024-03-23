@@ -6,17 +6,195 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/22 16:07:44 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/23 22:34:06 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 
+// int	run_cmd(Command *command, char **envp,t_shell* shell)
+// {
+// 	char	**cmd_args;
+// 	// char	*cmd_name;
+// 	char	*cmd_path;
+// 	char	**paths;
+// 	int		status;
+// 	int i;
+
+// 	i=1;
+// 	paths = find_cmd_paths(envp);
+// 	cmd_path = locate_cmd(paths, command->name);
+// 	free_array(paths);
+// 	// printf("command name is %s", command->name);
+// 	cmd_args=(char **)malloc((command->arg_count+2) * sizeof(char *));
+// 	cmd_args[0]=command->name;
+// 	while (i <= command->arg_count)
+// 	{
+// 		cmd_args[i] = command->args[i-1];
+// 		i++;
+// 	}
+// 	cmd_args[i]= 0;
+// 	// cmd_args = ft_split_cmd_args(join_name_and_args(command),command->arg_count);
+// 	// cmd_name = cmd_args[0];
+
+// 	status = 0;
+
+// 	// ft_printf("Executing command: %s arg count %d\n", command->name, command->arg_count);
+//     // Example stubs for calling built-in commands
+//     if (ft_strcmp(command->name, "cd") == 0) {
+//         // Call built-in cd command
+//         // Assuming the path is the first argument: command->args[1]
+//         builtin_cd(shell, command->args, command->arg_count);
+//     } else if (ft_strcmp(command->name, "pwd") == 0) {
+//         // Call built-in pwd command
+//         builtin_pwd();
+//     } else if (ft_strcmp(command->name, "echo") == 0) {
+//         // Call built-in echo command
+// 		// ft_printf("Executing builtin_echo\n");
+// 		// ft_printf("%s\n", command->args[0]);
+//         builtin_echo(shell, command->args, command->arg_count);
+//     } else if (ft_strcmp(command->name, "unset") == 0) {
+// 		// Call built-in unset command
+// 		// Assuming the variable name is the first argument: command->args[1]
+// 		builtin_unset(shell, command->args, command->arg_count);
+// 	} else if (ft_strcmp(command->name, "export") == 0) {
+// 		// Call built-in export command
+// 		builtin_export(shell, command->args, command->arg_count);
+//     } else if (ft_strcmp(command->name, "env") == 0) {
+// 		// Call built-in env command
+// 		builtin_env(shell);
+//     } else if (ft_strcmp(command->name, "exit") == 0) {
+//         // Call built-in exit command
+
+//         builtin_exit(shell, command->args, command->arg_count);
+//     }  else if (cmd_path)
+// 	{
+// 		status=execve(cmd_path, cmd_args, envp);
+// 		free(cmd_path);
+// 		free_array(cmd_args);
+// 		exit(EXIT_FAILURE);
+// 		// ft_putstr_fd(ft_strjoin_nconst("CMD inside STATUS IS ",ft_itoa(status)),2);
+
+// 		// exit(status);
+
+// 	}
+// 	else
+// 	{
+// 		status = 127;
+// 		shell->last_exit_status=status;
+
+// 		return (ft_puterr(ft_strjoin_nconst(command->name, ERR_INVALID_CMD), 127));
+// 	}
+// 	free(cmd_path);
+// 	free_array(cmd_args);
+// 	shell->last_exit_status=status;
+
+// 	return (status);
+// }
+
+
+// // int	execute_command_pipex(int prev_pipe,int fin,int fout, int pipefd[2], char *cmd, char *envp[])
+// // int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, t_shell *shell)
+
+// int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
+// {
+// 	int		status;
+// 	pid_t	pid;
+// 	status = 0;
+
+// 	pid = fork();
+// 	if (pid < 0)
+// 		return (write(STDOUT_FILENO, "Error forking\n", 15));
+// 	if (pid == 0)
+// 	{
+
+// 		if (cmd->fin ==  -99 && prev_pipe != STDIN_FILENO)
+// 		{
+// 			dup2(prev_pipe, STDIN_FILENO);
+// 			close(prev_pipe);
+			
+// 		}
+// 		else if (cmd->fin !=0)
+// 	{
+// 		dup2(cmd->fin, STDIN_FILENO);
+// 		close(cmd->fin);
+// 	}
+// 		if (cmd->fout ==  -99)
+// 		{
+// 			dup2(shell->pipefd[1], STDOUT_FILENO);
+// 			close(shell->pipefd[1]);
+// 		}
+
+// 		if (cmd->fout !=0 && cmd->fout !=-99)
+// 		{
+// 			dup2(cmd->fout, STDOUT_FILENO);
+// 			close(cmd->fout);
+// 		}
+
+// 		status=run_cmd(cmd, shell->envp,shell);
+// 		exit(status); // Needed
+// 	}
+// 	else 
+// 	{
+// 				// waitpid(0, NULL, WNOHANG | WUNTRACED );
+
+// 		// waitpid(0, NULL, WUNTRACED);
+// 		close(shell->pipefd[1]);
+
+
+// 	}
+
+// 	return (status);
+// }
+
+//----------------------------------------------------------------------------------------------------//
+
+int builtin_cmd(Command *command,t_shell* shell,char** cmd_args,char* cmd_path)
+{
+	int match;
+	int exit_code; 
+
+	exit_code=NULL;
+	match = 0; 
+	if (ft_strcmp(command->name, "cd") == 0) {
+        exit_code=builtin_cd(shell, command->args, command->arg_count);
+    } else if (ft_strcmp(command->name, "pwd") == 0) {
+        exit_code=builtin_pwd();
+    } else if (ft_strcmp(command->name, "echo") == 0) {
+        exit_code=builtin_echo(shell, command->args, command->arg_count);
+    } else if (ft_strcmp(command->name, "unset") == 0) {
+		exit_code=builtin_unset(shell, command->args, command->arg_count);
+	} else if (ft_strcmp(command->name, "export") == 0) {
+		exit_code=builtin_export(shell, command->args, command->arg_count);
+    } else if (ft_strcmp(command->name, "env") == 0) {
+		exit_code=builtin_env(shell);
+    } else if (ft_strcmp(command->name, "exit") == 0) {
+        exit_code=builtin_exit(shell, command->args, command->arg_count);}
+	if (exit_code==NULL)
+		return 0;
+	free(cmd_path);
+	free_array(cmd_args);
+	exit(exit_code);
+}
+
+
+int custom_cmd(char** cmd_args,char* cmd_path,char **envp)
+{
+	if (cmd_path)
+	{
+		execve(cmd_path, cmd_args, envp);
+		free(cmd_path);
+		free_array(cmd_args);
+		exit(EXIT_FAILURE);
+	}
+	else
+		return 0;
+}
+
 int	run_cmd(Command *command, char **envp,t_shell* shell)
 {
 	char	**cmd_args;
-	// char	*cmd_name;
 	char	*cmd_path;
 	char	**paths;
 	int		status;
@@ -26,7 +204,6 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
 	paths = find_cmd_paths(envp);
 	cmd_path = locate_cmd(paths, command->name);
 	free_array(paths);
-	// printf("command name is %s", command->name);
 	cmd_args=(char **)malloc((command->arg_count+2) * sizeof(char *));
 	cmd_args[0]=command->name;
 	while (i <= command->arg_count)
@@ -35,241 +212,246 @@ int	run_cmd(Command *command, char **envp,t_shell* shell)
 		i++;
 	}
 	cmd_args[i]= 0;
-	// cmd_args = ft_split_cmd_args(join_name_and_args(command),command->arg_count);
-	// cmd_name = cmd_args[0];
-
 	status = 0;
-
-	// ft_printf("Executing command: %s arg count %d\n", command->name, command->arg_count);
-    // Example stubs for calling built-in commands
-    if (ft_strcmp(command->name, "cd") == 0) {
-        // Call built-in cd command
-        // Assuming the path is the first argument: command->args[1]
-        builtin_cd(shell, command->args, command->arg_count);
-    } else if (ft_strcmp(command->name, "pwd") == 0) {
-        // Call built-in pwd command
-        builtin_pwd();
-    } else if (ft_strcmp(command->name, "echo") == 0) {
-        // Call built-in echo command
-		// ft_printf("Executing builtin_echo\n");
-		// ft_printf("%s\n", command->args[0]);
-        builtin_echo(shell, command->args, command->arg_count);
-    } else if (ft_strcmp(command->name, "unset") == 0) {
-		// Call built-in unset command
-		// Assuming the variable name is the first argument: command->args[1]
-		builtin_unset(shell, command->args, command->arg_count);
-	} else if (ft_strcmp(command->name, "export") == 0) {
-		// Call built-in export command
-		builtin_export(shell, command->args, command->arg_count);
-    } else if (ft_strcmp(command->name, "env") == 0) {
-		// Call built-in env command
-		builtin_env(shell);
-    } else if (ft_strcmp(command->name, "exit") == 0) {
-        // Call built-in exit command
-
-        builtin_exit(shell, command->args, command->arg_count);
-    }  else if (cmd_path)
+	if (!builtin_cmd(command,shell,cmd_args,cmd_path)|| !custom_cmd(cmd_args,cmd_path,envp))  // If succed,, wont come back out. If fail, exit from insidebuiltin.custom
 	{
-		status=execve(cmd_path, cmd_args, envp);
-		free(cmd_path);
-		free_array(cmd_args);
-		exit(EXIT_FAILURE);
-		// ft_putstr_fd(ft_strjoin_nconst("CMD inside STATUS IS ",ft_itoa(status)),2);
-
-		// exit(status);
-
-	}
-	else
-	{
-		status = 127;
 		shell->last_exit_status=status;
-
 		return (ft_puterr(ft_strjoin_nconst(command->name, ERR_INVALID_CMD), 127));
 	}
-	free(cmd_path);
-	free_array(cmd_args);
-	shell->last_exit_status=status;
+}
+ 
 
-	return (status);
+int check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
+{
+	if (cmd->fin ==  -99 && prev_pipe != STDIN_FILENO)
+		{
+			dup2(prev_pipe, STDIN_FILENO);
+			close(prev_pipe);		
+		}
+	else if (cmd->fin !=0)
+		{
+		dup2(cmd->fin, STDIN_FILENO);
+		close(cmd->fin);
+		}
+	if (cmd->fout ==  -99 && shell->pipefd[1] != STDOUT_FILENO)
+		{
+			dup2(shell->pipefd[1], STDOUT_FILENO);
+			close(shell->pipefd[1]);
+		}
+	else if (cmd->fout !=0 && cmd->fout !=-99)
+		{
+			dup2(cmd->fout, STDOUT_FILENO);
+			close(cmd->fout);
+		}
+	if (prev_pipe != STDIN_FILENO)
+		close(prev_pipe);		
+	if (shell->pipefd[1] != STDOUT_FILENO)
+		close(shell->pipefd[1]);		
+	close(shell->pipefd[0]);		
 }
 
 
-// int	execute_command_pipex(int prev_pipe,int fin,int fout, int pipefd[2], char *cmd, char *envp[])
-// int	execute_command_pipex(int prev_pipe,Command *cmd, t_in in, t_shell *shell)
+int clean_fd(Command *cmd,t_shell *shell,int std_in,int std_out)
+{
+	dup2(std_in, STDIN_FILENO);
+	dup2(std_out, STDOUT_FILENO) ;
+	close(std_in);
+	close(std_out);
+	close(shell->pipefd[0]);
+	close(shell->pipefd[1]);
+}
+
+void handle_status_error(int status,Command *cmd,t_shell *shell)
+{
+	int status2;
+
+	if (WIFEXITED(status) && ft_strcmp(cmd->name,"exit")!=0 )
+	{
+	// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa((status))),2);
+			status2=  WEXITSTATUS(status);
+			shell->last_exit_status=status2;
+		}
+		else
+				shell->last_exit_status=status;
+}
 
 int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 {
 	int		status;
 	pid_t	pid;
-	status = 0;
-	if (pipe(shell->pipefd) < 0)
-		return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
 	pid = fork();
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
 	{
-
-		if (cmd->fin ==  -99 && prev_pipe != STDIN_FILENO)
-		{
-			dup2(prev_pipe, STDIN_FILENO);
-			close(prev_pipe);
-			
-		}
-		else if (cmd->fin !=0)
-	{
-		dup2(cmd->fin, STDIN_FILENO);
-		close(cmd->fin);
-	}
-		if (cmd->fout ==  -99)
-		{
-			dup2(shell->pipefd[1], STDOUT_FILENO);
-			close(shell->pipefd[1]);
-		}
-
-		if (cmd->fout !=0 && cmd->fout !=-99)
-		{
-			dup2(cmd->fout, STDOUT_FILENO);
-			close(cmd->fout);
-		}
-
-		status=run_cmd(cmd, shell->envp,shell);
-		exit(status); // Needed
-	}
-	else 
-	{
-				// waitpid(0, NULL, WNOHANG | WUNTRACED );
-
-		// waitpid(0, NULL, WUNTRACED);
-		close(shell->pipefd[1]);
-
-
+		check_finfout(prev_pipe,cmd,shell);
+		if (cmd ->fin ==-1)
+		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
+		if (cmd ->fout ==-1)
+		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
+		run_cmd(cmd, shell->envp,shell);
+		exit(1);
 	}
 
-	return (status);
+	else
+		return;
+
 }
 
-int pipex(Command *cmd,t_shell *shell) {
+
+
+
+int new_pipex(Command *cmd,t_shell *shell) {
 	int status;
 	int prev_pipe;
-	int original_stdin = dup(STDIN_FILENO);
-	int original_stdout = dup(STDOUT_FILENO);
+	int std_in;
+	int std_out;
 
-	if (!find_env_var(shell->env_head, "PATH"))
-    {
-        perror("Command not found");
-        shell->last_exit_status = 127;
-        return 1;
-    }
-	
-	status = 0;
+	std_in = dup(STDOUT_FILENO);
+	std_out = dup(STDIN_FILENO);
+	if (pipe(shell->pipefd) < 0)
+		return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
 	prev_pipe = cmd->fin;
-	while (cmd->next) {
-		status = execute_command_pipex(prev_pipe,cmd,shell);
+	while (cmd->next) 
+	{
+		execute_command_pipex(prev_pipe,cmd,shell);
+		waitpid(0,&status,WUNTRACED);
 		prev_pipe = shell->pipefd[0];
-		if (cmd ->fin ==-1)
-		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
-		if (cmd ->fout ==-1)
-		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
-
 		*cmd = *(cmd->next);
-		if (status < 0)
-			exit(-1);
 	}
-
-			// waitpid(0, NULL, WNOHANG | WUNTRACED);
-		// waitpid(0, NULL, WUNTRACED);
-
-
-		if (cmd->fin == -99)
-		{
-				dup2(prev_pipe, STDIN_FILENO);
-				close(prev_pipe);
-				// close(in.pipefd[1]);
-		}
-
-
-
-		else if (cmd->fin !=0)
-		{
-
-			dup2(cmd->fin, STDIN_FILENO);
-			// close(cmd->fin);
-		}
-		if (cmd->fout !=0 && cmd->fout !=-99)
-		{
-			dup2(cmd->fout, STDOUT_FILENO);
-			close(cmd->fout);
-		}
-
-		if (ft_strcmp(cmd->name,"exit")==0)
-		{
-			status = run_cmd(cmd, shell->envp,shell);
-		}
-	
-	int pid2 = fork();
-	if (pid2 < 0)
-		return (write(STDOUT_FILENO, "Error forking\n", 15));
-	if (pid2 == 0)
+	if (ft_strcmp(cmd->name,"exit")==0)
 	{
-		if (cmd ->fin ==-1)
-		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
-		if (cmd ->fout ==-1)
-		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
-		status = run_cmd(cmd, shell->envp,shell);
-		exit(0);
+		clean_fd(cmd,shell,std_in,std_out);
+		run_cmd(cmd, shell->envp,shell);
 	}
-	// (void)shell;
-	if (pid2 > 0)
-	{
-		// waitpid(0,  &status, WUNTRACED );
-				// waitpid(0, &status, WNOHANG | WUNTRACED );
-		// waitpid(0, &status, 0);
-		waitpid(pid2, &status,  WUNTRACED );
-
-		if (WIFEXITED(status) && ft_strcmp(cmd->name,"exit")!=0 )
-		{
-
-			// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa((status))),2);
-
-			int status2=  WEXITSTATUS(status);
-			shell->last_exit_status=status2;
-		}
-		else
-				shell->last_exit_status=0;
-
-		// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa(status)),2);
-
-		// if (WIFEXITED(status))
-		// 	status = WEXITSTATUS(status);
-
-		// ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(shell->last_exit_status)),2);
-
-		// waitpid(-1,  &status, WNOHANG );
-		// waitpid(0, &status, 0 );
-		if (prev_pipe!=STDIN_FILENO)
-			close(prev_pipe);
-		// close(in.pipefd[0]);
-		// close(in.pipefd[1]);
-
-		// close(cmd->fin);
-		// close(cmd->fout);
-	}
-	if (dup2(original_stdin, STDIN_FILENO) == -1) {
-			perror("dup2");
-			exit(EXIT_FAILURE);
-		}
-		close(original_stdin);
-	if (dup2(original_stdout, STDOUT_FILENO) == -1) {
-			perror("dup2");
-			exit(EXIT_FAILURE);
-		}
-		close(original_stdout);
-
-	
-	
-	return  WEXITSTATUS(status);
+	execute_command_pipex(prev_pipe,cmd,shell);
+	waitpid(0,&status,WUNTRACED);
+	handle_status_error(status,cmd,shell);
+	clean_fd(cmd,shell,std_in,std_out);
 }
+
+
+
+// int pipex(Command *cmd,t_shell *shell) {
+// 	int status;
+// 	int prev_pipe;
+// 	int original_stdin = dup(STDIN_FILENO);
+// 	int original_stdout = dup(STDOUT_FILENO);
+
+// 	if (!find_env_var(shell->env_head, "PATH"))
+//     {
+//         perror("Command not found");
+//         shell->last_exit_status = 127;
+//         return 1;
+//     }
+// 	status = 0;
+// 	prev_pipe = cmd->fin;
+// 	while (cmd->next) {
+// 		status = execute_command_pipex(prev_pipe,cmd,shell);
+// 		prev_pipe = shell->pipefd[0];
+// 		if (cmd ->fin ==-1)
+// 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
+// 		if (cmd ->fout ==-1)
+// 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
+
+// 		*cmd = *(cmd->next);
+// 		if (status < 0)
+// 			exit(-1);
+// 	}
+
+// 			// waitpid(0, NULL, WNOHANG | WUNTRACED);
+// 		// waitpid(0, NULL, WUNTRACED);
+
+
+// 		if (cmd->fin == -99)
+// 		{
+// 				dup2(prev_pipe, STDIN_FILENO);
+// 				close(prev_pipe);
+// 				// close(in.pipefd[1]);
+// 		}
+
+
+
+// 		else if (cmd->fin !=0)
+// 		{
+
+// 			dup2(cmd->fin, STDIN_FILENO);
+// 			// close(cmd->fin);
+// 		}
+// 		if (cmd->fout !=0 && cmd->fout !=-99)
+// 		{
+// 			dup2(cmd->fout, STDOUT_FILENO);
+// 			close(cmd->fout);
+// 		}
+
+// 		if (ft_strcmp(cmd->name,"exit")==0)
+// 		{
+// 			status = run_cmd(cmd, shell->envp,shell);
+// 		}
+	
+// 	int pid2 = fork();
+// 	if (pid2 < 0)
+// 		return (write(STDOUT_FILENO, "Error forking\n", 15));
+// 	if (pid2 == 0)
+// 	{
+// 		if (cmd ->fin ==-1)
+// 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
+// 		if (cmd ->fout ==-1)
+// 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
+// 		status = run_cmd(cmd, shell->envp,shell);
+// 		exit(0);
+// 	}
+// 	// (void)shell;
+// 	if (pid2 > 0)
+// 	{
+// 		// waitpid(0,  &status, WUNTRACED );
+// 				// waitpid(0, &status, WNOHANG | WUNTRACED );
+// 		// waitpid(0, &status, 0);
+// 		waitpid(pid2, &status,  WUNTRACED );
+
+// 		if (WIFEXITED(status) && ft_strcmp(cmd->name,"exit")!=0 )
+// 		{
+
+// 			// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa((status))),2);
+
+// 			int status2=  WEXITSTATUS(status);
+// 			shell->last_exit_status=status2;
+// 		}
+// 		else
+// 				shell->last_exit_status=0;
+
+// 		// ft_putstr_fd(ft_strjoin_nconst("CMD STATUS IS ",ft_itoa(status)),2);
+
+// 		// if (WIFEXITED(status))
+// 		// 	status = WEXITSTATUS(status);
+
+// 		// ft_putstr_fd(ft_strjoin_nconst("STATUS IS ",ft_itoa(shell->last_exit_status)),2);
+
+// 		// waitpid(-1,  &status, WNOHANG );
+// 		// waitpid(0, &status, 0 );
+// 		if (prev_pipe!=STDIN_FILENO)
+// 			close(prev_pipe);
+// 		// close(in.pipefd[0]);
+// 		// close(in.pipefd[1]);
+
+// 		// close(cmd->fin);
+// 		// close(cmd->fout);
+// 	}
+// 	if (dup2(original_stdin, STDIN_FILENO) == -1) {
+// 			perror("dup2");
+// 			exit(EXIT_FAILURE);
+// 		}
+// 		close(original_stdin);
+// 	if (dup2(original_stdout, STDOUT_FILENO) == -1) {
+// 			perror("dup2");
+// 			exit(EXIT_FAILURE);
+// 		}
+// 		close(original_stdout);
+
+	
+	
+// 	return  WEXITSTATUS(status);
+// }
 
 
 // Current state of pipes

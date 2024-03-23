@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   commands_export.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:11:37 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 16:27:16 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/23 22:18:25 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_export(t_shell *shell, char **args, int n_args)
+int	builtin_export(t_shell *shell, char **args, int n_args)
 {
 	int	i;
 
@@ -27,4 +27,5 @@ void	builtin_export(t_shell *shell, char **args, int n_args)
 			i++;
 		}
 	}
+	return 0;
 }

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   commands_cd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:10:53 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 16:20:22 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/23 22:17:08 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_cd(t_shell *shell, char **args, int n_args)
+int	builtin_cd(t_shell *shell, char **args, int n_args)
 {
 	char	*path;
 
@@ -22,19 +22,24 @@ void	builtin_cd(t_shell *shell, char **args, int n_args)
 		if (path == NULL)
 		{
 			perror("cd: HOME not set\n");
-			return ;
+			return 1;
 		}
 	}
 	else if (n_args == 1)
 	{
 		path = args[0];
 		if (chdir(path) != 0)
+		{
 			perror("cd");
-		shell->last_exit_status = 1;
+			return 1;
+		}			
+		// shell->last_exit_status = 1;
 	}
 	else
 	{
 		perror("bash: cd: too many arguments\n");
-		shell->last_exit_status = 1;
+		return 1;
+		// shell->last_exit_status = 1;
 	}
+	return 0;
 }
