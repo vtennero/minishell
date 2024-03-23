@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/23 23:50:06 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/24 00:02:53 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,8 +324,8 @@ int pipex(Command *cmd,t_shell *shell) {
 	prev_pipe = cmd->fin;
 	while (cmd->next) 
 	{
-		execute_command_pipex(prev_pipe,cmd,shell);
-		waitpid(0,&status,WUNTRACED);
+		if (!execute_command_pipex(prev_pipe,cmd,shell))
+			waitpid(0,&status,WUNTRACED);
 		prev_pipe = shell->pipefd[0];
 
 		*cmd = *(cmd->next);
@@ -336,8 +336,10 @@ int pipex(Command *cmd,t_shell *shell) {
 		run_cmd(cmd, shell->envp,shell);
 	}
 	if (!execute_command_pipex(prev_pipe,cmd,shell))
+	{
 		waitpid(0,&status,WUNTRACED);
-	handle_status_error(status,cmd,shell);
+		handle_status_error(status,cmd,shell);
+	}
 	clean_fd(shell,std_in,std_out);
 	return 0;
 }
