@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/24 09:11:47 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/24 15:47:32 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,15 +258,15 @@ int close_child_fd(int prev_pipe,Command *cmd,t_shell *shell)
 		close(shell->pipefd[0]);
 	if (shell->pipefd[1]!=STDOUT_FILENO)
 		close(shell->pipefd[1]); // CHILD ONLY, PARENT DONT CLOSE
+	if (prev_pipe != STDIN_FILENO)
+			close(prev_pipe);			
+	if (cmd->fin != STDIN_FILENO && cmd->fin!=-99)
+		close(cmd->fin);
 
 
 	return 1;
-	if (cmd->fin != STDIN_FILENO && cmd->fin!=-99)
-		close(cmd->fin);
 	if (cmd->fout != STDOUT_FILENO  && cmd->fout!=-99) 
 		close(cmd->fout);
-			if (prev_pipe != STDIN_FILENO)
-			close(prev_pipe);			
 
 		
 
@@ -279,7 +279,9 @@ void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 		dup2(prev_pipe, STDIN_FILENO);
 	else if (cmd->fin !=0)
 		dup2(cmd->fin, STDIN_FILENO);
-	else if (cmd->fin==0 && STDIN_FILENO!=0)
+	// else if (cmd->fin==0 && STDIN_FILENO!=0)
+	// 	dup2(shell->std_in, STDIN_FILENO);
+	else if (cmd->fin==0)
 		dup2(shell->std_in, STDIN_FILENO);
 	
 	
@@ -289,8 +291,11 @@ void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 	}
 	else if (cmd->fout !=0 && cmd->fout !=-99)
 		dup2(cmd->fout, STDOUT_FILENO);
-	else if (cmd->fout==0 && STDOUT_FILENO!=0)
+	// else if (cmd->fout==0 && STDOUT_FILENO!=0)
+	// 	dup2(shell->std_out, STDOUT_FILENO);
+	else if (cmd->fout==0)
 		dup2(shell->std_out, STDOUT_FILENO);
+
 
 	// if (prev_pipe != STDIN_FILENO)
 	// 	close(prev_pipe);		
@@ -352,6 +357,8 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 	pid_t	pid;
 
 	check_finfout(prev_pipe,cmd,shell);
+	close(shell->pipefd[1]);
+
 	assign_cmd_args(cmd,shell->envp);
 	if (builtin_cmd(cmd,shell))
 		return 1;
@@ -366,8 +373,6 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 		if (cmd ->fout ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
 		close_child_fd(prev_pipe,cmd,shell);
-
-
 		run_cmd(cmd, shell->envp,shell);
 		exit(1);
 	}
@@ -391,18 +396,21 @@ int pipex(Command *cmd,t_shell *shell) {
 
 	shell->std_in = dup(STDIN_FILENO);
 	shell->std_out = dup(STDOUT_FILENO);
-	if (pipe(shell->pipefd) < 0)
-		return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
-
+	
 	// ft_putstr_fd(ft_strjoin("\npipe[1] is ",ft_itoa(shell->pipefd[1])),2);
 	// ft_putstr_fd(ft_strjoin("\npipe[0] is ",ft_itoa(shell->pipefd[0])),2);
 	prev_pipe = cmd->fin;
 	while (cmd->next) 
 	{
+		if (pipe(shell->pipefd) < 0)
+			return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
+
 		if (!execute_command_pipex(prev_pipe,cmd,shell))
 			waitpid(-1,&status,0);
 
-		dup2(shell->pipefd[0],prev_pipe);
+		prev_pipe=shell->pipefd[0];
+		// close(shell->pipefd[0]);
+
 		// prev_pipe = shell->pipefd[0];
 		// ft_putstr_fd(ft_strjoin("\nprev pipe[0] is ",ft_itoa(prev_pipe)),2);
 		*cmd = *(cmd->next);
