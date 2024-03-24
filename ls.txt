@@ -1,7 +1,5 @@
-a
-grep
-infile_big
-input.txt
+     31      34     284
+txt
 libft
 ls.txt
 Makefile

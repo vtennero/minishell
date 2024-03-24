@@ -148,6 +148,8 @@ typedef struct s_shell
 	int is_interactive;
 	char** envp;
 	int pipefd[2];
+	int std_in;
+	int std_out;
 	MemTracker mem_tracker;
 	TokenNode *token_head;
 } t_shell;
