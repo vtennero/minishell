@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/24 23:00:48 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/24 23:09:32 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -416,7 +416,7 @@ int pipex(Command *cmd,t_shell *shell) {
 			waitpid(-1,&status,0);
 
 		prev_pipe=shell->pipefd[0];
-		// close(shell->pipefd[0]);
+ 		// close(shell->pipefd[0]);    -> THIS TESTED TO NOT WORKING, WILL BLOCK PIPE
 
 		// prev_pipe = shell->pipefd[0];
 		// ft_putstr_fd(ft_strjoin("\nprev pipe[0] is ",ft_itoa(prev_pipe)),2);

@@ -68,7 +68,7 @@ void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) 
     } else {
 
         cmd->redirect_out = shell_strdup(shell, filename);
-        fd = open(filename, O_RDWR | O_CREAT,0666);
+        fd = open(filename, O_RDWR | O_CREAT|O_TRUNC ,0666);
     }
     // if (fd ==-1)
     //     ft_puterr(ft_strjoin_nconst(filename, "File not exists/permission error" ), 1);
