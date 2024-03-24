@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/24 15:47:32 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/24 15:54:41 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,13 +261,13 @@ int close_child_fd(int prev_pipe,Command *cmd,t_shell *shell)
 	if (prev_pipe != STDIN_FILENO)
 			close(prev_pipe);			
 	if (cmd->fin != STDIN_FILENO && cmd->fin!=-99)
-		close(cmd->fin);
+		close(cmd->fin);	
 
 
 	return 1;
 	if (cmd->fout != STDOUT_FILENO  && cmd->fout!=-99) 
-		close(cmd->fout);
-
+		close(cmd->fout);                                  /// after remove, work except cat<infile_big
+	
 		
 
 }
@@ -279,10 +279,10 @@ void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 		dup2(prev_pipe, STDIN_FILENO);
 	else if (cmd->fin !=0)
 		dup2(cmd->fin, STDIN_FILENO);
-	// else if (cmd->fin==0 && STDIN_FILENO!=0)
-	// 	dup2(shell->std_in, STDIN_FILENO);
-	else if (cmd->fin==0)
+	else if (cmd->fin==0 && STDIN_FILENO!=0)
 		dup2(shell->std_in, STDIN_FILENO);
+	// else if (cmd->fin==0)
+	// 	dup2(shell->std_in, STDIN_FILENO);
 	
 	
 	if (cmd->fout ==  -99 && shell->pipefd[1] != STDOUT_FILENO)
@@ -291,10 +291,10 @@ void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 	}
 	else if (cmd->fout !=0 && cmd->fout !=-99)
 		dup2(cmd->fout, STDOUT_FILENO);
-	// else if (cmd->fout==0 && STDOUT_FILENO!=0)
-	// 	dup2(shell->std_out, STDOUT_FILENO);
-	else if (cmd->fout==0)
+	else if (cmd->fout==0 && STDOUT_FILENO!=0)
 		dup2(shell->std_out, STDOUT_FILENO);
+	// else if (cmd->fout==0)
+	// 	dup2(shell->std_out, STDOUT_FILENO);
 
 
 	// if (prev_pipe != STDIN_FILENO)
@@ -542,8 +542,8 @@ int pipex(Command *cmd,t_shell *shell) {
 // 		}
 // 		close(original_stdout);
 
-	
-	
+
+
 // 	return  WEXITSTATUS(status);
 // }
 
