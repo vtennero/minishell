@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 14:46:06 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 21:02:47 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/24 22:57:21 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ t_shell	*initialize_shell(char **envp)
 	shell->last_exit_status = 0;
 	shell->is_interactive = 0;
 	shell->envp = envp;
+	shell->std_in = dup(STDIN_FILENO);
+	shell->std_out = dup(STDOUT_FILENO);
 	if (isatty(STDIN_FILENO))
 	{
 		if (isatty(STDOUT_FILENO))

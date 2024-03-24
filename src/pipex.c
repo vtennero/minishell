@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/24 15:54:41 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/24 23:00:48 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,11 +263,11 @@ int close_child_fd(int prev_pipe,Command *cmd,t_shell *shell)
 	if (cmd->fin != STDIN_FILENO && cmd->fin!=-99)
 		close(cmd->fin);	
 
-
 	return 1;
-	if (cmd->fout != STDOUT_FILENO  && cmd->fout!=-99) 
-		close(cmd->fout);                                  /// after remove, work except cat<infile_big
+                                /// after remove, work except cat<infile_big
 	
+	if (cmd->fout != STDOUT_FILENO  && cmd->fout!=-99) 
+		close(cmd->fout);  
 		
 
 }
@@ -279,8 +279,8 @@ void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 		dup2(prev_pipe, STDIN_FILENO);
 	else if (cmd->fin !=0)
 		dup2(cmd->fin, STDIN_FILENO);
-	else if (cmd->fin==0 && STDIN_FILENO!=0)
-		dup2(shell->std_in, STDIN_FILENO);
+	// else if (cmd->fin==0 && STDIN_FILENO!=0)
+	// 	dup2(shell->std_in, STDIN_FILENO);
 	// else if (cmd->fin==0)
 	// 	dup2(shell->std_in, STDIN_FILENO);
 	
@@ -291,10 +291,10 @@ void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 	}
 	else if (cmd->fout !=0 && cmd->fout !=-99)
 		dup2(cmd->fout, STDOUT_FILENO);
-	else if (cmd->fout==0 && STDOUT_FILENO!=0)
-		dup2(shell->std_out, STDOUT_FILENO);
-	// else if (cmd->fout==0)
+	// else if (cmd->fout==0 && STDOUT_FILENO!=0)
 	// 	dup2(shell->std_out, STDOUT_FILENO);
+	else if (cmd->fout==0)
+		dup2(shell->std_out, STDOUT_FILENO);
 
 
 	// if (prev_pipe != STDIN_FILENO)
@@ -307,12 +307,20 @@ void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 
 void clean_fd(t_shell *shell,int std_in,int std_out)
 {
-	dup2(std_in, STDIN_FILENO);
-	dup2(std_out, STDOUT_FILENO) ;
-	close(std_in);
-	close(std_out);
+
+
 	close(shell->pipefd[0]);
 	close(shell->pipefd[1]);
+	// ft_putstr_fd(ft_strjoin("\nstd_in is ",ft_itoa(std_in)),2);
+	// ft_putstr_fd(ft_strjoin("\nstd_out is ",ft_itoa(std_out)),2);
+
+	if (dup2(std_in, STDIN_FILENO) == -1) {
+			perror("dup2");
+		}
+	if (dup2(std_out, STDOUT_FILENO) == -1) {
+			perror("dup2");
+		}
+
 }
 
 void handle_status_error(int status,Command *cmd,t_shell *shell)
@@ -375,6 +383,8 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 		close_child_fd(prev_pipe,cmd,shell);
 		run_cmd(cmd, shell->envp,shell);
 		exit(1);
+				close_child_fd(prev_pipe,cmd,shell);
+
 	}
 
 	else
@@ -394,9 +404,6 @@ int pipex(Command *cmd,t_shell *shell) {
 	int prev_pipe;
 
 
-	shell->std_in = dup(STDIN_FILENO);
-	shell->std_out = dup(STDOUT_FILENO);
-	
 	// ft_putstr_fd(ft_strjoin("\npipe[1] is ",ft_itoa(shell->pipefd[1])),2);
 	// ft_putstr_fd(ft_strjoin("\npipe[0] is ",ft_itoa(shell->pipefd[0])),2);
 	prev_pipe = cmd->fin;
