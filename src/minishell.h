@@ -150,6 +150,7 @@ typedef struct s_shell
 	int pipefd[2];
 	int std_in;
 	int std_out;
+	pid_t pid;
 	MemTracker mem_tracker;
 	TokenNode *token_head;
 } t_shell;
@@ -274,7 +275,9 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell);
 char	**find_cmd_paths(char **envp);
 char	**ft_split_cmd_args(char *s);
 // int			run_cmd(char *cmd, char **envp);
-int	run_cmd(Command *command, char **envp, t_shell *shell);
+// int	run_cmd(Command *command, char **envp, t_shell *shell);
+int	run_cmd(Command *command, t_shell *shell);
+
 // int pipex(t_in in,Command cmd,t_shell *shell);
 int	pipex( Command *cmd, t_shell *shell);
 

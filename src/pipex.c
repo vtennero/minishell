@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/24 23:09:32 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/25 23:08:44 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,16 +156,15 @@ int builtin_cmd(Command *command,t_shell* shell)
 	exit_code=-99999;
 	if (ft_strcmp(command->name, "cd") == 0) {
         exit_code=builtin_cd(shell, command->args, command->arg_count);
-    } else if (ft_strcmp(command->name, "pwd") == 0) {
-        exit_code=builtin_pwd();
-    } else if (ft_strcmp(command->name, "echo") == 0) {
-        exit_code=builtin_echo(shell, command->args, command->arg_count);
+    // } else if (ft_strcmp(command->name, "pwd") == 0) {
+    //     exit_code=builtin_pwd();
+    // } else if (ft_strcmp(command->name, "echo") == 0) {
+    //     exit_code=builtin_echo(shell, command->args, command->arg_count);
     } else if (ft_strcmp(command->name, "unset") == 0) {
 		exit_code=builtin_unset(shell, command->args, command->arg_count);
 	} else if (ft_strcmp(command->name, "export") == 0) {
 		exit_code=builtin_export(shell, command->args, command->arg_count);
-    } else if (ft_strcmp(command->name, "env") == 0) {
-		exit_code=builtin_env(shell);
+
     } else if (ft_strcmp(command->name, "exit") == 0) {
         exit_code=builtin_exit(shell, command->args, command->arg_count);}
 	if (exit_code==-99999)
@@ -177,25 +176,39 @@ int builtin_cmd(Command *command,t_shell* shell)
 }
 
 
-int custom_cmd(char** cmd_args,char* cmd_path,char **envp)
+
+int custom_cmd(char** cmd_args,char* cmd_path,Command *cmd,t_shell *shell)
 {
-	if (cmd_path)
+	int exit_code;
+
+	exit_code=-999;
+	if (ft_strcmp(cmd->name, "pwd") == 0) {
+        exit_code=builtin_pwd();
+    } else if (ft_strcmp(cmd->name, "echo") == 0) {
+        exit_code=builtin_echo(shell, cmd->args, cmd->arg_count);
+    } else if (ft_strcmp(cmd->name, "env") == 0) {
+		exit_code=builtin_env(shell);}
+
+	if (exit_code!=-999)
+		exit(exit_code);
+	else if (cmd_path)
 	{
-		execve(cmd_path, cmd_args, envp);
+		execve(cmd_path, cmd_args, shell->envp);
 		free(cmd_path);
 		free_array(cmd_args);
 		exit(EXIT_FAILURE);
 	}
+	
 	else
 		return 0;
 }
 
-int	run_cmd(Command *command, char **envp,t_shell* shell)
+int	run_cmd(Command *command,t_shell* shell)
 {
 	int		status;
 
 	status = 0;
-	if (!custom_cmd(command->execv_args,command->cmd_path,envp))  // If succed,, wont come back out. If fail, exit from insidebuiltin.custom
+	if (!custom_cmd(command->execv_args,command->cmd_path,command,shell))  // If succed,, wont come back out. If fail, exit from insidebuiltin.custom
 
 		// if (!builtin_cmd(command,shell,cmd_args,cmd_path) && !custom_cmd(cmd_args,cmd_path,envp))  // If succed,, wont come back out. If fail, exit from insidebuiltin.custom
 		{
@@ -364,31 +377,36 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 {
 	pid_t	pid;
 
-	check_finfout(prev_pipe,cmd,shell);
-	close(shell->pipefd[1]);
 
 	assign_cmd_args(cmd,shell->envp);
+
 	if (builtin_cmd(cmd,shell))
 		return 1;
-	else
-		pid = fork();
+	pid = fork();
+	
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
-	{
+	{	
+		check_finfout(prev_pipe,cmd,shell);
+
 		if (cmd ->fin ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
 		if (cmd ->fout ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
 		close_child_fd(prev_pipe,cmd,shell);
-		run_cmd(cmd, shell->envp,shell);
+		run_cmd(cmd,shell);
 		exit(1);
 				close_child_fd(prev_pipe,cmd,shell);
 
 	}
 
 	else
-		return 0;
+		{
+
+			shell->pid=pid;
+			return 0;
+		}		
 
 }
 
@@ -412,11 +430,16 @@ int pipex(Command *cmd,t_shell *shell) {
 		if (pipe(shell->pipefd) < 0)
 			return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
 
-		if (!execute_command_pipex(prev_pipe,cmd,shell))
-			waitpid(-1,&status,0);
+		// if (!execute_command_pipex(prev_pipe,cmd,shell))
+		// {
+		// 	while (waitpid(shell->pid,&status,WNOHANG)!=shell->pid)
+		// 		usleep(100);
 
+		// }
+		execute_command_pipex(prev_pipe,cmd,shell);
 		prev_pipe=shell->pipefd[0];
  		// close(shell->pipefd[0]);    -> THIS TESTED TO NOT WORKING, WILL BLOCK PIPE
+		close(shell->pipefd[1]);
 
 		// prev_pipe = shell->pipefd[0];
 		// ft_putstr_fd(ft_strjoin("\nprev pipe[0] is ",ft_itoa(prev_pipe)),2);
@@ -424,7 +447,7 @@ int pipex(Command *cmd,t_shell *shell) {
 	}
 	if (!execute_command_pipex(prev_pipe,cmd,shell))
 	{
-		waitpid(0,&status,0);
+		waitpid(shell->pid,&status,WUNTRACED);
 		handle_status_error(status,cmd,shell);
 	}
 	clean_fd(shell,shell->std_in,shell->std_out);
