@@ -79,14 +79,35 @@ void shell_free(t_shell* shell, void* ptr)
 void shell_cleanup(t_shell* shell)
 {
     MemNode* current = shell->mem_tracker.head;
+    MemNode* next = NULL; // Initialize next to NULL
+
     while (current) {
-        MemNode* next = current->next;
+        if (current->next)
+            next = current->next;
+        else
+            next = NULL; // Set next to NULL if current->next is NULL
+
         free(current->ptr);
         free(current);
         current = next;
     }
+
     shell->mem_tracker.head = NULL;
 }
+
+// void shell_cleanup(t_shell* shell)
+// {
+//     MemNode* current = shell->mem_tracker.head;
+//     MemNode* next ;
+//     while (current) {
+//         if (current->next)
+//             next = current->next;
+//         free(current->ptr);
+//         free(current);
+//         current = next;
+//     }
+//     shell->mem_tracker.head = NULL;
+// }
 
 void	shexit(t_shell *shell, int exit_code)
 {

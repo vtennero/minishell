@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/25 23:08:44 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/26 00:14:48 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,13 @@ int custom_cmd(char** cmd_args,char* cmd_path,Command *cmd,t_shell *shell)
 		exit(exit_code);
 	else if (cmd_path)
 	{
+		// ft_putstr_fd(ft_strjoin("\ncmd-path-is ",cmd_path),2);
+		// ft_putstr_fd(ft_strjoin("\ncmd-args is ",cmd_args[0]),2);
+		// if (cmd_args[1])
+		// 	ft_putstr_fd(ft_strjoin("\ncmd-args-1 is ",cmd_args[1]),2);
+		// char* strr= get_next_line(STDIN_FILENO);
+		// ft_putstr_fd(ft_strjoin("\ncmd-stdin is ",strr),2);
+
 		execve(cmd_path, cmd_args, shell->envp);
 		free(cmd_path);
 		free_array(cmd_args);
@@ -271,17 +278,20 @@ int close_child_fd(int prev_pipe,Command *cmd,t_shell *shell)
 		close(shell->pipefd[0]);
 	if (shell->pipefd[1]!=STDOUT_FILENO)
 		close(shell->pipefd[1]); // CHILD ONLY, PARENT DONT CLOSE
-	if (prev_pipe != STDIN_FILENO)
-			close(prev_pipe);			
-	if (cmd->fin != STDIN_FILENO && cmd->fin!=-99)
-		close(cmd->fin);	
+	// if ( cmd->fin!=-99)
+	// 	close(cmd->fin);
 
 	return 1;
                                 /// after remove, work except cat<infile_big
 	
 	if (cmd->fout != STDOUT_FILENO  && cmd->fout!=-99) 
 		close(cmd->fout);  
-		
+	if (prev_pipe != STDIN_FILENO)
+			close(prev_pipe);			
+	if (cmd->fin != STDIN_FILENO && cmd->fin!=-99)
+		close(cmd->fin);
+
+
 
 }
 
@@ -291,11 +301,13 @@ void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 	if (cmd->fin ==  -99 && prev_pipe != STDIN_FILENO)
 		dup2(prev_pipe, STDIN_FILENO);
 	else if (cmd->fin !=0)
+	{
 		dup2(cmd->fin, STDIN_FILENO);
+	}
 	// else if (cmd->fin==0 && STDIN_FILENO!=0)
 	// 	dup2(shell->std_in, STDIN_FILENO);
-	// else if (cmd->fin==0)
-	// 	dup2(shell->std_in, STDIN_FILENO);
+	else if (cmd->fin==0)
+		dup2(shell->std_in, STDIN_FILENO);
 	
 	
 	if (cmd->fout ==  -99 && shell->pipefd[1] != STDOUT_FILENO)
@@ -379,6 +391,9 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 
 
 	assign_cmd_args(cmd,shell->envp);
+	// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",ft_itoa(cmd->fin)),2);
+	// char*strr= get_next_line(cmd->fin);
+	// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",strr),2);
 
 	if (builtin_cmd(cmd,shell))
 		return 1;
@@ -387,17 +402,30 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
-	{	
+	{		
+		// strr= get_next_line(cmd->fin);
+		// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",strr),2);
+
 		check_finfout(prev_pipe,cmd,shell);
+		// strr= get_next_line(cmd->fin);
+		// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",strr),2);
 
 		if (cmd ->fin ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
 		if (cmd ->fout ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
+		// strr= get_next_line(1);
+		// ft_putstr_fd(ft_strjoin("\ncmd-stdin is ",strr),2);
 		close_child_fd(prev_pipe,cmd,shell);
+		// strr= get_next_line(cmd->fin);
+		// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",strr),2);
+		// strr= get_next_line(1);
+		// ft_putstr_fd(ft_strjoin("\ncmd-stdin is ",strr),2);
+
+
 		run_cmd(cmd,shell);
 		exit(1);
-				close_child_fd(prev_pipe,cmd,shell);
+				// close_child_fd(prev_pipe,cmd,shell);
 
 	}
 
@@ -436,7 +464,14 @@ int pipex(Command *cmd,t_shell *shell) {
 		// 		usleep(100);
 
 		// }
-		execute_command_pipex(prev_pipe,cmd,shell);
+		if (cmd->fout==0)
+		{
+			if (!execute_command_pipex(prev_pipe,cmd,shell))
+		
+				waitpid(shell->pid,&status,WUNTRACED);
+		}
+		else
+			execute_command_pipex(prev_pipe,cmd,shell);
 		prev_pipe=shell->pipefd[0];
  		// close(shell->pipefd[0]);    -> THIS TESTED TO NOT WORKING, WILL BLOCK PIPE
 		close(shell->pipefd[1]);
