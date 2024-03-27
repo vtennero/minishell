@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 11:34:53 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/27 23:30:27 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int process_env_arg(t_shell *shell, const char *arg)
         // no = in the string
 	    // printf("Declaration without assignment\n");
         handle_decl_str(shell, arg, nchar);
-        return 1; // Valid as a declaration, but no action needed
+        return 0; // Valid as a declaration, but no action needed
     }
     else if (is_alloc_str(arg))
 	{
@@ -133,7 +133,7 @@ int process_env_arg(t_shell *shell, const char *arg)
         // ft_printf("with variables expanded with |%s| %s\n", processedQuotes, wvarexpanded);
         // handle_alloc_str(shell, wvarexpanded + nchar + 1, ft_strlen(wvarexpanded));
         handle_alloc_str(shell, arg, nchar);
-        return 2; // Valid and requires assignment action
+        return 0; // Valid and requires assignment action
     }
     else
     // If none of the conditions are met, it's an unrecognized format
