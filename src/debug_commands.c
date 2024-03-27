@@ -12,6 +12,11 @@
 
 #include "minishell.h"
 
+void printToken(TokenNode *head)
+{
+    ft_printf("Token: %s \t | Type: %d\n", head->token.value, head->token.type);
+}
+
 void printTokens(TokenNode* head)
 {
     // ft_printf("DEBUG: printTokens\n");
@@ -25,11 +30,11 @@ void printTokens(TokenNode* head)
     // ft_printf("DEBUG: printTokens END\n");
 }
 
-void print_command(const Command* cmd) {
+void print_command(const Command* cmd)
+{
     if (!cmd) return;
 
     ft_printf("Command: %s\n", cmd->name);
-    ft_printf("Type: %s\n", cmd->type == CMD_BUILTIN ? "Builtin" : "External");
 
     // Print arguments
     ft_printf("Arguments: ");

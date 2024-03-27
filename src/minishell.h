@@ -198,15 +198,14 @@ void	parse_heredoc(t_shell *shell);
 */
 CommandTable	*create_command_table(t_shell *shell, TokenNode *tokens);
 void	execute_command_table(t_shell *shell, CommandTable *table);
-void	free_command_table(CommandTable *table);
 // void	execute_ext_command(Command *cmd);
 void execute_ext_command(t_shell *shell, Command *cmd);
-
+void print_command(const Command* cmd);
 void handle_command_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
 void handle_arg_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
 void handle_redirect_in_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
 void handle_redirect_out_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
-
+void handle_debug_weird_arg(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command);
 /*
 ** -- BUILT_IN COMMANDS --
 */
@@ -254,6 +253,7 @@ int	intLength(int num);
 */
 void	printTokens(TokenNode *head);
 void	print_command_table(const CommandTable *table);
+void printToken(TokenNode *head);
 
 // pipex_and pipex_util
 # define ERR_INVALID_CMD " : command not found \n"

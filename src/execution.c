@@ -40,6 +40,8 @@ void execute_command_table(t_shell *shell, CommandTable* table)
 
     current = table->head;
     (void)shell;
+	ft_printf("execute_command_table\n");
+	print_command_table(table);
     pipex(current,shell);
 
     // while (current != NULL)

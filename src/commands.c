@@ -12,20 +12,30 @@
 
 #include "minishell.h"
 
-
 static TokenHandler tokenHandlers[] = {
-	NULL, // Assuming 0 is an invalid/unused token type
-	handle_command_token, // Assuming 1 corresponds to COMMAND
-	handle_arg_token,     // Assuming 2 corresponds to ARG
-	handle_redirect_in_token,
+	handle_command_token, // Assuming 0 corresponds to COMMAND
+	handle_arg_token,     // Assuming 1 corresponds to ARG
+	handle_redirect_in_token, // etc.
 	handle_redirect_out_token,
 	// Populate other handlers according to the token type values...
+	handle_debug_weird_arg,
+	handle_debug_weird_arg,
+	handle_debug_weird_arg,
+	handle_debug_weird_arg,
+	handle_debug_weird_arg,
+	handle_debug_weird_arg,
+	handle_debug_weird_arg,
+	handle_debug_weird_arg,
+	handle_debug_weird_arg,
 };
 
 CommandTable* initialize_command_table(t_shell *shell)
 {
-	CommandTable* table = (CommandTable*)shell_malloc(shell, sizeof(CommandTable));
-	if (!table) {
+	CommandTable	*table;
+	
+	table = (CommandTable *)shell_malloc(shell, sizeof(CommandTable));
+	if (!table)
+	{
 		perror("Failed to allocate CommandTable");
 		exit(EXIT_FAILURE);
 	}
@@ -70,11 +80,10 @@ void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) 
 	cmd->fout = fd;
 }
 
-Command* create_command_entry(t_shell *shell, char* name)
+Command		*create_command_entry(t_shell *shell, char* name)
 {
-	// Use ccalloc to allocate the Command structure, initializing all fields to 0/NULL.
-	Command* cmd = (Command*)shell_malloc(shell, sizeof(Command));
-	
+	Command	*cmd;
+	cmd = (Command *)shell_malloc(shell, sizeof(Command));
 	if (!cmd) {
 		perror("Failed to allocate Command");
 		exit(EXIT_FAILURE);
@@ -85,20 +94,23 @@ Command* create_command_entry(t_shell *shell, char* name)
 	return (cmd);
 }
 
-void add_argument(t_shell *shell, Command* cmd, char* arg)
+void	add_argument(t_shell *shell, Command* cmd, char* arg)
 {
 	cmd->args[cmd->arg_count++] = shell_strdup(shell, arg);
-	cmd->args[cmd->arg_count] = NULL; // Ensure NULL termination
+	cmd->args[cmd->arg_count] = NULL;
 }
 
-void handle_command_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command)
+void	handle_command_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command)
 {
-	ft_printf("handle_command_token\n");
-	Command* current_command = create_command_entry(shell, (*current_token)->token.value);
-	int arg_count = 0;
+	Command		*current_command;
+	int			arg_count;
+	TokenNode	*temp;
 
-	TokenNode* temp = (*current_token)->next;
-	while (temp && temp->token.type == TOKEN_ARG) {
+	current_command = create_command_entry(shell, (*current_token)->token.value);
+	arg_count = 0;
+	temp = (*current_token)->next;
+	while (temp && temp->token.type == TOKEN_ARG)
+	{
 		arg_count++;
 		temp = temp->next;
 	}
@@ -109,43 +121,57 @@ void handle_command_token(t_shell* shell, CommandTable* table, TokenNode** curre
 		(*last_command)->next = current_command;
 	*last_command = current_command;
 	table->command_count++;
-	ft_printf("handle_command_token arg count %d cmd count %d \n", arg_count, table->command_count);
 	print_command_table(table);
 }
 
 void handle_arg_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command)
 {
-	ft_printf("handle_arg_token\n");
 	if (*last_command != NULL)
 		add_argument(shell, *last_command, (*current_token)->token.value);
 	(void)table;
 }
 
 void handle_redirect_in_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command) {
-	ft_printf("handle_redirect_in_token\n");
-	if ((*current_token)->next != NULL && (*current_token)->next->token.type == TOKEN_ARG) {
+	if ((*current_token)->next != NULL && (*current_token)->next->token.type == TOKEN_ARG)
+	{
 		set_redirect_in(shell, *last_command, (*current_token)->next->token.value);
-		*current_token = (*current_token)->next; // Skip the next token
+		*current_token = (*current_token)->next;
 	}
 	(void)table;
 }
 
-void handle_redirect_out_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command) {
-	ft_printf("handle_redirect_out_token\n");
-	if ((*current_token)->next != NULL && (*current_token)->next->token.type == TOKEN_ARG) {
+void handle_redirect_out_token(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command)
+{
+	if ((*current_token)->next != NULL && (*current_token)->next->token.type == TOKEN_ARG)
+	{
 		set_redirect_out(shell, *last_command, (*current_token)->next->token.value, (*current_token)->token.type == TOKEN_REDIR_APPEND);
-		*current_token = (*current_token)->next; // Skip the next token
+		*current_token = (*current_token)->next;
 	}
 	(void)table;
+}
+
+void handle_debug_weird_arg(t_shell* shell, CommandTable* table, TokenNode** current_token, Command** last_command)
+{
+	printToken(*current_token);
+	(void)table;
+	(void)shell;
+	(void)last_command;
 }
 
 CommandTable* create_command_table(t_shell *shell, TokenNode* tokens)
 {
+	CommandTable	*table;
+	Command			*current_command;
+	Command			*last_command;
+	int				pipe_exist;
+	TokenNode		*current_token;
+
 	CommandTable* table = initialize_command_table(shell);
-	Command* current_command = NULL;
-	Command* last_command = NULL;
-	int pipe_exist = 0;
-	for (TokenNode* current_token = tokens; current_token != NULL; current_token = current_token->next)
+	current_command = NULL;
+	last_command = NULL;
+	pipe_exist = 0;
+	current_token = tokens;
+	while (current_token != NULL)
 	{
 		if (tokenHandlers[current_token->token.type])
 			tokenHandlers[current_token->token.type](shell, table, &current_token, &last_command);
@@ -160,91 +186,9 @@ CommandTable* create_command_table(t_shell *shell, TokenNode* tokens)
 		{
 			if (current_command->fout==0)
 				current_command->fout=-99;
-			pipe_exist =1;
+			pipe_exist = 1;
 		}
+		current_token = current_token->next;
 	}
 	return table;
 }
-
-// CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
-// {
-//     CommandTable* table = initialize_command_table(shell);
-//     Command* current_command = NULL;
-//     Command* last_command = NULL;
-
-//     TokenNode* current_token = tokens;
-//     int pipe_exist=0;
-
-//     // ft_printf("create_command_table current token value |%s| type |%d| \n", current_token->token.value, current_token->token.type);
-//     while (current_token != NULL)
-//     {
-//         // ft_printf("create_command_table while (current_token != NULL) {\n");
-//         if (current_token->token.type == TOKEN_COMMAND) {
-//                 // ft_printf("create_command_table if (current_token->token.type == TOKEN_COMMAND) { \n");
-//             // Count arguments for the current command
-//             int arg_count = 0;
-//             TokenNode* temp = current_token->next;
-//             while (temp && temp->token.type == TOKEN_ARG) {
-//                 // ft_printf("create_command_table while (temp && temp->token.type == TOKEN_ARG)\n");
-//                 arg_count++;
-//                 temp = temp->next;
-//             }
-
-//             // Now, create the command entry and allocate args
-//             current_command = create_command_entry(shell, current_token->token.value);
-//             // printf("Initialize cmd %s fin to %d",current_command->name,current_command->fin);
-
-//             // ft_printf("create_command_table create_command_entry done\n");
-//             current_command->args = (char**)shell_malloc(shell, (arg_count + 1) * sizeof(char*)); // +1 for NULL terminator
-
-//             // Add to command table
-//             if (table->head == NULL)
-//                 table->head = current_command;
-//             else if (last_command)
-//                 last_command->next = current_command;
-//             last_command = current_command;
-//             table->command_count++;
-//         } else if(current_token->token.type == TOKEN_ARG)
-//         // } else if(current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q)
-//         {
-//                 // ft_printf("create_command_table else if(current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q)\n");
-//             // ft_printf("create_command_table current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q\n");
-//             // ft_printf("create_command_table %d\n", current_token->token.value);
-//             add_argument(shell, current_command, current_token->token.value);
-//         }
-//         // ... handle redirections and other token types ...
-// 		else if (current_token->token.type == TOKEN_REDIR_IN)
-// 		{
-//             if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG)
-// 			{
-//                 set_redirect_in(shell, current_command, current_token->next->token.value);
-//                 current_token = current_token->next; // Skip the next token since it's part of the redirection
-//             }
-//         }
-// 		else if (current_token->token.type == TOKEN_REDIR_OUT || current_token->token.type == TOKEN_REDIR_APPEND)
-// 		{
-//             if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG)
-// 			{
-//                 set_redirect_out(shell, current_command, current_token->next->token.value, current_token->token.type == TOKEN_REDIR_APPEND);
-//                 current_token = current_token->next; // Skip the next token since it's part of the redirection
-//             }
-//         }
-		
-//         // add if pipe | here @eugene
-
-
-
-// 	    // else if (current_token->next->token.type == TOKEN_PIPE)
-// 		// {
-//         //     if (current_token->next->next != NULL && current_token->next->next->token.type == TOKEN_COMMAND)
-// 		// 	{
-//         //         // set_redirect_out(shell, current_command, current_token->next->token.value, current_token->token.type == TOKEN_REDIR_APPEND);
-//         //         current_token = current_token->next; // Skip the next token since it's part of the redirection
-//         //     }
-//         // }
-		
-//         current_token = current_token->next;
-//     }
-
-//     return table;
-// }
