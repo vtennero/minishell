@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/27 20:33:24 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/27 23:20:01 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ int custom_cmd(char** cmd_args,char* cmd_path,Command *cmd,t_shell *shell)
 	if (ft_strcmp(cmd->name, "pwd") == 0) {
         exit_code=builtin_pwd();
     } else if (ft_strcmp(cmd->name, "echo") == 0) {
-        exit_code=builtin_echo(shell, cmd->args, cmd->arg_count);
+        exit_code=builtin_echo(shell, cmd->args, cmd->arg_count,cmd);
     } else if (ft_strcmp(cmd->name, "env") == 0) {
 		exit_code=builtin_env(shell);}
 	 else if (ft_strcmp(cmd->name, "export") == 0 && cmd->fout ==-99) {

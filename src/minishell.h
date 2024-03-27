@@ -214,7 +214,7 @@ void execute_ext_command(t_shell *shell, Command *cmd);
 */
 int	builtin_cd(t_shell *shell, char **args, int n_args);
 int	builtin_pwd(void);
-int	builtin_echo(t_shell *shell, char **args, int n_args);
+int	builtin_echo(t_shell *shell, char **args, int n_args,Command* cmd);
 int	builtin_unset(t_shell *shell, char **args, int n_args);
 int	builtin_env(t_shell *shell);
 /*
