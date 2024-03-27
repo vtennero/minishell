@@ -40,7 +40,7 @@ void link_commands(Command* prev_cmd, Command* next_cmd) {
 void set_redirect_in(t_shell *shell, Command* cmd, char* filename) {
     // if (cmd->redirect_in) free(cmd->redirect_in);
     cmd->redirect_in = shell_strdup(shell, filename);
-    int fd = open(filename, O_RDONLY);
+    int fd = open(filename, O_RDWR);
     // if (fd ==-1)
     //     ft_puterr(ft_strjoin_nconst(filename, " : File not exists/permission error" ), 1);
     cmd->fin = fd;

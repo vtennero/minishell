@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/26 00:14:48 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/27 20:02:27 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,9 @@ int custom_cmd(char** cmd_args,char* cmd_path,Command *cmd,t_shell *shell)
 		// ft_putstr_fd(ft_strjoin("\ncmd-args is ",cmd_args[0]),2);
 		// if (cmd_args[1])
 		// 	ft_putstr_fd(ft_strjoin("\ncmd-args-1 is ",cmd_args[1]),2);
-		// char* strr= get_next_line(STDIN_FILENO);
+		
+		// char* strr= get_next_line(0);
+		// ft_putstr_fd(ft_strjoin("\ncmd-stdin is ",ft_itoa(cmd->fin)),2);
 		// ft_putstr_fd(ft_strjoin("\ncmd-stdin is ",strr),2);
 
 		execve(cmd_path, cmd_args, shell->envp);
@@ -270,65 +272,110 @@ int	run_cmd(Command *command,t_shell* shell)
 // }
 
 
-int close_child_fd(int prev_pipe,Command *cmd,t_shell *shell)
-{
+// int close_child_fd(int prev_pipe,Command *cmd,t_shell *shell)
+// {
 
 
-	if (shell->pipefd[0] != STDOUT_FILENO && shell->pipefd[0] != STDIN_FILENO)
-		close(shell->pipefd[0]);
-	if (shell->pipefd[1]!=STDOUT_FILENO)
-		close(shell->pipefd[1]); // CHILD ONLY, PARENT DONT CLOSE
-	// if ( cmd->fin!=-99)
-	// 	close(cmd->fin);
+// 	if (shell->pipefd[0] != STDOUT_FILENO && shell->pipefd[0] != STDIN_FILENO)
+// 		close(shell->pipefd[0]);
+// 	if (shell->pipefd[1]!=STDOUT_FILENO)
+// 		close(shell->pipefd[1]); // CHILD ONLY, PARENT DONT CLOSE
+// 	if ( cmd->fin!=-99 && cmd->fin !=0)
+// 		close(cmd->fin);
 
-	return 1;
-                                /// after remove, work except cat<infile_big
+// 	return 1;
+//                                 /// after remove, work except cat<infile_big
 	
-	if (cmd->fout != STDOUT_FILENO  && cmd->fout!=-99) 
-		close(cmd->fout);  
-	if (prev_pipe != STDIN_FILENO)
-			close(prev_pipe);			
-	if (cmd->fin != STDIN_FILENO && cmd->fin!=-99)
-		close(cmd->fin);
+// 	if (cmd->fout != STDOUT_FILENO  && cmd->fout!=-99) 
+// 		close(cmd->fout);  
+// 	if (prev_pipe != STDIN_FILENO)
+// 			close(prev_pipe);			
+// 	if (cmd->fin != STDIN_FILENO && cmd->fin!=-99)
+// 		close(cmd->fin);
 
 
 
-}
+// }
+
+
+// void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
+// {
+// 	if (cmd->fin ==  -99 && prev_pipe != STDIN_FILENO)
+// 		dup2(prev_pipe, STDIN_FILENO);
+// 	else if (cmd->fin !=0)
+// 	{
+// 		dup2(cmd->fin, STDIN_FILENO);
+// 	}
+// 	// else if (cmd->fin==0 && STDIN_FILENO!=0)
+// 	// 	dup2(shell->std_in, STDIN_FILENO);
+// 	else if (cmd->fin==0)
+// 		dup2(shell->std_in, STDIN_FILENO);
+	
+	
+// 	if (cmd->fout ==  -99 && shell->pipefd[1] != STDOUT_FILENO)
+// 	{
+// 		dup2(shell->pipefd[1], STDOUT_FILENO);
+// 	}
+// 	else if (cmd->fout !=0 && cmd->fout !=-99)
+// 		dup2(cmd->fout, STDOUT_FILENO);
+// 	// else if (cmd->fout==0 && STDOUT_FILENO!=0)
+// 	// 	dup2(shell->std_out, STDOUT_FILENO);
+// 	else if (cmd->fout==0)
+// 		dup2(shell->std_out, STDOUT_FILENO);
+
+
+// 	// if (prev_pipe != STDIN_FILENO)
+// 	// 	close(prev_pipe);		
+// 	// if (shell->pipefd[1] != STDOUT_FILENO)
+// 	// 	close(shell->pipefd[1]);		
+// 	// close(shell->pipefd[1]);		
+// }
 
 
 void check_finfout(int prev_pipe,Command *cmd,t_shell *shell)
 {
 	if (cmd->fin ==  -99 && prev_pipe != STDIN_FILENO)
+	{
 		dup2(prev_pipe, STDIN_FILENO);
+		// close(prev_pipe);
+	
+	}
 	else if (cmd->fin !=0)
 	{
 		dup2(cmd->fin, STDIN_FILENO);
+		close(cmd->fin);
 	}
 	// else if (cmd->fin==0 && STDIN_FILENO!=0)
 	// 	dup2(shell->std_in, STDIN_FILENO);
 	else if (cmd->fin==0)
+	{
 		dup2(shell->std_in, STDIN_FILENO);
+	}
 	
 	
 	if (cmd->fout ==  -99 && shell->pipefd[1] != STDOUT_FILENO)
 	{
 		dup2(shell->pipefd[1], STDOUT_FILENO);
+		close(shell->pipefd[1]);
 	}
-	else if (cmd->fout !=0 && cmd->fout !=-99)
+	else if (cmd->fout !=1 && cmd->fout!=0 && cmd->fout !=-99)
+	{
 		dup2(cmd->fout, STDOUT_FILENO);
+		// close(cmd->fout);
+	}
 	// else if (cmd->fout==0 && STDOUT_FILENO!=0)
 	// 	dup2(shell->std_out, STDOUT_FILENO);
 	else if (cmd->fout==0)
 		dup2(shell->std_out, STDOUT_FILENO);
 
-
+	if (shell->pipefd[0] != STDOUT_FILENO && shell->pipefd[0] != STDIN_FILENO)
+		close(shell->pipefd[0]);
 	// if (prev_pipe != STDIN_FILENO)
 	// 	close(prev_pipe);		
 	// if (shell->pipefd[1] != STDOUT_FILENO)
 	// 	close(shell->pipefd[1]);		
 	// close(shell->pipefd[1]);		
 }
-
 
 void clean_fd(t_shell *shell,int std_in,int std_out)
 {
@@ -406,7 +453,6 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 		// strr= get_next_line(cmd->fin);
 		// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",strr),2);
 
-		check_finfout(prev_pipe,cmd,shell);
 		// strr= get_next_line(cmd->fin);
 		// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",strr),2);
 
@@ -414,9 +460,11 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
 		if (cmd ->fout ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
+		check_finfout(prev_pipe,cmd,shell);
+
 		// strr= get_next_line(1);
 		// ft_putstr_fd(ft_strjoin("\ncmd-stdin is ",strr),2);
-		close_child_fd(prev_pipe,cmd,shell);
+		// close_child_fd(prev_pipe,cmd,shell);
 		// strr= get_next_line(cmd->fin);
 		// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",strr),2);
 		// strr= get_next_line(1);
