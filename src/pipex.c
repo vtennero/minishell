@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/27 20:02:27 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/27 20:33:24 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ int builtin_cmd(Command *command,t_shell* shell)
     //     exit_code=builtin_echo(shell, command->args, command->arg_count);
     } else if (ft_strcmp(command->name, "unset") == 0) {
 		exit_code=builtin_unset(shell, command->args, command->arg_count);
-	} else if (ft_strcmp(command->name, "export") == 0) {
+	} else if (ft_strcmp(command->name, "export") == 0 && command->fout !=-99) {
 		exit_code=builtin_export(shell, command->args, command->arg_count);
 
     } else if (ft_strcmp(command->name, "exit") == 0) {
@@ -188,7 +188,10 @@ int custom_cmd(char** cmd_args,char* cmd_path,Command *cmd,t_shell *shell)
         exit_code=builtin_echo(shell, cmd->args, cmd->arg_count);
     } else if (ft_strcmp(cmd->name, "env") == 0) {
 		exit_code=builtin_env(shell);}
+	 else if (ft_strcmp(cmd->name, "export") == 0 && cmd->fout ==-99) {
+		exit_code=builtin_export(shell, cmd->args, cmd->arg_count);
 
+    } 
 	if (exit_code!=-999)
 		exit(exit_code);
 	else if (cmd_path)
