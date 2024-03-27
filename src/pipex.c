@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/27 23:20:01 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/28 00:29:32 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -458,7 +458,8 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 
 		// strr= get_next_line(cmd->fin);
 		// ft_putstr_fd(ft_strjoin("\ncmd-fin is ",strr),2);
-
+		signal(SIGINT, SIG_DFL); // Reset SIGINT to default handling
+		signal(SIGQUIT, SIG_DFL); // Reset SIGQUIT to default handling
 		if (cmd ->fin ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
 		if (cmd ->fout ==-1)
