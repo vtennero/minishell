@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/28 00:27:20 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/28 15:07:29 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,20 @@ void	interactive_mode(t_shell *shell)
 				ft_printf("exit\n");
 				break ;
 			}
-			else if (end_with_pipe(input)==1)
+			else if (end_with_pipe(input)==1 && !isNotEmpty(input2))
 			{
-				while (!isNotEmpty(input2))
+			
 					input2 = readline("> ");
-				input=ft_strjoin_nconst(input,input2);
+					if (input == NULL)
+					{
+						ft_printf("exit\n");
+						break ;
+					}
 			}
+				if (input2)
+					input=ft_strjoin_nconst(input,input2);
+				input2="";
+			
 			if (ft_strlen(input) > 0)
 			{
 				add_history(input);
