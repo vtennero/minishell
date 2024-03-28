@@ -64,6 +64,10 @@ void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) 
     // Copy the filename to the appropriate field based on whether it's append or overwrite
     if (cmd->fout!=-1)
     {
+        if (cmd->fin==-1)
+        {
+            return;
+        }
         if (append) {
             cmd->redirect_out = shell_strdup(shell, filename);
             fd = open(filename, O_RDWR | O_CREAT | O_APPEND,0666);
