@@ -166,7 +166,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
 }
 
 char *quotevar(t_shell *shell, const char **s) {
-    char *result = strdup(""); // Start with an empty string
+    char *result = shell_strdup(shell,""); // Start with an empty string
 
 	if (!isSpecialOperator(*s))
 	{
@@ -197,7 +197,7 @@ char *quotevar(t_shell *shell, const char **s) {
 			// }
 			else {
 				// ft_printf("quotevar |%c|\n", **s);
-				temp = malloc(2); // Allocate space for char and null terminator
+				temp = shell_malloc(shell,2); // Allocate space for char and null terminator
 				temp[0] = **s;
 				temp[1] = '\0';
 				(*s)++;
@@ -205,7 +205,7 @@ char *quotevar(t_shell *shell, const char **s) {
 			(void)opLength;
 			if (temp) {
 				char *new_result = ft_strjoin(result, temp);
-				free(result); // Free the old result
+				// free(result); // Free the old result
 				result = new_result; // Update the result with the new concatenated string
 				free(temp); // Free the temporary string
 				// ft_printf("quotevar: while: result = |%s|\n", result);
