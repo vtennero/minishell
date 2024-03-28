@@ -313,7 +313,8 @@ void    set_commands(t_shell *shell)
 				if (node->token.type == TOKEN_PIPE)
 				{
 					node=node->next;
-					node->token.type=TOKEN_COMMAND;
+					if (node->token.type==TOKEN_ARG)
+						node->token.type=TOKEN_COMMAND;
 				}
 				else
 					node=node->next;
