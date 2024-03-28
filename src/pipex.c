@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/28 00:29:32 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/28 11:14:23 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -461,6 +461,7 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 		signal(SIGINT, SIG_DFL); // Reset SIGINT to default handling
 		signal(SIGQUIT, SIG_DFL); // Reset SIGQUIT to default handling
 		if (cmd ->fin ==-1)
+
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
 		if (cmd ->fout ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
@@ -494,6 +495,10 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 
 
 
+void free_cmd(Command *cmd){
+	free(cmd->execv_args);
+
+}
 
 
 
@@ -530,6 +535,7 @@ int pipex(Command *cmd,t_shell *shell) {
 
 		// prev_pipe = shell->pipefd[0];
 		// ft_putstr_fd(ft_strjoin("\nprev pipe[0] is ",ft_itoa(prev_pipe)),2);
+		free_cmd(cmd);
 		*cmd = *(cmd->next);
 	}
 	if (!execute_command_pipex(prev_pipe,cmd,shell))
@@ -537,9 +543,13 @@ int pipex(Command *cmd,t_shell *shell) {
 		waitpid(shell->pid,&status,WUNTRACED);
 		handle_status_error(status,cmd,shell);
 	}
+	free_cmd(cmd);
+
 	clean_fd(shell,shell->std_in,shell->std_out);
 	return 0;
 }
+
+
 
 
 
