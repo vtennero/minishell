@@ -306,6 +306,8 @@ void    set_commands(t_shell *shell)
 	
 	node = shell->token_head;
 	if (node){
+		if (!isNotEmpty(node->token.value))
+			node=node->next;
 		node->token.type=TOKEN_COMMAND;
 
 		while (node->next)

@@ -250,6 +250,8 @@ char	*shell_strndup(t_shell *shell, const char *s, size_t n);
 const char	*skip_delimiters(const char *s, char c);
 int	find_index_char(const char *str, char c);
 int	intLength(int num);
+int isNotEmpty(const char *str);
+
 /*
 ** -- DEBUG --
 */
