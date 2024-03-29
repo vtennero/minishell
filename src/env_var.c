@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/29 09:41:31 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/29 10:07:51 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,8 @@ int process_env_arg(t_shell *shell, const char *arg)
     // if (nchar == 0 || arg[0] == '$')
     {
         shell->last_exit_status = 1;
-        perror(" not a valid identifier");
+        ft_putstr_fd(" not a valid identifier",2);
+        // perror(" not a valid identifier");
         // first char is =
 	    // printf("Invalid variable declaration: Starts with '='\n");
         return 1; // need to return 1 for error flagging
