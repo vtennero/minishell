@@ -86,8 +86,11 @@ void shell_cleanup(t_shell* shell)
             next = current->next;
         else
             next = NULL; // Set next to NULL if current->next is NULL
+        if (current->ptr != NULL)
+        {
+            free(current->ptr);
 
-        free(current->ptr);
+        }
         free(current);
         current = next;
     }

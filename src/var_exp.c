@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:22 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/28 14:37:58 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/29 09:10:53 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,9 @@ char* expandVariables(t_shell *shell, const char *input)
 char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPosition)
 {
     int finalLength = calculateExpandedLength(shell, input, shell->env_head);
-    char *expanded = (char *)malloc(finalLength);
+    // char *expanded = (char *)malloc(finalLength);
+    char *expanded = shell_malloc(shell,finalLength*sizeof(char*));
+
     if (!expanded) {
         printf("Memory allocation failed\n");
         return NULL;

@@ -206,8 +206,9 @@ char *quotevar(t_shell *shell, const char **s) {
 			if (temp) {
 				char *new_result = ft_strjoin(result, temp);
 				// free(result); // Free the old result
-				result = new_result; // Update the result with the new concatenated string
-				free(temp); // Free the temporary string
+				result = shell_strdup(shell,new_result); // Update the result with the new concatenated string
+				free(new_result);
+				// free(temp); // Free the temporary string
 				// ft_printf("quotevar: while: result = |%s|\n", result);
 			}
 		}
@@ -215,7 +216,9 @@ char *quotevar(t_shell *shell, const char **s) {
 	else
 	if (isSpecialOperator(*s))
 	{
-		result = ft_strndup((*s), isSpecialOperator(*s));
+		// result = ft_strndup((*s), isSpecialOperator(*s));
+		result = shell_strndup(shell,(*s), isSpecialOperator(*s));
+
 		*s += isSpecialOperator(*s);
 	}
 	// ft_printf("quotevar: returning result = |%s|\n", result);
