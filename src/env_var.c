@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/27 23:30:27 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/29 09:41:31 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,9 +201,10 @@ void remove_var(t_shell *shell, const char *key, int nchar)
             t_env_var *to_delete = *tracer;
             *tracer = (*tracer)->next;
             (void)to_delete;
-            free(to_delete->key);
-            free(to_delete->value);
-            free(to_delete);
+            
+            // free(to_delete->key);
+            // free(to_delete->value);
+            // free(to_delete);
             return;
         }
         tracer = &(*tracer)->next;
