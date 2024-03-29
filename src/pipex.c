@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/28 22:05:25 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/29 09:38:02 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,32 +161,33 @@ int assign_cmd_args(t_shell *shell,Command *command, char **envp)
 int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 {
 	pid_t	pid;
+	char* error;
 
-
+	error=NULL;
 	assign_cmd_args(shell,cmd,shell->envp);
-
 	if (builtin_cmd(cmd,shell))
 		return 1;
 	pid = fork();
-	
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
 	{		
-
 		signal(SIGINT, SIG_DFL); // Reset SIGINT to default handling
 		signal(SIGQUIT, SIG_DFL); // Reset SIGQUIT to default handling
 		if (cmd ->fin ==-1)
-
-		    ft_puterr(ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" ), 1);
-		if (cmd ->fout ==-1)
+			error=ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" );
+		else if (cmd ->fout ==-1)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
+		if (error!=NULL)
+		{
+			ft_putstr_fd(error,2);	ft_puterr(error, 1);
+			free(error);
+			exit(1);
+		}
 		check_finfout(prev_pipe,cmd,shell);
-
 		run_cmd(cmd,shell);
 		exit(1);
 	}
-
 	else
 		{
 			shell->pid=pid;

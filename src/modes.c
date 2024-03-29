@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/28 15:07:29 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/29 09:39:01 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ void	interactive_mode(t_shell *shell)
 			}
 				if (input2)
 					input=ft_strjoin_nconst(input,input2);
+				
+
 				input2="";
 			
 			if (ft_strlen(input) > 0)
@@ -83,10 +85,8 @@ void	interactive_mode(t_shell *shell)
 				print_command_table(command_table);
 				execute_command_table(shell, command_table);
 				shell->token_head = NULL;
-				free(input);
 			}
-			else
-				free(input);
+			free(input);
 		// }
 	}
 }
