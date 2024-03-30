@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/29 09:39:01 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/29 18:18:56 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	interactive_mode(t_shell *shell)
 {
 	char			*input;
 	char			*input2=NULL;
+	char* temp;
 	CommandTable	*command_table;
 	// int status=0;
 	while (1)
@@ -71,7 +72,12 @@ void	interactive_mode(t_shell *shell)
 					}
 			}
 				if (input2)
-					input=ft_strjoin_nconst(input,input2);
+				{
+					temp =ft_strjoin_nconst(input,input2);
+					free(input);
+					input=ft_strdup(temp);
+					free(temp);
+				}
 				
 
 				input2="";
