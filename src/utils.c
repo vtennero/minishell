@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 14:05:36 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/15 15:33:23 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/31 21:49:03 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,11 @@
 
 const char *skip_delimiters(const char *s, char c)
 {
-	while (*s == c) s++;
+	// while (*s == c)
+        // s++;
+    while (*s == ' ' || *s == '\f' || *s == '\r' || *s == '\t' || *s == '\v' || *s == '\n')
+        s++;
+    (void)c;
 	return s;
 }
 

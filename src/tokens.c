@@ -66,23 +66,29 @@ int	get_non_expanded_var_length(char *var)
     int foundLetter = 0; // Flag to track if at least one letter has been found
     int foundDol = 1; // Flag to track if at least one letter has been found
 
-	// ft_printf("get_non_expanded_var_length %s\n", var);
+	ft_printf("get_non_expanded_var_length %s\n", var);
 	var++;
 	// ft_printf("get_non_expanded_var_length %s\n", var);
-    while(var[index] != '\0') {
+    while(var[index] != '\0')
+	{
 		if (var[index] == '$')
 			foundDol++;
-        else if(!isalpha(var[index]) && !isdigit(var[index])) {
+        else if(!isalpha(var[index]) && !isdigit(var[index]) && var[index] != '?') {
+			ft_printf("get_non_expanded_var_length break!\n");
+			// if (var[index] == '?')
+				// return (2);
             // If the character is not a letter or digit, break the loop
             break;
         }
+		else if (var[index] == '?' && var[index + 1] == '\"')
+			return(2);
         else if(isalpha(var[index])) {
             foundLetter = 1; // Set the flag if a letter is found
         }
         count++; // Increment the count of valid characters
         index++; // Move to the next character
     }
-	// ft_printf("get_non_expanded_var_length found Dol %d count %d\n", foundDol, count);
+	ft_printf("get_non_expanded_var_length found Dol %d count %d\n", foundDol, count);
 	if (foundDol == count)
 		return (count);
 	else if (!foundLetter)
@@ -114,12 +120,13 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
     }
 
     // 2. Iterate until the closing quote is reached
-    while (*s < endQuote) {
-		// ft_printf("processDoubleQuote while (*s < endQuote)  |%s|\n", *s);
+    while (*s < endQuote)
+	{
+		ft_printf("processDoubleQuote while (*s < endQuote)  |%s|\n", *s);
         if (**s == '$') {
             // a. Expand the variable
             char *expanded = expandVariables(shell, *s);
-			// ft_printf("processDoubleQuote char *expanded = expandVariables(shell, *s); |%s|\n", expanded);
+			ft_printf("processDoubleQuote char *expanded = expandVariables(shell, *s); |%s|\n", expanded);
 			if (!buf)
 				newBuf = expanded;
 			else
@@ -127,24 +134,28 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
             // free(buf); // Free the old buffer
             // free(expanded); // Free the expanded string
             buf = newBuf;
-			// ft_printf("processDoubleQuote buf |%s|\n", buf);
+			ft_printf("processDoubleQuote buf |%s|\n", buf);
+			ft_printf("processDoubleQuote s |%s|\n", *s);
 			textLen = get_non_expanded_var_length((char * )(*s));
-			// ft_printf("processDoubleQuote get_non_expanded_var_length |%d|\n", textLen);
+			ft_printf("processDoubleQuote get_non_expanded_var_length |%d|\n", textLen);
 			// ft_printf("processDoubleQuote s |%s|\n", *s);
             *s += textLen;
-			// ft_printf("processDoubleQuote s |%s|\n", *s);
+			ft_printf("processDoubleQuote s |%s|\n", *s);
+			ft_printf("processDoubleQuote buf |%s|\n", buf);
             // Move pointer s by n characters, where n is the length of the variable
             // Assuming expandVariables moves *s to the end of the variable
         } else {
-			// ft_printf("processDoubleQuote while (*s < endQuote) else not $ |%s|\n", *s);
+			ft_printf("processDoubleQuote while (*s < endQuote) else not $ |%s|\n", *s);
+			ft_printf("processDoubleQuote else buf |%s|\n", buf);
             // b. Duplicate text until the next $ or the end quote
             const char *nextDollar = strchr(*s, '$');
             if (!nextDollar || nextDollar > endQuote) {
                 nextDollar = endQuote; // If no $ is found, copy until the end quote
             }
             textLen = nextDollar - *s;
+			ft_printf("processDoubleQuote textLen %d\n", textLen);
             char *duplicatedText = strndup(*s, textLen);
-			// ft_printf("processDoubleQuote duplicatedText |%s|\n", duplicatedText);
+			ft_printf("processDoubleQuote duplicatedText |%s|\n", duplicatedText);
 			if (!buf)
 				newBuf = duplicatedText;
 			else
@@ -152,7 +163,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
             // free(buf); // Free the old buffer
             // free(duplicatedText); // Free the duplicated text
             buf = newBuf;
-			// ft_printf("processDoubleQuote else buf |%s|\n", buf);
+			ft_printf("processDoubleQuote else buf |%s|\n", buf);
 
             // Move the pointer to the position of the next $ or end quote
             *s += textLen;
@@ -232,6 +243,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 	int     type;
 	int		index;
 
+	ft_printf("parsetokens |%s|\n", s);
 	index = 0;
 	while (*s)
 	{
@@ -251,6 +263,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 		parse_heredoc(shell);
 		s = skip_delimiters(s, ' ');
 	}
+	// ft_printf("parsetokens returns NULL\n");
 	return (NULL);
 }
 
@@ -260,7 +273,8 @@ void addToken(t_shell *shell, const char *value, int type)
 {
 	// ft_printf("addToken shell_malloc\n");
 	TokenNode *newNode = (TokenNode *)shell_malloc(shell, sizeof(TokenNode));
-	if (!newNode) return;
+	if (!newNode)
+		return;
 
 	// ft_printf("addToken shell_strdup\n");
 	newNode->token.value = shell_strdup(shell, value); // Use shell_strdup
@@ -303,13 +317,54 @@ TokenType get_token_type(const char* token_text)
 	return TOKEN_ARG;
 }
 
+
+
+int	is_only_spaces(char *str)
+{
+	int	length;
+
+	length = ft_strlen(str);
+    // Check for single or double quotes at the beginning and end of the string
+    if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"')) {
+        int i = 1;
+        
+        // Check all characters in between the quotes for spaces
+        while (i < length - 1) {
+            // if (str[i] != ' ') {
+            if (!isspace(str[i])) {
+                return 1; // Non-space character found
+            }
+            i++;
+        }
+        
+        // Only spaces found in between quotes
+        return 0;
+    }
+    
+    // First and last characters are not matching quotes
+    return 1;
+}
+
+int		check_if_valid_cmd(TokenNode *node)
+{
+	if (!ft_strlen(node->token.value))
+		return (0);
+	if (is_only_spaces(node->token.value))
+		return (0);
+	return (1);
+}
+
 void    set_commands(t_shell *shell)
 {
 	TokenNode	*node;
 	
+	// ft_printf("set_commands\n");
 	node = shell->token_head;
-	if (node){
-		if (!isNotEmpty(node->token.value))
+	if (node)
+	{
+		if (!check_if_valid_cmd(node))
+			node->token.type=TOKEN_INV_COMMAND;
+		else if (!isNotEmpty(node->token.value))
 			node=node->next;
 		node->token.type=TOKEN_COMMAND;
 
@@ -329,6 +384,8 @@ void    set_commands(t_shell *shell)
 
 void create_tokens(t_shell *shell, const char *s)
 {
+	// ft_printf("createtokens\n");
 	parse_tokens(shell, s);
 	set_commands(shell);
+	// ft_printf("createtokens end\n");
 }

@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/31 19:34:58 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 21:52:54 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-int isNotEmpty(const char *str) {
+int isNotEmpty(const char *str)
+{
+	ft_printf("isNotEmpty with |%s|\n", str);
     // Check if string is NULL
     if (str == NULL)
         return 0; // String is NULL
@@ -24,6 +26,7 @@ int isNotEmpty(const char *str) {
     
     return 0; // String is empty or consists of only whitespace characters
 }
+
 int end_with_pipe(const char *str) {
     if (str == NULL)
         return 0; // String is NULL
@@ -59,7 +62,6 @@ void	interactive_mode(t_shell *shell)
 			}
 			else if (end_with_pipe(input)==1 && !isNotEmpty(input2))
 			{
-			
 					input2 = readline("> ");
 					if (input == NULL)
 					{
@@ -78,6 +80,7 @@ void	interactive_mode(t_shell *shell)
 
 			if (ft_strlen(input) > 0)
 			{
+				// ft_printf("if (ft_strlen(input) > 0)\n");
 				add_history(input);
 				create_tokens(shell, input);
 				command_table = create_command_table(shell, shell->token_head);

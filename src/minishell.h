@@ -74,8 +74,8 @@ typedef enum
 	TOKEN_D_Q,           //              9
 	TOKEN_S_Q,           //              10
 	TOKEN_S_DOL,         //              11
-	TOKEN_EOL,           //              12
-							// Add other necessary token types
+	TOKEN_EOL, 
+	TOKEN_INV_COMMAND          //              12
 } TokenType;
 
 typedef enum
