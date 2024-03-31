@@ -27,6 +27,7 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <termios.h>
+#include <sys/stat.h>
 
 extern volatile sig_atomic_t g_signal_received;
 /*

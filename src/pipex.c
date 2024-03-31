@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/31 21:16:23 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 22:06:02 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,29 @@ int assign_cmd_args(t_shell *shell,Command *command, char **envp)
 	return 0;
 }
 
+// int is_directory(const char *path) {
+//     struct stat path_stat;
+//     if (stat(path, &path_stat) != 0) {
+//         // perror("stat");
+//         return -1; // Return -1 to indicate error
+//     }
 
+//     return S_ISDIR(path_stat.st_mode); // Returns non-zero if it's a directory, 0 otherwise
+// }
+
+int is_directory(const char *path) {
+    struct stat path_stat;
+    if (stat(path, &path_stat) != 0) {
+        // perror("stat");
+        return -1; // Return -1 to indicate error
+    }
+
+    if (!S_ISDIR(path_stat.st_mode)) {
+        return 0; // Not a directory
+    }
+
+    return 1; // It's a directory
+}
 
 int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 {
@@ -165,7 +187,12 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 	char* error;
 
 	error=NULL;
-
+	if (is_directory( cmd->name)==1)
+	{
+			ft_putstr_fd("is a directory\n",2);
+			shell->last_exit_status = 126;
+			return 1;
+    }
 	if (builtin_cmd(cmd,shell))
 		return 1;
 	if (!find_env_var(shell->env_head, "PATH"))
