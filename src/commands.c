@@ -177,7 +177,7 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
             // printf("Initialize cmd %s fin to %d",current_command->name,current_command->fin);
 
             // ft_printf("create_command_table create_command_entry done\n");
-            current_command->args = (char**)shell_malloc(shell, (arg_count + 1) * sizeof(char*)); // +1 for NULL terminator
+            current_command->args = (char**)shell_malloc(shell, (arg_count + 2) * sizeof(char*)); // +1 for NULL terminator
 
             // Add to command table
             if (table->head == NULL)
