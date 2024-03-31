@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/31 20:29:26 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 21:28:37 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,8 @@ void decl_new_var(t_shell *shell, const char *key)
 {
     t_env_var *new_var = malloc(sizeof(t_env_var));
     new_var->key = strdup(key);
-    new_var->value = NULL;
+    // new_var->value = NULL;
+    new_var->value = "";
     new_var->next = NULL;
 
     // Insert in alphabetical order
