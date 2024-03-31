@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   commands_env.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:11:39 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 16:15:25 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/23 22:37:32 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_env(t_shell *shell)
+int	builtin_env(t_shell *shell)
 {
 	print_export(shell, 0);
+	return 0;
 }

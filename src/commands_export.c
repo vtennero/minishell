@@ -3,19 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   commands_export.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:11:37 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 16:27:16 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/31 17:25:35 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_export(t_shell *shell, char **args, int n_args)
+int	builtin_export(t_shell *shell, char **args, int n_args)
 {
 	int	i;
-
+	int error;
+	
+	error=0;
 	i = 0;
 	if (n_args == 0)
 		print_export(shell, 1);
@@ -23,8 +25,11 @@ void	builtin_export(t_shell *shell, char **args, int n_args)
 	{
 		while (i < n_args)
 		{
-			process_env_arg(shell, args[i]);
+			error=process_env_arg(shell, args[i]);
+			if (error ==1)
+				return 1;
 			i++;
 		}
 	}
+	return 0;
 }

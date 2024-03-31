@@ -76,17 +76,68 @@ void shell_free(t_shell* shell, void* ptr)
     }
 }
 
-void shell_cleanup(t_shell* shell)
-{
-    MemNode* current = shell->mem_tracker.head;
-    while (current) {
-        MemNode* next = current->next;
-        free(current->ptr);
+
+
+
+void shell_cleanup(t_shell* shell){
+    MemNode* current;
+    MemNode* next;
+
+    current= shell->mem_tracker.head;
+    next = NULL;
+    while (current != NULL) {
+        next = current->next; // Always update next
+
+        // Free memory pointed to by current->ptr if it's not NULL
+        if (current->ptr != NULL) {
+            free(current->ptr);
+        }
+
+        // Free the memory allocated for the current node
         free(current);
+
+        // Move to the next node
         current = next;
     }
+
+    // Set head to NULL after cleaning up the linked list
     shell->mem_tracker.head = NULL;
 }
+// void shell_cleanup(t_shell* shell)
+// {
+//     MemNode* current = shell->mem_tracker.head;
+//     MemNode* next = NULL; // Initialize next to NULL
+
+//     while (current!=NULL) {
+//         if (current->next)
+//             next = current->next;
+//         else
+//             next = NULL; // Set next to NULL if current->next is NULL
+//         if (current->ptr != NULL)
+//         {
+//             free(current->ptr);
+
+//         }
+//         free(current);
+//         current = next;
+//     }
+
+//     shell->mem_tracker.head = NULL;
+// }
+
+// void shell_cleanup(t_shell* shell)
+// {
+//     MemNode* current = shell->mem_tracker.head;
+//     MemNode* next ;
+//     while (current) {
+//         if (current->next)
+//             next = current->next;
+//         free(current->ptr);
+//         free(current);
+//         current = next;
+//     }
+//     shell->mem_tracker.head = NULL;
+// }
 
 void	shexit(t_shell *shell, int exit_code)
 {

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   commands_unset.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:15:00 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 16:28:42 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/23 22:18:12 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_unset(t_shell *shell, char **args, int n_args)
+int	builtin_unset(t_shell *shell, char **args, int n_args)
 {
 	int	i;
 	int	nchar;
@@ -24,4 +24,5 @@ void	builtin_unset(t_shell *shell, char **args, int n_args)
 		remove_var(shell, args[i], nchar);
 		i++;
 	}
+	return 0;
 }

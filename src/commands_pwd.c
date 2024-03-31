@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   commands_pwd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:12:13 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/20 16:27:47 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/23 22:17:36 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	builtin_pwd(void)
+int	builtin_pwd(void)
 {
 	char	*pwd;
 
@@ -23,5 +23,10 @@ void	builtin_pwd(void)
 		free(pwd);
 	}
 	else
+	{
 		perror("pwd: error");
+		return 1;
+
+	}
+	return 0;
 }

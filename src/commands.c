@@ -40,10 +40,11 @@ void link_commands(Command* prev_cmd, Command* next_cmd) {
 void set_redirect_in(t_shell *shell, Command* cmd, char* filename) {
     // if (cmd->redirect_in) free(cmd->redirect_in);
     cmd->redirect_in = shell_strdup(shell, filename);
-    int fd = open(filename, O_RDONLY);
+    int fd = open(filename, O_RDWR);
     // if (fd ==-1)
     //     ft_puterr(ft_strjoin_nconst(filename, " : File not exists/permission error" ), 1);
-    cmd->fin = fd;
+    if (cmd->fin!=-1)
+        cmd->fin = fd;
 }
 
 void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) {
@@ -62,17 +63,26 @@ void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) 
     // }
 
     // Copy the filename to the appropriate field based on whether it's append or overwrite
-    if (append) {
-        cmd->redirect_out = shell_strdup(shell, filename);
-        fd = open(filename, O_RDWR | O_CREAT | O_APPEND,0666);
-    } else {
+    if (cmd->fout!=-1)
+    {
+        if (cmd->fin==-1)
+        {
+            return;
+        }
+        if (append) {
+            cmd->redirect_out = shell_strdup(shell, filename);
+            fd = open(filename, O_RDWR | O_CREAT | O_APPEND,0666);
+        } else {
 
-        cmd->redirect_out = shell_strdup(shell, filename);
-        fd = open(filename, O_RDWR | O_CREAT,0666);
+            cmd->redirect_out = shell_strdup(shell, filename);
+            fd = open(filename, O_RDWR | O_CREAT|O_TRUNC ,0666);
+        }
+        cmd->fout = fd;
+
     }
+    
     // if (fd ==-1)
     //     ft_puterr(ft_strjoin_nconst(filename, "File not exists/permission error" ), 1);
-    cmd->fout = fd;
 
 }
 
@@ -167,7 +177,7 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
             // printf("Initialize cmd %s fin to %d",current_command->name,current_command->fin);
 
             // ft_printf("create_command_table create_command_entry done\n");
-            current_command->args = (char**)shell_malloc(shell, (arg_count + 1) * sizeof(char*)); // +1 for NULL terminator
+            current_command->args = (char**)shell_malloc(shell, (arg_count + 2) * sizeof(char*)); // +1 for NULL terminator
 
             // Add to command table
             if (table->head == NULL)
@@ -220,7 +230,7 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
 
         {
             // ft_putstr_fd(ft_strjoin_nconst("fout is",ft_itoa(current_command->fout)),2);
-            if (current_command->fout==0)
+            if (current_command->fout==0 )
                 current_command->fout=-99;
                         // printf("Current cmd is %s and fout is %d",current_command->name,current_command->fout);
 

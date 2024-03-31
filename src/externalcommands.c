@@ -36,13 +36,13 @@ void execute_ext_command(t_shell *shell, Command *cmd)
     if (pid == 0) { // Child process
         // Handle input redirection
         if (cmd->redirect_in != NULL) {
-            cmd->fd_in = open(cmd->redirect_in, O_RDONLY);
+            cmd->fd_in = open(cmd->redirect_in, O_RDWR);
             if (cmd->fd_in < 0) {
                 perror("Failed to open input file");
                 exit(EXIT_FAILURE);
             }
-            dup2(cmd->fd_in, STDIN_FILENO);
-            close(cmd->fd_in);
+            // dup2(cmd->fd_in, STDIN_FILENO);
+            // close(cmd->fd_in);
         }
 
         // Handle output redirection
@@ -52,8 +52,8 @@ void execute_ext_command(t_shell *shell, Command *cmd)
                 perror("Failed to open output file");
                 exit(EXIT_FAILURE);
             }
-            dup2(cmd->fd_out, STDOUT_FILENO);
-            close(cmd->fd_out);
+            // dup2(cmd->fd_out, STDOUT_FILENO);
+            // close(cmd->fd_out);
         }
 
         // Handle append redirection

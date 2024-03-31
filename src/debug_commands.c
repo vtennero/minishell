@@ -41,13 +41,13 @@ void print_command(const Command* cmd) {
     // Print fin
     // if (cmd->fin)
      {
-        ft_printf("Fin is: %s\n", cmd->fin);
+        ft_printf("Fin is: %d\n", cmd->fin);
     }
 
     // Print fout
     // if (cmd->fout) 
     {
-        ft_printf("Fout is: %s\n", cmd->fout);
+        ft_printf("Fout is: %d\n", cmd->fout);
     }
     // Print redirections
     if (cmd->redirect_in) {
