@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/29 10:35:24 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 17:53:20 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 		    ft_puterr(ft_strjoin_nconst(cmd->redirect_out, " : File not exists/permission error" ), 1);
 		if (error!=NULL)
 		{
-			ft_putstr_fd(error,2);	ft_puterr(error, 1);
+			ft_putstr_fd(error,2);
 			free(error);
 			exit(1);
 		}

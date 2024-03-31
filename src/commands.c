@@ -43,7 +43,8 @@ void set_redirect_in(t_shell *shell, Command* cmd, char* filename) {
     int fd = open(filename, O_RDWR);
     // if (fd ==-1)
     //     ft_puterr(ft_strjoin_nconst(filename, " : File not exists/permission error" ), 1);
-    cmd->fin = fd;
+    if (cmd->fin!=-1)
+        cmd->fin = fd;
 }
 
 void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) {
