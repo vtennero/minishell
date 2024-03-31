@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/29 18:18:56 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 19:34:58 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,6 @@ void	interactive_mode(t_shell *shell)
 	// int status=0;
 	while (1)
 	{
-		// while (waitpid(-1, &status, WUNTRACED) == 0 || waitpid(-1, &status,
-		// 		WUNTRACED) == -1)
-		// {
-			// shell->last_exit_status=status;
 			input = readline("$ ");
 			if (input == NULL)
 			{
@@ -71,17 +67,15 @@ void	interactive_mode(t_shell *shell)
 						break ;
 					}
 			}
-				if (input2)
-				{
+			if (input2)
+			{
 					temp =ft_strjoin_nconst(input,input2);
 					free(input);
-					input=ft_strdup(temp);
+					input=shell_strdup(shell,temp);
 					free(temp);
-				}
-				
+			}
+			input2="";
 
-				input2="";
-			
 			if (ft_strlen(input) > 0)
 			{
 				add_history(input);
@@ -92,7 +86,7 @@ void	interactive_mode(t_shell *shell)
 				execute_command_table(shell, command_table);
 				shell->token_head = NULL;
 			}
-			free(input);
+			// free(input);
 		// }
 	}
 }

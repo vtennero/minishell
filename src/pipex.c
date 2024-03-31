@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/31 17:53:20 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 19:18:31 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 void free_cmd(Command *cmd){
 	free(cmd->cmd_path);
+
 }
 int builtin_cmd(Command *command,t_shell* shell)
 {
@@ -182,10 +183,13 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 		{
 			ft_putstr_fd(error,2);
 			free(error);
+			free_cmd(cmd);
+
 			exit(1);
 		}
 		check_finfout(prev_pipe,cmd,shell);
 		run_cmd(cmd,shell);
+		free_cmd(cmd);
 		exit(1);
 	}
 	else

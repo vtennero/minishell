@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_util.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 17:08:33 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/22 09:47:22 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 18:53:15 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,14 @@ char	*locate_cmd(char **paths, char *cmd)
 	{
 		cmd_path = ft_strjoin(*paths, _cmd);
 		if (access(cmd_path, X_OK) >= 0)
-			break ;
+		{
+			// free(cmd_path);
+			free(_cmd);
+
+			return (cmd_path);
+
+			// break ;
+		}
 		free(cmd_path);
 		cmd_path = NULL;
 		paths++;
