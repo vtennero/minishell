@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/31 19:18:31 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 21:16:23 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,10 @@ int custom_cmd(char** cmd_args,char* cmd_path,Command *cmd,t_shell *shell)
         exit_code=builtin_echo(shell, cmd->args, cmd->arg_count,cmd);
     } else if (ft_strcmp(cmd->name, "env") == 0) {
 		exit_code=builtin_env(shell);}
-	 else if (ft_strcmp(cmd->name, "export") == 0 && cmd->fout ==-99) {
-		exit_code=builtin_export(shell, cmd->args, cmd->arg_count);
+	//  else if (ft_strcmp(cmd->name, "export") == 0 && cmd->fout ==-99) {
+	// 	exit_code=builtin_export(shell, cmd->args, cmd->arg_count);
 
-    } 
+    // } 
 	if (exit_code!=-999)
 		exit(exit_code);
 	else if (cmd_path)
@@ -165,9 +165,17 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 	char* error;
 
 	error=NULL;
-	assign_cmd_args(shell,cmd,shell->envp);
+
 	if (builtin_cmd(cmd,shell))
 		return 1;
+	if (!find_env_var(shell->env_head, "PATH"))
+	{
+			perror("Command not found");
+			shell->last_exit_status = 127;
+			return 1;
+    }
+	assign_cmd_args(shell,cmd,shell->envp);
+
 	pid = fork();
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
@@ -175,6 +183,8 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 	{		
 		signal(SIGINT, SIG_DFL); // Reset SIGINT to default handling
 		signal(SIGQUIT, SIG_DFL); // Reset SIGQUIT to default handling
+
+
 		if (cmd ->fin ==-1)
 			error=ft_strjoin_nconst(cmd->redirect_in, " : File not exists/permission error" );
 		else if (cmd ->fout ==-1)
@@ -199,11 +209,6 @@ int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell)
 		}		
 
 }
-
-
-
-
-
 
 
 
