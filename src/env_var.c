@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 17:20:29 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/29 10:07:51 by cliew            ###   ########.fr       */
+/*   Updated: 2024/03/31 17:28:39 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,48 @@
 
 // process_env_arg_helpers
 
-int is_valid_var_name(const char *str, int n)
-{
-    int foundLetter = 0; // Flag to track if at least one letter has been found
+// int is_valid_var_name(const char *str, int n)
+// {
+//     int foundLetter = 0; // Flag to track if at least one letter has been found
 
-    for(int i = 0; i < n; i++) {
-        if(str[i] == '\0') { // If end of string is reached before n
+//     for(int i = 0; i < n; i++) {
+//         if(str[i] == '\0') { // If end of string is reached before n
+//             break;
+//         }
+//         if(!ft_isalpha(str[i]) && !ft_isdigit(str[i])) { // If not a letter or digit
+//             return 0; // Return 0 if any character doesn't meet the criteria
+//         }
+//         if(ft_isalpha(str[i])) { // If the character is a letter
+//             foundLetter = 1; // Set the flag
+//         }
+//     }
+//     return foundLetter; // Return the flag value (0 if only numbers, 1 otherwise)
+// }
+int is_valid_var_name(const char *str,int n)
+{
+    int foundLetter; // Flag to track if at least one letter has been found
+    int i; // Loop counter
+    int len;
+
+    if (n!=-1)
+        len = n;
+    else 
+        len=(int)ft_strlen(str);
+    i=0;
+    foundLetter=0;
+    
+    
+    while (i < len) {
+        if (str[i] == '\0') { // If end of string is reached before n
             break;
         }
-        if(!ft_isalpha(str[i]) && !ft_isdigit(str[i])) { // If not a letter or digit
+        if (!ft_isalpha(str[i]) && !ft_isdigit(str[i])) { // If not a letter or digit
             return 0; // Return 0 if any character doesn't meet the criteria
         }
-        if(ft_isalpha(str[i])) { // If the character is a letter
+        if (ft_isalpha(str[i])) { // If the character is a letter
             foundLetter = 1; // Set the flag
         }
+        i++; // Increment loop counter
     }
     return foundLetter; // Return the flag value (0 if only numbers, 1 otherwise)
 }
@@ -102,7 +130,18 @@ int process_env_arg(t_shell *shell, const char *arg)
     // ft_printf("process_env_arg: |%s|\n", arg);
     nchar = find_index_char(arg, '=');
     // ft_printf("process_env_arg nchar %d strlen %d\n", nchar, (int)ft_strlen(arg) - 1);
-    if (nchar == 0 || is_valid_var_name(arg, nchar) == 0)
+    // if (nchar == 0 || is_valid_var_name(arg, nchar) == 0)
+    // // if (nchar == 0 || arg[0] == '$')
+    // {
+    //     shell->last_exit_status = 1;
+    //     ft_putstr_fd(" not a valid identifier",2);
+    //     // perror(" not a valid identifier");
+    //     // first char is =
+	//     // printf("Invalid variable declaration: Starts with '='\n");
+    //     return 1; // need to return 1 for error flagging
+    // }
+
+    if (is_valid_var_name(arg,nchar) == 0)
     // if (nchar == 0 || arg[0] == '$')
     {
         shell->last_exit_status = 1;
