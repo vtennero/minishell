@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:22 by vitenner          #+#    #+#             */
-/*   Updated: 2024/03/31 21:59:45 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/03/31 22:37:53 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_v
     {
         if (*input == '$')
         {
-            ft_printf("replaceVariables is $ |%s|\n", input);
+            // ft_printf("replaceVariables is $ |%s|\n", input);
             if (*(input + 1) == ' ') 
             { // Check for space after $
                 break;
@@ -128,12 +128,12 @@ size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_v
             }
             else if (*(input + 1) == '?' )
             {
-            ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
+            // ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
                 cpy_exit_code(output, shell->last_exit_status);
-            ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
+            // ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
                 output += intLength(shell->last_exit_status);
                 input += 2;
-            ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
+            // ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
             // } else if (*(input + 1) == '\0' || *(input + 1) == '$') {
             // } else if (*(input + 1) == '\0' || *(input + 1) == '$' || *(input + 1) == '\"') {
                 // ft_printf("replaceVariables  } else if (*(input + 1) == '\0' || *(input + 1) == '$') { output |%s|\n", output);
@@ -180,7 +180,7 @@ size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_v
 // can refactor this by replacing envVars with shell
 char* expandVariables(t_shell *shell, const char *input)
 {
-    ft_printf("expandVariables |%s|\n", input);
+    // ft_printf("expandVariables |%s|\n", input);
     int finalLength = calculateExpandedLength(shell, input, shell->env_head);
     char *expanded = (char *)malloc(finalLength);
     if (!expanded) {
@@ -189,7 +189,7 @@ char* expandVariables(t_shell *shell, const char *input)
     }
     
     size_t advancedPosition = replaceVariables(shell, input, expanded, shell->env_head);
-    ft_printf("expandVariables returns %s\n", expanded);
+    // ft_printf("expandVariables returns %s\n", expanded);
     (void)advancedPosition;
     return expanded;
 }
