@@ -260,7 +260,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 			type = get_token_type(wvarexpanded);
 		addToken(shell, wvarexpanded, type);
 		index++;
-		parse_heredoc(shell);
+		// parse_heredoc(shell);
 		s = skip_delimiters(s, ' ');
 	}
 	// ft_printf("parsetokens returns NULL\n");
@@ -366,10 +366,14 @@ void    set_commands(t_shell *shell)
 			node->token.type=TOKEN_INV_COMMAND;
 		else if (!isNotEmpty(node->token.value))
 			node=node->next;
+		if (node)
+		{
 		node->token.type=TOKEN_COMMAND;
-
 		while (node->next)
 			{
+				// if (node->token.type == TOKEN_REDIR_OUT && node->next->next)
+					// node=node->next->next;
+				// else if (node->token.type == TOKEN_PIPE)
 				if (node->token.type == TOKEN_PIPE)
 				{
 					node=node->next;
@@ -379,7 +383,9 @@ void    set_commands(t_shell *shell)
 				else
 					node=node->next;
 			}
+		}
 	}
+
 }
 
 void create_tokens(t_shell *shell, const char *s)

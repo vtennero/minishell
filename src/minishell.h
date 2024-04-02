@@ -257,6 +257,7 @@ int isNotEmpty(const char *str);
 */
 void	printTokens(TokenNode *head);
 void	print_command_table(const CommandTable *table);
+int is_token_type_present(TokenNode *head, int type);
 
 // pipex_and pipex_util
 # define ERR_INVALID_CMD " : command not found\n"

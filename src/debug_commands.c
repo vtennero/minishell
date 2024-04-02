@@ -85,3 +85,15 @@ void print_command_table(const CommandTable* table)
     ft_printf("*********************************\n\n");
     // ft_printf("\n");
 }
+
+int is_token_type_present(TokenNode *head, int type)
+{
+    TokenNode *current = head;
+    while (current != NULL) {
+        if (current->token.type == type) {
+            return 1; // Found the TokenType in the list
+        }
+        current = current->next;
+    }
+    return 0; // TokenType not found in the list
+}
