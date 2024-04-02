@@ -105,7 +105,9 @@ typedef struct Command
 	char *redirect_in;
 	char *redirect_out;
 	char *redirect_append;
-	char *redirect_heredoc;
+	// char *redirect_heredoc;
+	char *heredoc_delimiter;
+	char *heredoc_temp_path; 
 	int fd_in;  // File descriptor for input redirection
 	int fd_out; // File descriptor for output redirection
 	int fin;    // File descriptor for input redirection
@@ -198,6 +200,9 @@ char	*expandVariables2(t_shell *shell, const char *input,
 ** -- HEREDOC --
 */
 void	parse_heredoc(t_shell *shell);
+void prepare_heredocs_in_command_table(CommandTable* table);
+void handle_heredoc_for_commands(t_shell *shell, CommandTable* table);
+void cleanup_heredocs_in_command_table(CommandTable* table);
 /*
 ** ================== COMMANDS ==================
 */

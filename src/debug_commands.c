@@ -59,6 +59,12 @@ void print_command(const Command* cmd) {
     if (cmd->redirect_append) {
         ft_printf("Output appended to: %s\n", cmd->redirect_append);
     }
+        if (cmd->heredoc_delimiter) {
+        ft_printf("Heredoc delimiter: %s\n", cmd->heredoc_delimiter);
+    }
+    if (cmd->heredoc_temp_path) {
+        ft_printf("Heredoc temporary file path: %s\n", cmd->heredoc_temp_path);
+    }
 
     // If there's a pipe to another command, indicate this
     if (cmd->next) {
