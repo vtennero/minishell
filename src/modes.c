@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/02 16:35:34 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/02 21:11:07 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 int isNotEmpty(const char *str)
 {
-	ft_printf("isNotEmpty with |%s|\n", str);
+	// ft_printf("isNotEmpty with |%s|\n", str);
     // Check if string is NULL
     if (str == NULL)
         return 0; // String is NULL

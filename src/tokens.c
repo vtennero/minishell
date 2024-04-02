@@ -392,12 +392,16 @@ int		check_if_valid_cmd(TokenNode *node)
 	{
 		char	**paths;
 		char	*cmd_path;
+		int 	is_custom_cmd;
 
+		is_custom_cmd=0;
+		if ((ft_strcmp(cmd_name,"cd")==0) ||  (ft_strcmp(cmd_name,"env")==0) || (ft_strcmp(cmd_name,"exit")==0)|| (ft_strcmp(cmd_name,"unset")==0)|| (ft_strcmp(cmd_name,"export")==0)|| (ft_strcmp(cmd_name,"echo")==0)|| (ft_strcmp(cmd_name,"pwd")==0))
+			is_custom_cmd=1;
 		paths = find_cmd_paths(shell->envp);
 		cmd_path = locate_cmd(paths, cmd_name);
 		free_array(paths);
 		// ft_putstr_fd(ft_strjoin_nconst("cmd path is ",cmd_path),2);
-		if (cmd_path!=NULL && is_directory(cmd_path)!=1)
+		if ((cmd_path!=NULL && is_directory(cmd_path)!=1) || is_custom_cmd==1)
 			return 1;
 		else
 			return 0;
@@ -438,15 +442,18 @@ int		check_if_valid_cmd(TokenNode *node)
 
 
 void set_commands(t_shell *shell) {
-    TokenNode *node = shell->token_head;
-    int pipe_exist = 1;
+    TokenNode *node;
+    int pipe_exist;
+
+	node=shell->token_head;
+	pipe_exist = 1;
 
     while (node) 
 	{
-        // if (!check_if_valid_cmd(node))
-        //     node->token.type = TOKEN_INV_COMMAND;
-        // else if (!isNotEmpty(node->token.value))
-        //     node = node->next;
+        if (!check_if_valid_cmd(node) && (node == shell->token_head))
+            node->token.type = TOKEN_INV_COMMAND;
+        else if (!isNotEmpty(node->token.value) && (node == shell->token_head))
+            node = node->next;
         if (node)
 		{
 			if (pipe_exist && is_valid_cmd(shell, node->token.value)) 
@@ -458,7 +465,6 @@ void set_commands(t_shell *shell) {
             if (node->next && node->next->token.type == TOKEN_PIPE) 
                 pipe_exist = 1;
         }
-		// if node
         node = node->next;
     }
 }

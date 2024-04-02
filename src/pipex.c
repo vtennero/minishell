@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/02 17:05:23 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/02 22:06:52 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ int	builtin_cmd(Command *command, t_shell *shell)
 		exit_code = builtin_export(shell, command->args, command->arg_count);
 	else if (ft_strcmp(command->name, "exit") == 0)
 		exit_code = builtin_exit(shell, command->args, command->arg_count);
+	// else if (ft_strcmp(command->name, "echo") == 0 && (!find_env_var(shell->env_head, "PATH")))
+	// 	exit_code = builtin_echo(shell, command->args, command->arg_count, command);
+	// else if (ft_strcmp(command->name, "env") == 0 && (!find_env_var(shell->env_head, "PATH")))
+	// 	exit_code =builtin_env(shell);
+	// else if (ft_strcmp(command->name, "pwd") == 0 && (!find_env_var(shell->env_head, "PATH")))
+	// 	exit_code = builtin_pwd();
 	if (exit_code == -99999)
 		return (0);
 	shell->last_exit_status = exit_code;
@@ -53,7 +59,8 @@ int	custom_cmd(char **cmd_args, char *cmd_path, Command *cmd, t_shell *shell)
 		execve(cmd_path, cmd_args, shell->envp);
 		free(cmd_path);
 		free_array(cmd_args);
-		exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);	
+		
 	}
 	else
 		return (0);
@@ -163,16 +170,25 @@ int	check_error(Command *cmd, t_shell *shell)
 	}
 	if (builtin_cmd(cmd, shell))
 		return (1);
-	if (!find_env_var(shell->env_head, "PATH"))
-	{
-		perror("Command not found");
-		shell->last_exit_status = 127;
-		return (1);
-	}
+	// if (!find_env_var(shell->env_head, "PATH"))
+	// {
+	// 	perror("Command not found");
+	// 	shell->last_exit_status = 127;
+	// 	return (1);
+	// }
 	return (0);
 }
 
-void	check_child_error(Command *cmd, char *error)
+int is_custom_cmd(char *name)
+{
+if ((ft_strcmp(name,"cd")==0) ||  (ft_strcmp(name,"env")==0) || (ft_strcmp(name,"exit")==0)|| (ft_strcmp(name,"unset")==0)|| (ft_strcmp(name,"export")==0)|| (ft_strcmp(name,"echo")==0)|| (ft_strcmp(name,"pwd")==0))
+	return 1;
+else 
+	return 0;
+
+}
+
+void	check_child_error(t_shell* shell, Command *cmd, char *error)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
@@ -182,11 +198,18 @@ void	check_child_error(Command *cmd, char *error)
 	else if (cmd->fout == -1)
 		ft_puterr(ft_strjoin_nconst(cmd->redirect_out,
 				" : File not exists/permission error"), 1);
+	else if (!find_env_var(shell->env_head, "PATH") && !is_custom_cmd(cmd->name))
+	{
+		error = ft_strjoin_nconst(cmd->name,
+				" : Command not found\n");
+		shell->last_exit_status = 127;
+		
+	}
 	if (error != NULL)
 	{
 		ft_putstr_fd(error, 2);
 		free(error);
-		free_cmd(cmd);
+		// free_cmd(cmd);
 		exit(1);
 	}
 }
@@ -205,10 +228,10 @@ int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
 	{
-		check_child_error(cmd, error);
+		check_child_error(shell,cmd, error);
 		check_finfout(prev_pipe, cmd, shell);
 		run_cmd(cmd, shell);
-		free_cmd(cmd);
+		// free_cmd(cmd);
 		exit(1);
 	}
 	else
