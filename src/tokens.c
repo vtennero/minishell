@@ -66,7 +66,7 @@ int	get_non_expanded_var_length(char *var)
     int foundLetter = 0; // Flag to track if at least one letter has been found
     int foundDol = 1; // Flag to track if at least one letter has been found
 
-	ft_printf("get_non_expanded_var_length %s\n", var);
+	// ft_printf("get_non_expanded_var_length %s\n", var);
 	var++;
 	// ft_printf("get_non_expanded_var_length %s\n", var);
     while(var[index] != '\0')
@@ -74,7 +74,7 @@ int	get_non_expanded_var_length(char *var)
 		if (var[index] == '$')
 			foundDol++;
         else if(!isalpha(var[index]) && !isdigit(var[index]) && var[index] != '?') {
-			ft_printf("get_non_expanded_var_length break!\n");
+			// ft_printf("get_non_expanded_var_length break!\n");
 			// if (var[index] == '?')
 				// return (2);
             // If the character is not a letter or digit, break the loop
@@ -88,7 +88,7 @@ int	get_non_expanded_var_length(char *var)
         count++; // Increment the count of valid characters
         index++; // Move to the next character
     }
-	ft_printf("get_non_expanded_var_length found Dol %d count %d\n", foundDol, count);
+	// ft_printf("get_non_expanded_var_length found Dol %d count %d\n", foundDol, count);
 	if (foundDol == count)
 		return (count);
 	else if (!foundLetter)
@@ -122,11 +122,11 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
     // 2. Iterate until the closing quote is reached
     while (*s < endQuote)
 	{
-		ft_printf("processDoubleQuote while (*s < endQuote)  |%s|\n", *s);
+		// ft_printf("processDoubleQuote while (*s < endQuote)  |%s|\n", *s);
         if (**s == '$') {
             // a. Expand the variable
             char *expanded = expandVariables(shell, *s);
-			ft_printf("processDoubleQuote char *expanded = expandVariables(shell, *s); |%s|\n", expanded);
+			// ft_printf("processDoubleQuote char *expanded = expandVariables(shell, *s); |%s|\n", expanded);
 			if (!buf)
 				newBuf = expanded;
 			else
@@ -134,28 +134,28 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
             // free(buf); // Free the old buffer
             // free(expanded); // Free the expanded string
             buf = newBuf;
-			ft_printf("processDoubleQuote buf |%s|\n", buf);
-			ft_printf("processDoubleQuote s |%s|\n", *s);
+			// ft_printf("processDoubleQuote buf |%s|\n", buf);
+			// ft_printf("processDoubleQuote s |%s|\n", *s);
 			textLen = get_non_expanded_var_length((char * )(*s));
-			ft_printf("processDoubleQuote get_non_expanded_var_length |%d|\n", textLen);
+			// ft_printf("processDoubleQuote get_non_expanded_var_length |%d|\n", textLen);
 			// ft_printf("processDoubleQuote s |%s|\n", *s);
             *s += textLen;
-			ft_printf("processDoubleQuote s |%s|\n", *s);
-			ft_printf("processDoubleQuote buf |%s|\n", buf);
+			// ft_printf("processDoubleQuote s |%s|\n", *s);
+			// ft_printf("processDoubleQuote buf |%s|\n", buf);
             // Move pointer s by n characters, where n is the length of the variable
             // Assuming expandVariables moves *s to the end of the variable
         } else {
-			ft_printf("processDoubleQuote while (*s < endQuote) else not $ |%s|\n", *s);
-			ft_printf("processDoubleQuote else buf |%s|\n", buf);
+			// ft_printf("processDoubleQuote while (*s < endQuote) else not $ |%s|\n", *s);
+			// ft_printf("processDoubleQuote else buf |%s|\n", buf);
             // b. Duplicate text until the next $ or the end quote
             const char *nextDollar = strchr(*s, '$');
             if (!nextDollar || nextDollar > endQuote) {
                 nextDollar = endQuote; // If no $ is found, copy until the end quote
             }
             textLen = nextDollar - *s;
-			ft_printf("processDoubleQuote textLen %d\n", textLen);
+			// ft_printf("processDoubleQuote textLen %d\n", textLen);
             char *duplicatedText = strndup(*s, textLen);
-			ft_printf("processDoubleQuote duplicatedText |%s|\n", duplicatedText);
+			// ft_printf("processDoubleQuote duplicatedText |%s|\n", duplicatedText);
 			if (!buf)
 				newBuf = duplicatedText;
 			else
@@ -163,7 +163,7 @@ char *processDoubleQuote(const char **s, t_shell *shell) {
             // free(buf); // Free the old buffer
             // free(duplicatedText); // Free the duplicated text
             buf = newBuf;
-			ft_printf("processDoubleQuote else buf |%s|\n", buf);
+			// ft_printf("processDoubleQuote else buf |%s|\n", buf);
 
             // Move the pointer to the position of the next $ or end quote
             *s += textLen;
@@ -243,7 +243,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 	int     type;
 	int		index;
 
-	ft_printf("parsetokens |%s|\n", s);
+	// ft_printf("parsetokens |%s|\n", s);
 	index = 0;
 	while (*s)
 	{
@@ -260,7 +260,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 			type = get_token_type(wvarexpanded);
 		addToken(shell, wvarexpanded, type);
 		index++;
-		parse_heredoc(shell);
+		// parse_heredoc(shell);
 		s = skip_delimiters(s, ' ');
 	}
 	// ft_printf("parsetokens returns NULL\n");
@@ -366,10 +366,14 @@ void    set_commands(t_shell *shell)
 			node->token.type=TOKEN_INV_COMMAND;
 		else if (!isNotEmpty(node->token.value))
 			node=node->next;
+		if (node)
+		{
 		node->token.type=TOKEN_COMMAND;
-
 		while (node->next)
 			{
+				// if (node->token.type == TOKEN_REDIR_OUT && node->next->next)
+					// node=node->next->next;
+				// else if (node->token.type == TOKEN_PIPE)
 				if (node->token.type == TOKEN_PIPE)
 				{
 					node=node->next;
@@ -379,7 +383,9 @@ void    set_commands(t_shell *shell)
 				else
 					node=node->next;
 			}
+		}
 	}
+
 }
 
 void create_tokens(t_shell *shell, const char *s)

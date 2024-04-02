@@ -211,6 +211,14 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
                 current_token = current_token->next; // Skip the next token since it's part of the redirection
             }
         }
+else if (current_token->token.type == TOKEN_REDIR_HEREDOC) {
+    if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG) {
+        // Directly store the heredoc delimiter in the command structure.
+        current_command->heredoc_delimiter = shell_strdup(shell, current_token->next->token.value);
+        // Move past the delimiter token as it's now stored and will be processed later.
+        current_token = current_token->next;
+    }
+}
         
         // add if pipe | here @eugene
 

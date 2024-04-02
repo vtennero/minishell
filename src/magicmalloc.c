@@ -79,7 +79,8 @@ void shell_free(t_shell* shell, void* ptr)
 
 
 
-void shell_cleanup(t_shell* shell){
+void shell_cleanup(t_shell* shell)
+{
     MemNode* current;
     MemNode* next;
 

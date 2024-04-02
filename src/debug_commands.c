@@ -59,6 +59,12 @@ void print_command(const Command* cmd) {
     if (cmd->redirect_append) {
         ft_printf("Output appended to: %s\n", cmd->redirect_append);
     }
+        if (cmd->heredoc_delimiter) {
+        ft_printf("Heredoc delimiter: %s\n", cmd->heredoc_delimiter);
+    }
+    if (cmd->heredoc_temp_path) {
+        ft_printf("Heredoc temporary file path: %s\n", cmd->heredoc_temp_path);
+    }
 
     // If there's a pipe to another command, indicate this
     if (cmd->next) {
@@ -84,4 +90,16 @@ void print_command_table(const CommandTable* table)
     }
     ft_printf("*********************************\n\n");
     // ft_printf("\n");
+}
+
+int is_token_type_present(TokenNode *head, int type)
+{
+    TokenNode *current = head;
+    while (current != NULL) {
+        if (current->token.type == type) {
+            return 1; // Found the TokenType in the list
+        }
+        current = current->next;
+    }
+    return 0; // TokenType not found in the list
 }
