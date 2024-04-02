@@ -387,48 +387,81 @@ int		check_if_valid_cmd(TokenNode *node)
 // 	}
 
 // }
-void    set_commands(t_shell *shell)
-{
-	TokenNode	*node;
-	
-	// ft_printf("set_commands\n");
-	node = shell->token_head;
-	if (node)
+
+	int is_valid_cmd(t_shell* shell,char* cmd_name)
 	{
-		if (!check_if_valid_cmd(node))
-			node->token.type=TOKEN_INV_COMMAND;
-		else if (!isNotEmpty(node->token.value))
-			node=node->next;
-		if (node)
-		{
-		node->token.type=TOKEN_COMMAND;
-		while (node->next)
-			{
-				if (node->next->next && (node->token.type == TOKEN_REDIR_OUT  || node->token.type == TOKEN_REDIR_IN ) )
-				{
-					if (node->next->next->token.type==TOKEN_ARG && node->next->token.type==TOKEN_ARG )
-					{
-						node->next->next->token.type=TOKEN_COMMAND;
-						node=node->next->next;
+		char	**paths;
+		char	*cmd_path;
 
-					}
-
-				}
-				// else if (node->token.type == TOKEN_PIPE)
-				if (node->token.type == TOKEN_PIPE)
-				{
-					node=node->next;
-					if (node->token.type==TOKEN_ARG)
-						node->token.type=TOKEN_COMMAND;
-				}
-				else
-					node=node->next;
-			}
-		}
+		paths = find_cmd_paths(shell->envp);
+		cmd_path = locate_cmd(paths, cmd_name);
+		free_array(paths);
+		// ft_putstr_fd(ft_strjoin_nconst("cmd path is ",cmd_path),2);
+		if (cmd_path!=NULL && is_directory(cmd_path)!=1)
+			return 1;
+		else
+			return 0;
 	}
 
-}
 
+
+
+// void    set_commands(t_shell *shell)
+// {
+// 	TokenNode	*node;
+// 	int pipe_exist;
+
+// 	pipe_exist=0;
+// 	node = shell->token_head;
+// 	if (node)
+// 	{
+// 		if (!check_if_valid_cmd(node))
+// 			node->token.type=TOKEN_INV_COMMAND;
+// 		else if (!isNotEmpty(node->token.value))
+// 			node=node->next;
+// 		if (node)
+// 		{	
+// 			node->token.type=TOKEN_COMMAND;
+// 			while (node->next)
+// 			{
+// 				if (node->token.type == TOKEN_PIPE)
+// 					pipe_exist=1;
+// 				if (pipe_exist==1 && is_valid_cmd(shell,node->token.value))
+// 				{
+// 					node->token.type = TOKEN_COMMAND;
+// 					pipe_exist=0;
+// 				}
+// 			}
+// 		}
+// 	}
+// }
+
+
+void set_commands(t_shell *shell) {
+    TokenNode *node = shell->token_head;
+    int pipe_exist = 1;
+
+    while (node) 
+	{
+        // if (!check_if_valid_cmd(node))
+        //     node->token.type = TOKEN_INV_COMMAND;
+        // else if (!isNotEmpty(node->token.value))
+        //     node = node->next;
+        if (node)
+		{
+			if (pipe_exist && is_valid_cmd(shell, node->token.value)) 
+			{
+                node->token.type = TOKEN_COMMAND;
+                pipe_exist = 0;
+            }
+            // node->token.type = TOKEN_COMMAND;
+            if (node->next && node->next->token.type == TOKEN_PIPE) 
+                pipe_exist = 1;
+        }
+		// if node
+        node = node->next;
+    }
+}
 
 void create_tokens(t_shell *shell, const char *s)
 {

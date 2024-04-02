@@ -158,26 +158,19 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
     TokenNode* current_token = tokens;
     int pipe_exist=0;
 
-    // ft_printf("create_command_table current token value |%s| type |%d| \n", current_token->token.value, current_token->token.type);
     while (current_token != NULL)
     {
-        // ft_printf("create_command_table while (current_token != NULL) {\n");
         if (current_token->token.type == TOKEN_COMMAND) {
-                // ft_printf("create_command_table if (current_token->token.type == TOKEN_COMMAND) { \n");
-            // Count arguments for the current command
+
             int arg_count = 0;
             TokenNode* temp = current_token->next;
             while (temp && temp->token.type == TOKEN_ARG) {
-                // ft_printf("create_command_table while (temp && temp->token.type == TOKEN_ARG)\n");
                 arg_count++;
                 temp = temp->next;
             }
 
-            // Now, create the command entry and allocate args
             current_command = create_command_entry(shell, current_token->token.value);
-            // printf("Initialize cmd %s fin to %d",current_command->name,current_command->fin);
 
-            // ft_printf("create_command_table create_command_entry done\n");
             current_command->args = (char**)shell_malloc(shell, (arg_count + 2) * sizeof(char*)); // +1 for NULL terminator
 
             // Add to command table
@@ -212,17 +205,17 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
                 current_token = current_token->next; // Skip the next token since it's part of the redirection
             }
         }
-else if (current_token->token.type == TOKEN_REDIR_HEREDOC) {
-    if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG) {
-        // Directly store the heredoc delimiter in the command structure.
-        current_command->heredoc_delimiter = shell_strdup(shell, current_token->next->token.value);
-        // Move past the delimiter token as it's now stored and will be processed later.
-        current_token = current_token->next;
+    else if (current_token->token.type == TOKEN_REDIR_HEREDOC) {
+        if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG) {
+            // Directly store the heredoc delimiter in the command structure.
+            current_command->heredoc_delimiter = shell_strdup(shell, current_token->next->token.value);
+            // Move past the delimiter token as it's now stored and will be processed later.
+            current_token = current_token->next;
+        }
     }
-}
         
         // add if pipe | here @eugene
-
+        
         if (pipe_exist==1 && current_token->token.type !=  TOKEN_PIPE)
 
         {
@@ -234,6 +227,19 @@ else if (current_token->token.type == TOKEN_REDIR_HEREDOC) {
 
             pipe_exist =0;
         }
+
+
+        // if (pipe_exist==1 && current_token->token.type !=  TOKEN_PIPE)
+
+        // {
+        //     //   printf("Current cmd is %s and fin is %d",current_command->name,current_command->fin);
+        //     if (ft_strcmp(current_command->name,"ls") != 0 && ft_strcmp(current_command->name,"echo") != 0)
+        //         if (current_command->fin!=-1)
+        //             current_command->fin=-99;
+        //     // printf("Current cmd %s fin to %d",current_command->name,current_command->fin);
+
+        //     pipe_exist =0;
+        // }
 
         if (current_token->next && current_token->next->token.type == TOKEN_PIPE)
 

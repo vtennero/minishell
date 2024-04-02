@@ -123,6 +123,13 @@ typedef struct
 	int command_count; // Number of commands in the table
 } CommandTable;
 
+
+typedef struct
+{
+	int command_count; // Number of commands in the table
+} Temp_CommandTable;
+
+
 typedef enum
 {
 	REDIRECT_NONE,   // No redirection
@@ -257,6 +264,7 @@ const char	*skip_delimiters(const char *s, char c);
 int	find_index_char(const char *str, char c);
 int	intLength(int num);
 int isNotEmpty(const char *str);
+int	is_directory(const char *path);
 
 /*
 ** -- DEBUG --

@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 17:08:33 by cliew             #+#    #+#             */
-/*   Updated: 2024/03/31 18:53:15 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/02 16:06:50 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,7 @@ char	*locate_cmd(char **paths, char *cmd)
 		{
 			// free(cmd_path);
 			free(_cmd);
-
 			return (cmd_path);
-
 			// break ;
 		}
 		free(cmd_path);
