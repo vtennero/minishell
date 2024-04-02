@@ -354,6 +354,39 @@ int		check_if_valid_cmd(TokenNode *node)
 	return (1);
 }
 
+// void    set_commands(t_shell *shell)
+// {
+// 	TokenNode	*node;
+	
+// 	// ft_printf("set_commands\n");
+// 	node = shell->token_head;
+// 	if (node)
+// 	{
+// 		if (!check_if_valid_cmd(node))
+// 			node->token.type=TOKEN_INV_COMMAND;
+// 		else if (!isNotEmpty(node->token.value))
+// 			node=node->next;
+// 		if (node)
+// 		{
+// 		node->token.type=TOKEN_COMMAND;
+// 		while (node->next)
+// 			{
+// 				// if (node->token.type == TOKEN_REDIR_OUT && node->next->next)
+// 					// node=node->next->next;
+// 				// else if (node->token.type == TOKEN_PIPE)
+// 				if (node->token.type == TOKEN_PIPE)
+// 				{
+// 					node=node->next;
+// 					if (node->token.type==TOKEN_ARG)
+// 						node->token.type=TOKEN_COMMAND;
+// 				}
+// 				else
+// 					node=node->next;
+// 			}
+// 		}
+// 	}
+
+// }
 void    set_commands(t_shell *shell)
 {
 	TokenNode	*node;
@@ -371,8 +404,16 @@ void    set_commands(t_shell *shell)
 		node->token.type=TOKEN_COMMAND;
 		while (node->next)
 			{
-				// if (node->token.type == TOKEN_REDIR_OUT && node->next->next)
-					// node=node->next->next;
+				if (node->next->next && (node->token.type == TOKEN_REDIR_OUT  || node->token.type == TOKEN_REDIR_IN ) )
+				{
+					if (node->next->next->token.type==TOKEN_ARG && node->next->token.type==TOKEN_ARG )
+					{
+						node->next->next->token.type=TOKEN_COMMAND;
+						node=node->next->next;
+
+					}
+
+				}
 				// else if (node->token.type == TOKEN_PIPE)
 				if (node->token.type == TOKEN_PIPE)
 				{
@@ -387,6 +428,7 @@ void    set_commands(t_shell *shell)
 	}
 
 }
+
 
 void create_tokens(t_shell *shell, const char *s)
 {

@@ -45,8 +45,8 @@ void execute_command_table(t_shell *shell, CommandTable* table)
     //     ft_printf("heredoc detected\n");
     // }
     // else
-    prepare_heredocs_in_command_table(table);
-    print_command_table(table);
+    // prepare_heredocs_in_command_table(table);
+    // print_command_table(table);
     pipex(current,shell);
     cleanup_heredocs_in_command_table(table);
 

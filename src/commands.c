@@ -148,6 +148,7 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
 }
 
 
+
 CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
 {
     CommandTable* table = initialize_command_table(shell);
@@ -259,3 +260,116 @@ else if (current_token->token.type == TOKEN_REDIR_HEREDOC) {
 
     return table;
 }
+
+
+// CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
+// {
+//     CommandTable* table = initialize_command_table(shell);
+//     Command* current_command = NULL;
+//     Command* last_command = NULL;
+
+//     TokenNode* current_token = tokens;
+//     int pipe_exist=0;
+
+//     // ft_printf("create_command_table current token value |%s| type |%d| \n", current_token->token.value, current_token->token.type);
+//     while (current_token != NULL)
+//     {
+//         // ft_printf("create_command_table while (current_token != NULL) {\n");
+//         if (current_token->token.type == TOKEN_COMMAND) {
+//                 // ft_printf("create_command_table if (current_token->token.type == TOKEN_COMMAND) { \n");
+//             // Count arguments for the current command
+//             int arg_count = 0;
+//             TokenNode* temp = current_token->next;
+//             while (temp && temp->token.type == TOKEN_ARG) {
+//                 // ft_printf("create_command_table while (temp && temp->token.type == TOKEN_ARG)\n");
+//                 arg_count++;
+//                 temp = temp->next;
+//             }
+
+//             // Now, create the command entry and allocate args
+//             current_command = create_command_entry(shell, current_token->token.value);
+//             // printf("Initialize cmd %s fin to %d",current_command->name,current_command->fin);
+
+//             // ft_printf("create_command_table create_command_entry done\n");
+//             current_command->args = (char**)shell_malloc(shell, (arg_count + 2) * sizeof(char*)); // +1 for NULL terminator
+
+//             // Add to command table
+//             if (table->head == NULL)
+//                 table->head = current_command;
+//             else if (last_command)
+//                 last_command->next = current_command;
+//             last_command = current_command;
+//             table->command_count++;
+//         } else if(current_token->token.type == TOKEN_ARG)
+//         // } else if(current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q)
+//         {
+//                 // ft_printf("create_command_table else if(current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q)\n");
+//             // ft_printf("create_command_table current_token->token.type == TOKEN_ARG || current_token->token.type == TOKEN_S_Q\n");
+//             // ft_printf("create_command_table %d\n", current_token->token.value);
+//             add_argument(shell, current_command, current_token->token.value);
+//         }
+//         // ... handle redirections and other token types ...
+// 		else if (current_token->token.type == TOKEN_REDIR_IN)
+// 		{
+//             if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG)
+// 			{
+//                 set_redirect_in(shell, current_command, current_token->next->token.value);
+//                 current_token = current_token->next; // Skip the next token since it's part of the redirection
+//             }
+//         }
+// 		else if (current_token->token.type == TOKEN_REDIR_OUT || current_token->token.type == TOKEN_REDIR_APPEND)
+// 		{
+//             if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG)
+// 			{
+//                 set_redirect_out(shell, current_command, current_token->next->token.value, current_token->token.type == TOKEN_REDIR_APPEND);
+//                 current_token = current_token->next; // Skip the next token since it's part of the redirection
+//             }
+//         }
+// else if (current_token->token.type == TOKEN_REDIR_HEREDOC) {
+//     if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG) {
+//         // Directly store the heredoc delimiter in the command structure.
+//         current_command->heredoc_delimiter = shell_strdup(shell, current_token->next->token.value);
+//         // Move past the delimiter token as it's now stored and will be processed later.
+//         current_token = current_token->next;
+//     }
+// }
+        
+//         // add if pipe | here @eugene
+
+//         if (pipe_exist==1 && current_token->token.type !=  TOKEN_PIPE)
+
+//         {
+//             //   printf("Current cmd is %s and fin is %d",current_command->name,current_command->fin);
+//             if (ft_strcmp(current_command->name,"ls") != 0 && ft_strcmp(current_command->name,"echo") != 0)
+//                 if (current_command->fin!=-1)
+//                     current_command->fin=-99;
+//             // printf("Current cmd %s fin to %d",current_command->name,current_command->fin);
+
+//             pipe_exist =0;
+//         }
+
+//         if (current_token->next && current_token->next->token.type == TOKEN_PIPE)
+
+//         {
+//             // ft_putstr_fd(ft_strjoin_nconst("fout is",ft_itoa(current_command->fout)),2);
+//             if (current_command->fout==0 )
+//                 current_command->fout=-99;
+//                         // printf("Current cmd is %s and fout is %d",current_command->name,current_command->fout);
+
+//             pipe_exist =1;
+//         }
+
+// 	    // else if (current_token->next->token.type == TOKEN_PIPE)
+// 		// {
+//         //     if (current_token->next->next != NULL && current_token->next->next->token.type == TOKEN_COMMAND)
+// 		// 	{
+//         //         // set_redirect_out(shell, current_command, current_token->next->token.value, current_token->token.type == TOKEN_REDIR_APPEND);
+//         //         current_token = current_token->next; // Skip the next token since it's part of the redirection
+//         //     }
+//         // }
+        
+//         current_token = current_token->next;
+//     }
+
+//     return table;
+// }
