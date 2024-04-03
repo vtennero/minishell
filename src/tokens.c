@@ -30,6 +30,17 @@ int isSpecialOperator(const char *str) {
     return 0; // Not a match
 }
 
+int is_redirect(int type,int* after_redirect)
+{
+	if ((type==2) || (type ==3) || (type==4) || (type==5))
+	{
+		*after_redirect=1;
+		return 1;
+	}
+	else 
+		return 0;
+
+}
 
 
 // v3 tokenizer
@@ -245,6 +256,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 
 	// ft_printf("parsetokens |%s|\n", s);
 	index = 0;
+	int after_redirect=0;
 	while (*s)
 	{
 		s = skip_delimiters(s, ' ');
@@ -253,11 +265,11 @@ char    *parse_tokens(t_shell *shell, const char *s)
 
 		// quote and var logic here
 		wvarexpanded = quotevar(shell, &s);
-
-		// if (index == 0)
-		// 	type = TOKEN_COMMAND;
-		// else
 		type = get_token_type(wvarexpanded);
+
+		if (index == 0 && !is_redirect(type,&after_redirect))
+			type = TOKEN_COMMAND;
+	
 		addToken(shell, wvarexpanded, type);
 		index++;
 		// parse_heredoc(shell);
@@ -469,17 +481,6 @@ int		check_if_valid_cmd(TokenNode *node)
 //     }
 // }
 
-int is_redirect(int type,int* after_redirect)
-{
-	if ((type==2) || (type ==3) || (type==4) || (type==5))
-	{
-		*after_redirect=1;
-		return 1;
-	}
-	else 
-		return 0;
-
-}
 
 void set_commands(t_shell *shell) {
     TokenNode *node;
@@ -494,6 +495,8 @@ void set_commands(t_shell *shell) {
 	{
         if (!check_if_valid_cmd(node) && (node == shell->token_head))
             node->token.type = TOKEN_INV_COMMAND;
+		else if (!isNotEmpty(node->token.value))
+			node=node->next;
         // else if (!isNotEmpty(node->token.value) && (node == shell->token_head) && ( node->token.type == TOKEN_REDIR_IN || node->token.type == TOKEN_REDIR_OUT  || node->token.type == TOKEN_REDIR_APPEND  ))
 		else if (is_redirect(node->token.type,&after_redirect) && node->next->next)
 		{
@@ -519,7 +522,9 @@ void set_commands(t_shell *shell) {
             //     pipe_exist = 0;
             // }
             // node->token.type = TOKEN_COMMAND;
-            if (node->next && node->next->token.type == TOKEN_PIPE) 
+            // if (node->next && node->next->token.type == TOKEN_PIPE) 
+            //     pipe_exist = 1;
+			 if (node->token.type == TOKEN_PIPE) 
                 pipe_exist = 1;
         }
         node = node->next;
