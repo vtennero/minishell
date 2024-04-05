@@ -25,8 +25,7 @@ int	builtin_pwd(void)
 	else
 	{
 		perror("pwd: error");
-		return 1;
-
+		return (1);
 	}
-	return 0;
+	return (0);
 }

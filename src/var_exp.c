@@ -340,4 +340,3 @@ char* expandVariables2(t_shell *shell, const char *input, size_t *advancedPositi
 //     return expanded;
 // }
 
-

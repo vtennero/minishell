@@ -22,7 +22,7 @@ int	builtin_cd(t_shell *shell, char **args, int n_args)
 		if (path == NULL)
 		{
 			perror("cd: HOME not set\n");
-			return 1;
+			return (1);
 		}
 	}
 	else if (n_args == 1)
@@ -31,17 +31,15 @@ int	builtin_cd(t_shell *shell, char **args, int n_args)
 		if (chdir(path) != 0)
 		{
 			perror("cd");
-			return 1;
-		}			
+			return (1);
+		}
 		// shell->last_exit_status = 1;
 	}
 	else
 	{
-		// perror("bash: cd: too many arguments\n");
-		ft_putstr_fd(" bash: cd: too many arguments\n",2);
-
-		return 1;
+		ft_putstr_fd(" bash: cd: too many arguments\n", 2);
+		return (1);
 		shell->last_exit_status = -255;
 	}
-	return 0;
+	return (0);
 }

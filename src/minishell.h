@@ -257,6 +257,7 @@ void	shell_free(t_shell *shell, void *ptr);
 void	shell_cleanup(t_shell *shell);
 char	*shell_strdup(t_shell *shell, const char *s);
 char	*shell_strndup(t_shell *shell, const char *s, size_t n);
+char	*shell_strjoin(t_shell *shell, char const *s1, char const *s2);
 /*
 ** ================== UTILS ==================
 */

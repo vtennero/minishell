@@ -12,51 +12,55 @@
 
 #include "minishell.h"
 
-const char *skip_delimiters(const char *s, char c)
+const char	*skip_delimiters(const char *s, char c)
 {
 	// while (*s == c)
-        // s++;
-    while (*s == ' ' || *s == '\f' || *s == '\r' || *s == '\t' || *s == '\v' || *s == '\n')
-        s++;
-    (void)c;
-	return s;
+	// s++;
+	while (*s == ' ' || *s == '\f' || *s == '\r' || *s == '\t' || *s == '\v'
+		|| *s == '\n')
+		s++;
+	(void)c;
+	return (s);
 }
 
 int	find_index_char(const char *str, char c)
 {
-    const char	*found;
-	
+	const char	*found;
+
 	found = ft_strchr(str, c);
-    if (found != NULL) {
-        return found - str;
-    }
-    return -1;
+	if (found != NULL)
+	{
+		return (found - str);
+	}
+	return (-1);
 }
 
-int getTokenListLength(TokenNode* head)
+int	getTokenListLength(TokenNode *head)
 {
-	int length = 0;
-	TokenNode* current = head;
+	int			length;
+	TokenNode	*current;
 
-	while (current != NULL) {
+	length = 0;
+	current = head;
+	while (current != NULL)
+	{
 		length++;
 		current = current->next; // Move to the next node
 	}
-
-	return length;
+	return (length);
 }
 
-int intLength(int num)
+int	intLength(int num)
 {
-    int	length;
-    if (num == 0)
-        return 1;
-    
-    length = 0;
-    while (num != 0)
+	int	length;
+
+	if (num == 0)
+		return (1);
+	length = 0;
+	while (num != 0)
 	{
-        length++;
-        num /= 10;
-    }
-    return (length);
+		length++;
+		num /= 10;
+	}
+	return (length);
 }

@@ -83,7 +83,8 @@ int					ft_ullonglen(unsigned long long n);
 void				ft_putnbr_base(int nbr, char *base);
 void				ft_putuintnbr_base(unsigned int nbr, char *base);
 void				ft_putulonglongnbr_base(unsigned long long nbr, char *base);
-char				*ft_strncpy(char *dest, char *src, unsigned int n);
+char				*ft_strcpy(char *dest, const char *src);
+char				*ft_strncpy(char *dest, const char *src, unsigned int n);
 char				*ft_strndup(const char *src, int n);
 
 /*

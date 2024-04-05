@@ -42,7 +42,6 @@ int	adjust_exit_code(int n)
 // 	return (1);
 // }
 
-
 int	is_valid_number(const char *str)
 {
 	if (!str || *str == '\0')
@@ -63,24 +62,22 @@ int	builtin_exit(t_shell *shell, char **args, int n_args)
 {
 	if (n_args >= 2)
 	{
-		ft_putstr_fd(" too many arguments\n",2);
+		ft_putstr_fd(" too many arguments\n", 2);
 		// perror();
 		shell->last_exit_status = 1;
 	}
 	else if (n_args == 1)
 	{
 		if (is_valid_number(args[0]) == 0)
-		{		
+		{
 			shell->last_exit_status = 2;
-			ft_putstr_fd(" numeric argument required\n",2);
-
+			ft_putstr_fd(" numeric argument required\n", 2);
 		}
 		else
 			shell->last_exit_status = adjust_exit_code(ft_atoi(args[0]));
-	
 	}
 	ft_printf("exit\n");
 	shexit(shell, 0);
-	return 1;
+	return (1);
 	// return (0); // whatever the exit code is
 }

@@ -15,9 +15,9 @@
 int	builtin_export(t_shell *shell, char **args, int n_args)
 {
 	int	i;
-	int error;
-	
-	error=0;
+	int	error;
+
+	error = 0;
 	i = 0;
 	if (n_args == 0)
 		print_export(shell, 1);
@@ -25,11 +25,11 @@ int	builtin_export(t_shell *shell, char **args, int n_args)
 	{
 		while (i < n_args)
 		{
-			error=process_env_arg(shell, args[i]);
-			if (error ==1)
-				return 1;
+			error = process_env_arg(shell, args[i]);
+			if (error == 1)
+				return (1);
 			i++;
 		}
 	}
-	return 0;
+	return (0);
 }

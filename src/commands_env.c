@@ -15,5 +15,5 @@
 int	builtin_env(t_shell *shell)
 {
 	print_export(shell, 0);
-	return 0;
+	return (0);
 }

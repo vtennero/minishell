@@ -287,4 +287,3 @@ void print_export(t_shell *shell, int is_export)
         current = current->next;
     }
 }
-

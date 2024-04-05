@@ -24,5 +24,5 @@ int	builtin_unset(t_shell *shell, char **args, int n_args)
 		remove_var(shell, args[i], nchar);
 		i++;
 	}
-	return 0;
+	return (0);
 }

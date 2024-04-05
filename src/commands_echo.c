@@ -12,14 +12,13 @@
 
 #include "minishell.h"
 
-int	builtin_echo(t_shell *shell, char **args, int n_args,Command* cmd)
+int	builtin_echo(t_shell *shell, char **args, int n_args, Command *cmd)
 {
 	int	i;
 	int	newline;
 
 	i = 0;
 	newline = 1;
-
 	if (n_args >= 1 && strcmp(args[0], "-n") == 0)
 	{
 		if (n_args == 1)
@@ -29,9 +28,9 @@ int	builtin_echo(t_shell *shell, char **args, int n_args,Command* cmd)
 	}
 	while (i < n_args)
 	{
-		if (cmd->fin==0 && cmd->fout==0 && ft_strcmp(args[i],"0")==0)
+		if (cmd->fin == 0 && cmd->fout == 0 && ft_strcmp(args[i], "0") == 0)
 		{
-			ft_printf("%s",ft_itoa(shell->last_exit_status));
+			ft_printf("%s", ft_itoa(shell->last_exit_status));
 		}
 		else
 		{
@@ -44,5 +43,5 @@ int	builtin_echo(t_shell *shell, char **args, int n_args,Command* cmd)
 	if (newline)
 		ft_printf("\n");
 	(void)shell;
-	return 0;
+	return (0);
 }

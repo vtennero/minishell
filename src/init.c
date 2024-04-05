@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	split_key_value(const char *str, char **key, char **value,t_shell *shell)
+int	split_key_value(const char *str, char **key, char **value, t_shell *shell)
 {
 	const char	*equals_pos;
 	int			key_len;
@@ -21,14 +21,12 @@ int	split_key_value(const char *str, char **key, char **value,t_shell *shell)
 	if (equals_pos != NULL)
 	{
 		key_len = equals_pos - str;
-		*key = shell_malloc(shell,key_len + 1);
-
+		*key = shell_malloc(shell, key_len + 1);
 		// *key = (char *)malloc(key_len + 1);
 		ft_strncpy(*key, (char *)str, key_len);
 		(*key)[key_len] = '\0';
 		// *value = ft_strdup(equals_pos + 1);
-		*value = shell_strdup(shell,equals_pos + 1);
-
+		*value = shell_strdup(shell, equals_pos + 1);
 		return (1);
 	}
 	return (0);
@@ -40,8 +38,7 @@ void	insert_sorted_env_var(t_shell *shell, char *key, char *value)
 	t_env_var	*current;
 
 	// new_var = malloc(sizeof(t_env_var));
-
-	new_var = shell_malloc(shell,sizeof(t_env_var));
+	new_var = shell_malloc(shell, sizeof(t_env_var));
 	new_var->key = key;
 	new_var->value = value;
 	new_var->next = NULL;
@@ -70,7 +67,7 @@ void	create_env_var_list(t_shell *shell, char **envp)
 	shell->env_head = NULL;
 	while (envp[i] != NULL)
 	{
-		if (split_key_value(envp[i], &key, &value,shell))
+		if (split_key_value(envp[i], &key, &value, shell))
 			insert_sorted_env_var(shell, key, value);
 		i++;
 	}

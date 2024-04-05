@@ -12,146 +12,134 @@
 
 #include "minishell.h"
 
-char* shell_strdup(t_shell* shell, const char* s)
+char	*shell_strjoin(t_shell *shell, char const *s1, char const *s2)
 {
-    size_t len = ft_strlen(s) + 1; // +1 for the null terminator
-    char* newStr = (char*)shell_malloc(shell, len);
-    if (newStr) {
-        ft_strncpy(newStr, (char *)s, len);
-        newStr[len - 1] = '\0'; // Ensure null termination
-    }
-    return newStr;
+	int		i;
+	int		j;
+	char	*str;
+
+	i = 0;
+	j = 0;
+	str = NULL;
+	if (s1 && s2)
+	{
+		str = shell_malloc(shell, (ft_strlen(s1) + ft_strlen(s2) + 1));
+		if (!str)
+			return (NULL);
+		while (s1[i])
+		{
+			str[i] = s1[i];
+			i++;
+		}
+		while (s2[j])
+		{
+			str[i++] = s2[j++];
+		}
+		str[i] = '\0';
+	}
+	return (str);
 }
 
-char* shell_strndup(t_shell* shell, const char* s, size_t n) {
-    // Find the length of the string, ensuring not to read beyond its termination
-    size_t len = strlen(s);
-
-    // Ensure we do not copy more than n characters
-    if (len > n) {
-        len = n;
-    }
-
-    // Allocate enough memory for the string plus the null terminator
-    char* newStr = (char*)shell_malloc(shell, len + 1);
-    if (newStr) {
-        // Copy up to len characters
-        strncpy(newStr, s, len);
-        // Explicitly null-terminate the new string
-        newStr[len] = '\0';
-    }
-    return newStr;
-}
-
-void *shell_malloc(t_shell* shell, size_t size)
+char	*shell_strdup(t_shell *shell, const char *s)
 {
-    void* ptr = ft_calloc(1, size);
-    if (ptr) {
-        MemNode* node = (MemNode*)malloc(sizeof(MemNode));
-        if (node) {
-            node->ptr = ptr;
-            node->next = shell->mem_tracker.head;
-            shell->mem_tracker.head = node;
-        } else {
-            // Handle failed allocation for MemNode
-            free(ptr);
-            return NULL;
-        }
-    }
-    return ptr;
+	char	*newStr;
+
+	size_t len = ft_strlen(s) + 1; // +1 for the null terminator
+	newStr = (char *)shell_malloc(shell, len);
+	if (newStr)
+	{
+		ft_strncpy(newStr, (char *)s, len);
+		newStr[len - 1] = '\0'; // Ensure null termination
+	}
+	return (newStr);
 }
 
-void shell_free(t_shell* shell, void* ptr)
+char	*shell_strndup(t_shell *shell, const char *s, size_t n)
 {
-    MemNode** current = &shell->mem_tracker.head;
-    while (*current) {
-        MemNode* entry = *current;
-        if (entry->ptr == ptr) {
-            *current = entry->next;
-            free(entry->ptr);
-            free(entry);
-            return;
-        }
-        current = &entry->next;
-    }
+	size_t	len;
+	char	*newStr;
+
+	len = strlen(s);
+	if (len > n)
+	{
+		len = n;
+	}
+	newStr = (char *)shell_malloc(shell, len + 1);
+	if (newStr)
+	{
+		ft_strncpy(newStr, s, len);
+		newStr[len] = '\0';
+	}
+	return (newStr);
 }
 
-
-
-
-void shell_cleanup(t_shell* shell)
+void	*shell_malloc(t_shell *shell, size_t size)
 {
-    MemNode* current;
-    MemNode* next;
+	void	*ptr;
+	MemNode	*node;
 
-    current= shell->mem_tracker.head;
-    next = NULL;
-    while (current != NULL) {
-        next = current->next; // Always update next
-
-        // Free memory pointed to by current->ptr if it's not NULL
-        if (current->ptr != NULL) {
-            free(current->ptr);
-        }
-
-        // Free the memory allocated for the current node
-        free(current);
-
-        // Move to the next node
-        current = next;
-    }
-
-    // Set head to NULL after cleaning up the linked list
-    shell->mem_tracker.head = NULL;
+	ptr = ft_calloc(1, size);
+	if (ptr)
+	{
+		node = (MemNode *)malloc(sizeof(MemNode));
+		if (node)
+		{
+			node->ptr = ptr;
+			node->next = shell->mem_tracker.head;
+			shell->mem_tracker.head = node;
+		}
+		else
+		{
+			free(ptr);
+			return (NULL);
+		}
+	}
+	return (ptr);
 }
-// void shell_cleanup(t_shell* shell)
-// {
-//     MemNode* current = shell->mem_tracker.head;
-//     MemNode* next = NULL; // Initialize next to NULL
 
-//     while (current!=NULL) {
-//         if (current->next)
-//             next = current->next;
-//         else
-//             next = NULL; // Set next to NULL if current->next is NULL
-//         if (current->ptr != NULL)
-//         {
-//             free(current->ptr);
+void	shell_free(t_shell *shell, void *ptr)
+{
+	MemNode	**current;
+	MemNode	*entry;
 
-//         }
-//         free(current);
-//         current = next;
-//     }
+	current = &shell->mem_tracker.head;
+	while (*current)
+	{
+		entry = *current;
+		if (entry->ptr == ptr)
+		{
+			*current = entry->next;
+			free(entry->ptr);
+			free(entry);
+			return ;
+		}
+		current = &entry->next;
+	}
+}
 
-//     shell->mem_tracker.head = NULL;
-// }
+void	shell_cleanup(t_shell *shell)
+{
+	MemNode	*current;
+	MemNode	*next;
 
-// void shell_cleanup(t_shell* shell)
-// {
-//     MemNode* current = shell->mem_tracker.head;
-//     MemNode* next ;
-//     while (current) {
-//         if (current->next)
-//             next = current->next;
-//         free(current->ptr);
-//         free(current);
-//         current = next;
-//     }
-//     shell->mem_tracker.head = NULL;
-// }
+	current = shell->mem_tracker.head;
+	while (current)
+	{
+		next = current->next;
+		free(current->ptr);
+		free(current);
+		current = next;
+	}
+	shell->mem_tracker.head = NULL;
+}
 
 void	shexit(t_shell *shell, int exit_code)
 {
-    int exit_s;
-    
-    // ft_printf("shexit\n");
-    exit_s = shell->last_exit_status;
-    // ft_printf("shexit %d\n", shell->last_exit_status);
+	int	exit_s;
+
+	exit_s = shell->last_exit_status;
 	shell_cleanup(shell);
-	// free big struct
 	free(shell);
-	// exit
-	// exit(exit_code);
-    exit(exit_s);
-    (void)exit_code;
+	exit(exit_s);
+	(void)exit_code;
 }

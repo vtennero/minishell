@@ -11,85 +11,87 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-int isNotEmpty(const char *str)
+
+int	isNotEmpty(const char *str)
 {
 	ft_printf("isNotEmpty with |%s|\n", str);
-    // Check if string is NULL
-    if (str == NULL)
-        return 0; // String is NULL
-    
-    // Check if string is empty or consists of only whitespace characters
-    for (size_t i = 0; str[i] != '\0'; i++) {
-        if (!isspace((unsigned char)str[i]))
-            return 1; // String is not empty and contains non-whitespace characters
-    }
-    
-    return 0; // String is empty or consists of only whitespace characters
+	// Check if string is NULL
+	if (str == NULL)
+		return (0); // String is NULL
+	// Check if string is empty or consists of only whitespace characters
+	for (size_t i = 0; str[i] != '\0'; i++)
+	{
+		if (!isspace((unsigned char)str[i]))
+			return (1);
+		// String is not empty and contains non-whitespace characters
+	}
+	return (0); // String is empty or consists of only whitespace characters
 }
 
-int end_with_pipe(const char *str) {
-    if (str == NULL)
-        return 0; // String is NULL
+int	end_with_pipe(const char *str)
+{
+	int	i;
 
-    int i = 0;
-    while (str[i] != '\0')
-        i++; // Move to the end of the string
-
-    // Move backwards, skipping whitespace characters
-    while (i > 0 && isspace((unsigned char)str[i - 1]))
-        i--;
-
-    // Check if the last non-space character is a pipe symbol
-    if (i > 0 && str[i - 1] == '|')
-        return 1; // Last non-space character is a pipe symbol
-    else
-        return 0; // Last non-space character is not a pipe symbol
+	if (str == NULL)
+		return (0); // String is NULL
+	i = 0;
+	while (str[i] != '\0')
+		i++; // Move to the end of the string
+	// Move backwards, skipping whitespace characters
+	while (i > 0 && isspace((unsigned char)str[i - 1]))
+		i--;
+	// Check if the last non-space character is a pipe symbol
+	if (i > 0 && str[i - 1] == '|')
+		return (1); // Last non-space character is a pipe symbol
+	else
+		return (0); // Last non-space character is not a pipe symbol
 }
 void	interactive_mode(t_shell *shell)
 {
 	char			*input;
-	char			*input2=NULL;
-	char* temp;
+	char			*input2;
+	char			*temp;
 	CommandTable	*command_table;
+
+	input2 = NULL;
 	// int status=0;
 	while (1)
 	{
-			input = readline("$ ");
+		input = readline("$ ");
+		if (input == NULL)
+		{
+			ft_printf("exit\n");
+			break ;
+		}
+		else if (end_with_pipe(input) == 1 && !isNotEmpty(input2))
+		{
+			input2 = readline("> ");
 			if (input == NULL)
 			{
 				ft_printf("exit\n");
 				break ;
 			}
-			else if (end_with_pipe(input)==1 && !isNotEmpty(input2))
-			{
-					input2 = readline("> ");
-					if (input == NULL)
-					{
-						ft_printf("exit\n");
-						break ;
-					}
-			}
-			if (input2)
-			{
-					temp =ft_strjoin_nconst(input,input2);
-					free(input);
-					input=shell_strdup(shell,temp);
-					free(temp);
-			}
-			input2="";
-
-			if (ft_strlen(input) > 0)
-			{
-				// ft_printf("if (ft_strlen(input) > 0)\n");
-				add_history(input);
-				create_tokens(shell, input);
-				command_table = create_command_table(shell, shell->token_head);
-				printTokens(shell->token_head);
-				print_command_table(command_table);
-				execute_command_table(shell, command_table);
-				shell->token_head = NULL;
-			}
-			// free(input);
+		}
+		if (input2)
+		{
+			temp = ft_strjoin_nconst(input, input2);
+			free(input);
+			input = shell_strdup(shell, temp);
+			free(temp);
+		}
+		input2 = "";
+		if (ft_strlen(input) > 0)
+		{
+			// ft_printf("if (ft_strlen(input) > 0)\n");
+			add_history(input);
+			create_tokens(shell, input);
+			command_table = create_command_table(shell, shell->token_head);
+			printTokens(shell->token_head);
+			print_command_table(command_table);
+			execute_command_table(shell, command_table);
+			shell->token_head = NULL;
+		}
+		// free(input);
 		// }
 	}
 }
@@ -163,6 +165,3 @@ void	std_input_mode(int fd, t_shell *shell)
 	// print_command_table(command_table);
 	execute_command_table(shell, command_table);
 }
-
-
-
