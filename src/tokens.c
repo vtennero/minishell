@@ -27,8 +27,6 @@ int isSpecialOperator(const char *str) {
     return 0;
 }
 
-
-
 int	get_non_expanded_var_length(char *var)
 {
     int count = 1; // Counter for valid characters
@@ -58,9 +56,6 @@ int	get_non_expanded_var_length(char *var)
 		count = 1;
 	return (count);
 }
-
-
-
 
 char *quotevar(t_shell *shell, const char **s) {
     char *result = shell_strdup(shell,""); // Start with an empty string
@@ -94,11 +89,9 @@ char *quotevar(t_shell *shell, const char **s) {
 			}
 		}
 	}
-	else
-	if (isSpecialOperator(*s))
+	else if (isSpecialOperator(*s))
 	{
 		result = shell_strndup(shell,(*s), isSpecialOperator(*s));
-
 		*s += isSpecialOperator(*s);
 	}
     return result; // This is the concatenated final result
@@ -117,9 +110,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 		s = skip_delimiters(s, ' ');
 		if (!*s)
 			break;
-
 		wvarexpanded = quotevar(shell, &s);
-
 		if (index == 0)
 			type = TOKEN_COMMAND;
 		else
@@ -141,7 +132,6 @@ void addToken(t_shell *shell, const char *value, int type)
 	newNode->token.value = shell_strdup(shell, value); // Use shell_strdup
 	newNode->token.type = type;
 	newNode->next = NULL;
-
 	if (shell->token_head == NULL)
 		shell->token_head = newNode;
 	else
@@ -172,84 +162,8 @@ TokenType get_token_type(const char* token_text)
 	return TOKEN_ARG;
 }
 
-
-
-int	is_only_spaces(char *str)
-{
-	int	length;
-
-	length = ft_strlen(str);
-    if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"')) {
-        int i = 1;
-
-        while (i < length - 1) {
-            if (!isspace(str[i])) {
-                return 1; // Non-space character found
-            }
-            i++;
-        }
-
-        return 0;
-    }
-
-    return 1;
-}
-
-int		check_if_valid_cmd(TokenNode *node)
-{
-	if (!ft_strlen(node->token.value))
-		return (0);
-	if (is_only_spaces(node->token.value))
-		return (0);
-	return (1);
-}
-
-
-int is_valid_cmd(t_shell* shell,char* cmd_name)
-{
-	char	**paths;
-	char	*cmd_path;
-
-	paths = find_cmd_paths(shell->envp);
-	cmd_path = locate_cmd(paths, cmd_name);
-	free_array(paths);
-	// ft_putstr_fd(ft_strjoin_nconst("cmd path is ",cmd_path),2);
-	if (cmd_path!=NULL && is_directory(cmd_path)!=1)
-		return 1;
-	else
-		return 0;
-}
-
-void set_commands(t_shell *shell) {
-    TokenNode *node = shell->token_head;
-    int pipe_exist = 1;
-
-    while (node)
-	{
-        // if (!check_if_valid_cmd(node))
-        //     node->token.type = TOKEN_INV_COMMAND;
-        // else if (!isNotEmpty(node->token.value))
-        //     node = node->next;
-        if (node)
-		{
-			if (pipe_exist && is_valid_cmd(shell, node->token.value))
-			{
-                node->token.type = TOKEN_COMMAND;
-                pipe_exist = 0;
-            }
-            // node->token.type = TOKEN_COMMAND;
-            if (node->next && node->next->token.type == TOKEN_PIPE)
-                pipe_exist = 1;
-        }
-		// if node
-        node = node->next;
-    }
-}
-
 void create_tokens(t_shell *shell, const char *s)
 {
-	// ft_printf("createtokens\n");
 	parse_tokens(shell, s);
-	set_commands(shell);
-	// ft_printf("createtokens end\n");
+	set_token_commands(shell);
 }

@@ -14,7 +14,7 @@
 
 t_env_var *findEnvVar(t_env_var *head, const char *key) {
     while (head != NULL) {
-        if (strcmp(head->key, key) == 0) {
+        if (ft_strcmp(head->key, key) == 0) {
             return head;
         }
         head = head->next;
@@ -46,7 +46,7 @@ int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *envVar
                 length += 2;
                 input += 2;
             } else if (*(input + 1) == '?') {
-                length += process_double_quotegth(shell->last_exit_status);
+                length += calc_int_len(shell->last_exit_status);
                 input += 2;
             }
             else if (*(input + 1) == '$') {
@@ -90,7 +90,7 @@ char	*cpy_exit_code(char *str, int n)
 {
 	int		i;
 
-	i = process_double_quote((n));
+	i = calc_int_len((n));
 	str[i] = '\0';
 	if (str)
 	{
@@ -123,7 +123,7 @@ size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_v
             // ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
                 cpy_exit_code(output, shell->last_exit_status);
             // ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
-                output += process_double_quotegth(shell->last_exit_status);
+                output += calc_int_len(shell->last_exit_status);
                 input += 2;
             // ft_printf("replaceVariables is ? input=|%s| output=|%s|\n", input, output);
             // } else if (*(input + 1) == '\0' || *(input + 1) == '$') {

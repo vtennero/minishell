@@ -195,6 +195,7 @@ void	addToken(t_shell *shell, const char *value, int type);
 TokenType	get_token_type(const char *token_text);
 char	*parse_tokens(t_shell *shell, const char *s);
 int 	isspace_not_eol(int ch);
+void	set_token_commands(t_shell *shell);
 /*
 ** -- QUOTES --
 */

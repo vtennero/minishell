@@ -23,6 +23,7 @@ OBJ_DIR = obj
 # Source files for minishell
 MINISHELL_SRC = main.c \
 tokens.c \
+tokens_set_cmds.c \
 signals.c \
 commands.c \
 debug_commands.c \

@@ -62,7 +62,7 @@ void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *str, int fd);
 void				ft_putendl_fd(char const *s, int fd);
 void				ft_putnbr_fd(int n, int fd);
-int					ft_strcmp(const char *s1, char *s2);
+int					ft_strcmp(const char *s1, const char *s2);
 long				ft_atol(const char *str);
 int					ft_max(int a, int b);
 int					ft_min(int a, int b);
