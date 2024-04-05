@@ -96,7 +96,6 @@ int create_temp_file(char **tempFilePath) {
 }
 
 
-
 // int create_temp_file(char **tempFilePath) {
 //     static int counter = 0; // Static counter to ensure uniqueness within the same second
 //     time_t now = time(NULL); // Get the current time
@@ -188,7 +187,7 @@ char* handle_heredoc(const char* delimiter)
     if (fd == -1) {
         return NULL; // Error message already printed by create_temp_file
     }
-    
+
     write_heredoc_to_file(fd, delimiter);
     close(fd);
     return tempFilePath; // Caller is responsible for freeing this

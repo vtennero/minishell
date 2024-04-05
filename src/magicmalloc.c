@@ -44,7 +44,8 @@ char	*shell_strdup(t_shell *shell, const char *s)
 {
 	char	*newStr;
 
-	size_t len = ft_strlen(s) + 1; // +1 for the null terminator
+	size_t len = ft_strlen(s) + 1;
+	
 	newStr = (char *)shell_malloc(shell, len);
 	if (newStr)
 	{
