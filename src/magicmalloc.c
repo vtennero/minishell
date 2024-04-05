@@ -42,36 +42,59 @@ char	*shell_strjoin(t_shell *shell, char const *s1, char const *s2)
 
 char	*shell_strdup(t_shell *shell, const char *s)
 {
-	char	*newStr;
+	char	*new;
+	size_t	len;
 
-	size_t len = ft_strlen(s) + 1;
-	
-	newStr = (char *)shell_malloc(shell, len);
-	if (newStr)
+	len = ft_strlen(s) + 1;
+	new = (char *)shell_malloc(shell, len);
+	if (new)
 	{
-		ft_strncpy(newStr, (char *)s, len);
-		newStr[len - 1] = '\0'; // Ensure null termination
+		ft_strncpy(new, (char *)s, len);
+		new[len - 1] = '\0';
 	}
-	return (newStr);
+	return (new);
 }
 
 char	*shell_strndup(t_shell *shell, const char *s, size_t n)
 {
 	size_t	len;
-	char	*newStr;
+	char	*new;
 
 	len = strlen(s);
 	if (len > n)
-	{
 		len = n;
-	}
-	newStr = (char *)shell_malloc(shell, len + 1);
-	if (newStr)
+	new = (char *)shell_malloc(shell, len + 1);
+	if (new)
 	{
-		ft_strncpy(newStr, s, len);
-		newStr[len] = '\0';
+		ft_strncpy(new, s, len);
+		new[len] = '\0';
 	}
-	return (newStr);
+	return (new);
+}
+
+char	*shell_itoa(t_shell *shell, int n)
+{
+	int		neg;
+	int		i;
+	char	*str;
+
+	neg = 0;
+	if (n < 0)
+		neg = 1;
+	i = ft_intlen((n));
+	str = shell_malloc(shell, sizeof(char) * i + 1);
+	str[i] = '\0';
+	if (str)
+	{
+		while (i > 0)
+		{
+			str[--i] = ft_abs(n % 10) + 48;
+			n /= 10;
+		}
+		if (neg == 1)
+			str[0] = '-';
+	}
+	return (str);
 }
 
 void	*shell_malloc(t_shell *shell, size_t size)
@@ -96,51 +119,4 @@ void	*shell_malloc(t_shell *shell, size_t size)
 		}
 	}
 	return (ptr);
-}
-
-void	shell_free(t_shell *shell, void *ptr)
-{
-	MemNode	**current;
-	MemNode	*entry;
-
-	current = &shell->mem_tracker.head;
-	while (*current)
-	{
-		entry = *current;
-		if (entry->ptr == ptr)
-		{
-			*current = entry->next;
-			free(entry->ptr);
-			free(entry);
-			return ;
-		}
-		current = &entry->next;
-	}
-}
-
-void	shell_cleanup(t_shell *shell)
-{
-	MemNode	*current;
-	MemNode	*next;
-
-	current = shell->mem_tracker.head;
-	while (current)
-	{
-		next = current->next;
-		free(current->ptr);
-		free(current);
-		current = next;
-	}
-	shell->mem_tracker.head = NULL;
-}
-
-void	shexit(t_shell *shell, int exit_code)
-{
-	int	exit_s;
-
-	exit_s = shell->last_exit_status;
-	shell_cleanup(shell);
-	free(shell);
-	exit(exit_s);
-	(void)exit_code;
 }

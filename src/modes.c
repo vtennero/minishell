@@ -12,40 +12,6 @@
 
 #include "minishell.h"
 
-int	isNotEmpty(const char *str)
-{
-	ft_printf("isNotEmpty with |%s|\n", str);
-	// Check if string is NULL
-	if (str == NULL)
-		return (0); // String is NULL
-	// Check if string is empty or consists of only whitespace characters
-	for (size_t i = 0; str[i] != '\0'; i++)
-	{
-		if (!isspace((unsigned char)str[i]))
-			return (1);
-		// String is not empty and contains non-whitespace characters
-	}
-	return (0); // String is empty or consists of only whitespace characters
-}
-
-int	end_with_pipe(const char *str)
-{
-	int	i;
-
-	if (str == NULL)
-		return (0); // String is NULL
-	i = 0;
-	while (str[i] != '\0')
-		i++; // Move to the end of the string
-	// Move backwards, skipping whitespace characters
-	while (i > 0 && isspace((unsigned char)str[i - 1]))
-		i--;
-	// Check if the last non-space character is a pipe symbol
-	if (i > 0 && str[i - 1] == '|')
-		return (1); // Last non-space character is a pipe symbol
-	else
-		return (0); // Last non-space character is not a pipe symbol
-}
 void	interactive_mode(t_shell *shell)
 {
 	char			*input;
@@ -54,7 +20,6 @@ void	interactive_mode(t_shell *shell)
 	CommandTable	*command_table;
 
 	input2 = NULL;
-	// int status=0;
 	while (1)
 	{
 		input = readline("$ ");
@@ -82,7 +47,6 @@ void	interactive_mode(t_shell *shell)
 		input2 = "";
 		if (ft_strlen(input) > 0)
 		{
-			// ft_printf("if (ft_strlen(input) > 0)\n");
 			add_history(input);
 			create_tokens(shell, input);
 			command_table = create_command_table(shell, shell->token_head);
@@ -91,8 +55,6 @@ void	interactive_mode(t_shell *shell)
 			execute_command_table(shell, command_table);
 			shell->token_head = NULL;
 		}
-		// free(input);
-		// }
 	}
 }
 
@@ -116,8 +78,6 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 	}
 	free(line);
 	command_table = create_command_table(shell, shell->token_head);
-	// printTokens(shell->token_head);
-	// print_command_table(command_table);
 	execute_command_table(shell, command_table);
 }
 
@@ -138,7 +98,9 @@ void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 	}
 }
 
-// Non-interactive mode but with arguments
+/*
+Non-interactive mode but with arguments
+*/
 void	w_arg_mode(t_shell *shell, int argc, char **argv)
 {
 	if (ft_strcmp(argv[1], "-c") == 0)
@@ -147,7 +109,9 @@ void	w_arg_mode(t_shell *shell, int argc, char **argv)
 		w_arg_mode_read_file(shell, argc, argv);
 }
 
-// Non-interactive mode due to input or output redirection
+/*
+Non-interactive mode due to input or output redirection
+*/
 void	std_input_mode(int fd, t_shell *shell)
 {
 	char			**line;
@@ -161,7 +125,5 @@ void	std_input_mode(int fd, t_shell *shell)
 	}
 	free(line);
 	command_table = create_command_table(shell, shell->token_head);
-	// printTokens(shell->token_head);
-	// print_command_table(command_table);
 	execute_command_table(shell, command_table);
 }

@@ -16,7 +16,6 @@ void	printTokens(TokenNode *head)
 {
 	TokenNode	*current;
 
-	// ft_printf("DEBUG: printTokens\n");
 	current = head;
 	ft_printf("\n");
 	while (current != NULL)
@@ -26,58 +25,34 @@ void	printTokens(TokenNode *head)
 		current = current->next;
 	}
 	ft_printf("*********************************\n");
-	// ft_printf("DEBUG: printTokens END\n");
 }
 
 void	print_command(const Command *cmd)
 {
+	int	i;
+
+	i = 0;
 	if (!cmd)
 		return ;
 	ft_printf("Command: %s\n", cmd->name);
-	ft_printf("Type: %s\n", cmd->type == CMD_BUILTIN ? "Builtin" : "External");
-	// Print arguments
 	ft_printf("Arguments: ");
-	for (int i = 0; i < cmd->arg_count; i++)
-	{
-		ft_printf("\"%s\" ", cmd->args[i]);
-	}
+	while (i < cmd->arg_count)
+		ft_printf("\"%s\" ", cmd->args[i++]);
 	ft_printf("\n");
-	// Print fin
-	// if (cmd->fin)
-	{
-		ft_printf("Fin is: %d\n", cmd->fin);
-	}
-	// Print fout
-	// if (cmd->fout)
-	{
-		ft_printf("Fout is: %d\n", cmd->fout);
-	}
-	// Print redirections
+	ft_printf("Fin is: %d\n", cmd->fin);
+	ft_printf("Fout is: %d\n", cmd->fout);
 	if (cmd->redirect_in)
-	{
 		ft_printf("Input redirected from: %s\n", cmd->redirect_in);
-	}
 	if (cmd->redirect_out)
-	{
 		ft_printf("Output redirected to: %s\n", cmd->redirect_out);
-	}
 	if (cmd->redirect_append)
-	{
 		ft_printf("Output appended to: %s\n", cmd->redirect_append);
-	}
 	if (cmd->heredoc_delimiter)
-	{
 		ft_printf("Heredoc delimiter: %s\n", cmd->heredoc_delimiter);
-	}
 	if (cmd->heredoc_temp_path)
-	{
 		ft_printf("Heredoc temporary file path: %s\n", cmd->heredoc_temp_path);
-	}
-	// If there's a pipe to another command, indicate this
 	if (cmd->next)
-	{
 		ft_printf("Piped to next command\n");
-	}
 }
 
 void	print_command_table(const CommandTable *table)
@@ -98,23 +73,21 @@ void	print_command_table(const CommandTable *table)
 		if (current)
 		{
 			ft_printf("----------\n");
-			// Separator between commands in a pipeline
 		}
 	}
 	ft_printf("*********************************\n\n");
-	// ft_printf("\n");
 }
 
 int	is_token_type_present(TokenNode *head, int type)
 {
-	TokenNode *current = head;
+	TokenNode	*current;
+
+	current = head;
 	while (current != NULL)
 	{
 		if (current->token.type == type)
-		{
-			return (1); // Found the TokenType in the list
-		}
+			return (1);
 		current = current->next;
 	}
-	return (0); // TokenType not found in the list
+	return (0);
 }

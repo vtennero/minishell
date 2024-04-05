@@ -3,90 +3,72 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:55:49 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/05 11:25:46 by toto             ###   ########.fr       */
+/*   Updated: 2024/04/05 16:59:19 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	shouldExpandVariable(const char *word)
+char *process_single_quote(const char **s)
 {
-	int	quoteCountleft;
-	int	quoteCountright;
-
-	quoteCountleft = 0;
-	quoteCountright = 0;
-	while (*word && *word == '\'')
-	{
-		quoteCountleft++;
-		word++;
-	}
-	while (*word && *word != '\'')
-		word++;
-	while (*word && *word == '\'')
-	{
-		quoteCountright++;
-		word++;
-	}
-		if (quoteCountleft % 2 == 0 && quoteCountright % 2 == 0)
-			return (1);
-		return (0); // Return 1 if even, 0 if odd
+	(*s)++;
+    const char *start = *s;
+    while (**s && **s != '\'')
+		(*s)++;
+	int len = *s - start;
+	char *result = strndup(start, len);
+    return result;
 }
 
-void	toggleQuoteState(int *quoteState)
+char *process_double_quote(const char **s, t_shell *shell)
 {
-	*quoteState = !(*quoteState);
-}
+    char *buf = NULL;
+	char	*newBuf;
+	size_t textLen;
 
-void	processCharacter(char c, char **output, int *isInSingleQuotes,
-		int *isInDoubleQuotes)
-{
-	if (c == '\'' && !(*isInDoubleQuotes))
-	{
-		toggleQuoteState(isInSingleQuotes);
-	}
-	else if (c == '\"' && !(*isInSingleQuotes))
-	{
-		toggleQuoteState(isInDoubleQuotes);
-	}
-	else
-	{
-		*(*output) = c;
-		(*output)++;
-	}
-}
+	(*s)++;
+    const char *endQuote = strchr(*s, '\"');
 
-void	transformQuotes(const char *input, char *output)
-{
-	int		isInSingleQuotes;
-	int		isInDoubleQuotes;
-	char	*outputPtr;
-
-	isInSingleQuotes = 0;
-	isInDoubleQuotes = 0;
-	outputPtr = output;
-	while (*input)
+    if (!endQuote)
 	{
-		processCharacter(*input, &outputPtr, &isInSingleQuotes,
-			&isInDoubleQuotes);
-		input++;
-	}
-	*outputPtr = '\0'; // Null-terminate the output string
-}
+        buf = malloc(2);
+        if (buf) {
+            buf[0] = **s;
+            buf[1] = '\0';
+        }
+        (*s)++;
+        return buf;
+    }
 
-char	*reviewquotes(char *input)
-{
-	char	*output;
-
-	output = (char *)malloc(strlen(input) + 1);
-	if (output == NULL)
+    while (*s < endQuote)
 	{
-		perror("Memory allocation failed\n");
-		return (NULL);
-	}
-	transformQuotes(input, output);
-	return (output);
+        if (**s == '$') {
+            char *expanded = expandVariables(shell, *s);
+			if (!buf)
+				newBuf = expanded;
+			else
+            	newBuf = ft_strjoin(buf, expanded);
+            buf = newBuf;
+			textLen = get_non_expanded_var_length((char * )(*s));
+            *s += textLen;
+        } else {
+            const char *nextDollar = strchr(*s, '$');
+            if (!nextDollar || nextDollar > endQuote) {
+                nextDollar = endQuote; // If no $ is found, copy until the end quote
+            }
+            textLen = nextDollar - *s;
+            char *duplicatedText = strndup(*s, textLen);
+			if (!buf)
+				newBuf = duplicatedText;
+			else
+            	newBuf = ft_strjoin(buf, duplicatedText);
+            buf = newBuf;
+            *s += textLen;
+        }
+    }
+    if (**s == '\"') (*s)++;
+    return buf;
 }

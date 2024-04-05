@@ -20,27 +20,6 @@ int	adjust_exit_code(int n)
 		n += 256;
 	return (n);
 }
-// int	ft_isinteger(char *number)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	if (number[0] == '-' || number[0]=='+')
-// 		i = 1;
-// 	if (number[0] == '0' && number[1] != '\0')
-// 		return (0);
-// 	if (number[0] == '-' && number[1] == '0')
-// 		return (0);
-// 	if (number[0] == '-' && number[1] == '\0')
-// 		return (0);
-// 	while (number[i] != '\0')
-// 	{
-// 		if (!ft_isdigit(number[i]))
-// 			return (0);
-// 		i++;
-// 	}
-// 	return (1);
-// }
 
 int	is_valid_number(const char *str)
 {
@@ -63,7 +42,6 @@ int	builtin_exit(t_shell *shell, char **args, int n_args)
 	if (n_args >= 2)
 	{
 		ft_putstr_fd(" too many arguments\n", 2);
-		// perror();
 		shell->last_exit_status = 1;
 	}
 	else if (n_args == 1)
@@ -79,5 +57,4 @@ int	builtin_exit(t_shell *shell, char **args, int n_args)
 	ft_printf("exit\n");
 	shexit(shell, 0);
 	return (1);
-	// return (0); // whatever the exit code is
 }

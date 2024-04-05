@@ -36,6 +36,7 @@ commands_unset.c \
 externalcommands.c \
 execution.c \
 magicmalloc.c \
+magicmalloc_terminate.c \
 heredoc.c \
 env_var.c \
 pipex.c \
@@ -44,7 +45,8 @@ quotes.c \
 var_exp.c \
 utils.c \
 init.c \
-modes.c
+modes.c \
+modes_utils.c
 
 LIBFT_FILES = ft_isdigit.c \
 ft_isalnum.c \

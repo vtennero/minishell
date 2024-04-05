@@ -12,6 +12,13 @@
 
 #include "minishell.h"
 
+static int	builtin_cd_too_many_args(t_shell *shell)
+{
+	ft_putstr_fd(" bash: cd: too many arguments\n", 2);
+	return (1);
+	shell->last_exit_status = -255;
+}
+
 int	builtin_cd(t_shell *shell, char **args, int n_args)
 {
 	char	*path;
@@ -33,13 +40,8 @@ int	builtin_cd(t_shell *shell, char **args, int n_args)
 			perror("cd");
 			return (1);
 		}
-		// shell->last_exit_status = 1;
 	}
 	else
-	{
-		ft_putstr_fd(" bash: cd: too many arguments\n", 2);
-		return (1);
-		shell->last_exit_status = -255;
-	}
+		return (builtin_cd_too_many_args(shell));
 	return (0);
 }

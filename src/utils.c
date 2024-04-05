@@ -14,9 +14,8 @@
 
 const char	*skip_delimiters(const char *s, char c)
 {
-	// while (*s == c)
-	// s++;
-	while (*s == ' ' || *s == '\f' || *s == '\r' || *s == '\t' || *s == '\v'
+	while (*s == ' ' || *s == '\f' || *s == '\r' || \
+	*s == '\t' || *s == '\v'
 		|| *s == '\n')
 		s++;
 	(void)c;
@@ -35,7 +34,7 @@ int	find_index_char(const char *str, char c)
 	return (-1);
 }
 
-int	getTokenListLength(TokenNode *head)
+int	get_token_list_length(TokenNode *head)
 {
 	int			length;
 	TokenNode	*current;
@@ -45,12 +44,12 @@ int	getTokenListLength(TokenNode *head)
 	while (current != NULL)
 	{
 		length++;
-		current = current->next; // Move to the next node
+		current = current->next;
 	}
 	return (length);
 }
 
-int	intLength(int num)
+int	calc_int_len(int num)
 {
 	int	length;
 
@@ -63,4 +62,10 @@ int	intLength(int num)
 		num /= 10;
 	}
 	return (length);
+}
+
+int isspace_not_eol(int ch)
+{
+    return (ch == ' ' || ch == '\f' || ch == '\r' || \
+	ch == '\t' || ch == '\v');
 }

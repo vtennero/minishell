@@ -12,9 +12,6 @@
 
 #include "minishell.h"
 
-// v4
-
-
 int isSpecialOperator(const char *str) {
     if (strncmp(str, "|", 1) == 0) {
         return 1;
@@ -27,36 +24,9 @@ int isSpecialOperator(const char *str) {
     } else if (strncmp(str, "<", 1) == 0) {
         return 1;
     }
-    return 0; // Not a match
+    return 0;
 }
 
-
-
-// v3 tokenizer
-
-int isspace_not_eol(int ch)
-{
-    return (ch == ' ' || ch == '\f' || ch == '\r' || ch == '\t' || ch == '\v');
-}
-
-char *processSingleQuote(const char **s)
-{
-	// ft_printf("processSingleQuote start s |%s|\n", *s);
-	(*s)++;
-    const char *start = *s; // Skip the initial quote
-    while (**s && **s != '\'')
-		(*s)++;
-	// ft_printf("processSingleQuote s after while |%s|\n", *s);
-	int len = *s - start;
-	// ft_printf("processSingleQuote len |%d|\n", len);
-	char *result = strndup(start, len);
-	// ft_printf("processSingleQuote s before going past word |%s|\n", *s);
-    // if (**s == '\'') (*s)++;
-	// (*s) += len + 1;
-	// ft_printf("processSingleQuote s after going past word |%s|\n", *s);
-	// ft_printf("processSingleQuote result |%s|\n", result);
-    return result;
-}
 
 
 int	get_non_expanded_var_length(char *var)
@@ -66,115 +36,31 @@ int	get_non_expanded_var_length(char *var)
     int foundLetter = 0; // Flag to track if at least one letter has been found
     int foundDol = 1; // Flag to track if at least one letter has been found
 
-	// ft_printf("get_non_expanded_var_length %s\n", var);
 	var++;
-	// ft_printf("get_non_expanded_var_length %s\n", var);
     while(var[index] != '\0')
 	{
 		if (var[index] == '$')
 			foundDol++;
-        else if(!isalpha(var[index]) && !isdigit(var[index]) && var[index] != '?') {
-			// ft_printf("get_non_expanded_var_length break!\n");
-			// if (var[index] == '?')
-				// return (2);
-            // If the character is not a letter or digit, break the loop
+        else if(!ft_isalpha(var[index]) && !ft_isdigit(var[index]) && var[index] != '?') {
             break;
         }
 		else if (var[index] == '?' && var[index + 1] == '\"')
 			return(2);
-        else if(isalpha(var[index])) {
+        else if(ft_isalpha(var[index])) {
             foundLetter = 1; // Set the flag if a letter is found
         }
         count++; // Increment the count of valid characters
         index++; // Move to the next character
     }
-	// ft_printf("get_non_expanded_var_length found Dol %d count %d\n", foundDol, count);
 	if (foundDol == count)
 		return (count);
 	else if (!foundLetter)
 		count = 1;
-		// count = 0;
 	return (count);
 }
 
 
 
-char *processDoubleQuote(const char **s, t_shell *shell) {
-    char *buf = NULL;
-	char	*newBuf;
-	size_t textLen;
-
-    // 1. Find the closing quote
-	(*s)++;
-    const char *endQuote = strchr(*s, '\"');
-    
-    // a. If a closing quote is not found
-    if (!endQuote) {
-        buf = malloc(2); // for the quote and the null terminator
-        if (buf) {
-            buf[0] = **s; // Copy the opening quote
-            buf[1] = '\0'; // Null-terminate the string
-        }
-        (*s)++; // Move past the opening quote
-        return buf;
-    }
-
-    // 2. Iterate until the closing quote is reached
-    while (*s < endQuote)
-	{
-		// ft_printf("processDoubleQuote while (*s < endQuote)  |%s|\n", *s);
-        if (**s == '$') {
-            // a. Expand the variable
-            char *expanded = expandVariables(shell, *s);
-			// ft_printf("processDoubleQuote char *expanded = expandVariables(shell, *s); |%s|\n", expanded);
-			if (!buf)
-				newBuf = expanded;
-			else
-            	newBuf = ft_strjoin(buf, expanded);
-            // free(buf); // Free the old buffer
-            // free(expanded); // Free the expanded string
-            buf = newBuf;
-			// ft_printf("processDoubleQuote buf |%s|\n", buf);
-			// ft_printf("processDoubleQuote s |%s|\n", *s);
-			textLen = get_non_expanded_var_length((char * )(*s));
-			// ft_printf("processDoubleQuote get_non_expanded_var_length |%d|\n", textLen);
-			// ft_printf("processDoubleQuote s |%s|\n", *s);
-            *s += textLen;
-			// ft_printf("processDoubleQuote s |%s|\n", *s);
-			// ft_printf("processDoubleQuote buf |%s|\n", buf);
-            // Move pointer s by n characters, where n is the length of the variable
-            // Assuming expandVariables moves *s to the end of the variable
-        } else {
-			// ft_printf("processDoubleQuote while (*s < endQuote) else not $ |%s|\n", *s);
-			// ft_printf("processDoubleQuote else buf |%s|\n", buf);
-            // b. Duplicate text until the next $ or the end quote
-            const char *nextDollar = strchr(*s, '$');
-            if (!nextDollar || nextDollar > endQuote) {
-                nextDollar = endQuote; // If no $ is found, copy until the end quote
-            }
-            textLen = nextDollar - *s;
-			// ft_printf("processDoubleQuote textLen %d\n", textLen);
-            char *duplicatedText = strndup(*s, textLen);
-			// ft_printf("processDoubleQuote duplicatedText |%s|\n", duplicatedText);
-			if (!buf)
-				newBuf = duplicatedText;
-			else
-            	newBuf = ft_strjoin(buf, duplicatedText);
-            // free(buf); // Free the old buffer
-            // free(duplicatedText); // Free the duplicated text
-            buf = newBuf;
-			// ft_printf("processDoubleQuote else buf |%s|\n", buf);
-
-            // Move the pointer to the position of the next $ or end quote
-            *s += textLen;
-        }
-    }
-
-    // Move past the closing quote for the next iteration
-    if (**s == '\"') (*s)++;
-	// ft_printf("processDoubleQuote end \n");
-    return buf;
-}
 
 char *quotevar(t_shell *shell, const char **s) {
     char *result = shell_strdup(shell,""); // Start with an empty string
@@ -186,28 +72,15 @@ char *quotevar(t_shell *shell, const char **s) {
 			char *temp = NULL;
 			int opLength = isSpecialOperator((*s));
 			if (**s == '\'') {
-				temp = processSingleQuote(s);
+				temp = process_single_quote(s);
 			} else if (**s == '\"') {
-				temp = processDoubleQuote(s, shell);
+				temp = process_double_quote(s, shell);
 			} else if (**s == '$') {
 				size_t advancedPosition = 0;
 				temp = expandVariables2(shell, *s, &advancedPosition);
-				// *s += advancedPosition - 1; // Adjust for loop increment
 				*s += advancedPosition; // Adjust for loop increment
 			}
-			// else if (opLength > 0)
-			// {
-			// 	ft_printf("quotevar: operator found\n");
-			// 	// if (!temp)
-			// 	// {
-			// 		temp = ft_strndup((*s), opLength);
-			// 		result = temp;
-			// 		*s += opLength;
-			// 	// }
-			// 	break ;
-			// }
 			else {
-				// ft_printf("quotevar |%c|\n", **s);
 				temp = shell_malloc(shell,2); // Allocate space for char and null terminator
 				temp[0] = **s;
 				temp[1] = '\0';
@@ -216,23 +89,18 @@ char *quotevar(t_shell *shell, const char **s) {
 			(void)opLength;
 			if (temp) {
 				char *new_result = ft_strjoin(result, temp);
-				// free(result); // Free the old result
 				result = shell_strdup(shell,new_result); // Update the result with the new concatenated string
 				free(new_result);
-				// free(temp); // Free the temporary string
-				// ft_printf("quotevar: while: result = |%s|\n", result);
 			}
 		}
 	}
 	else
 	if (isSpecialOperator(*s))
 	{
-		// result = ft_strndup((*s), isSpecialOperator(*s));
 		result = shell_strndup(shell,(*s), isSpecialOperator(*s));
 
 		*s += isSpecialOperator(*s);
 	}
-	// ft_printf("quotevar: returning result = |%s|\n", result);
     return result; // This is the concatenated final result
 }
 
@@ -243,7 +111,6 @@ char    *parse_tokens(t_shell *shell, const char *s)
 	int     type;
 	int		index;
 
-	// ft_printf("parsetokens |%s|\n", s);
 	index = 0;
 	while (*s)
 	{
@@ -251,7 +118,6 @@ char    *parse_tokens(t_shell *shell, const char *s)
 		if (!*s)
 			break;
 
-		// quote and var logic here
 		wvarexpanded = quotevar(shell, &s);
 
 		if (index == 0)
@@ -260,42 +126,31 @@ char    *parse_tokens(t_shell *shell, const char *s)
 			type = get_token_type(wvarexpanded);
 		addToken(shell, wvarexpanded, type);
 		index++;
-		// parse_heredoc(shell);
 		s = skip_delimiters(s, ' ');
 	}
-	// ft_printf("parsetokens returns NULL\n");
 	return (NULL);
 }
 
-// v3 tokenizer end
 
 void addToken(t_shell *shell, const char *value, int type)
 {
-	// ft_printf("addToken shell_malloc\n");
 	TokenNode *newNode = (TokenNode *)shell_malloc(shell, sizeof(TokenNode));
 	if (!newNode)
 		return;
 
-	// ft_printf("addToken shell_strdup\n");
 	newNode->token.value = shell_strdup(shell, value); // Use shell_strdup
 	newNode->token.type = type;
-	// ft_printf("addToken new token type is %d\n", newNode->token.type);
 	newNode->next = NULL;
 
-	// ft_printf("addToken token_head NULL?\n");
 	if (shell->token_head == NULL)
 		shell->token_head = newNode;
 	else
 	{
-		// ft_printf("addToken token_head NULL? else\n");
 		TokenNode *current = shell->token_head;
-		// ft_printf("addToken while (current->next != NULL)\n");
 		while (current->next != NULL)
 		{
-			// ft_printf("addToken while\n");
 			current = current->next;
 		}
-		// ft_printf("addToken current->next = newNode;\n");
 		current->next = newNode;
 	}
 }
@@ -324,24 +179,19 @@ int	is_only_spaces(char *str)
 	int	length;
 
 	length = ft_strlen(str);
-    // Check for single or double quotes at the beginning and end of the string
     if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"')) {
         int i = 1;
-        
-        // Check all characters in between the quotes for spaces
+
         while (i < length - 1) {
-            // if (str[i] != ' ') {
             if (!isspace(str[i])) {
                 return 1; // Non-space character found
             }
             i++;
         }
-        
-        // Only spaces found in between quotes
+
         return 0;
     }
-    
-    // First and last characters are not matching quotes
+
     return 1;
 }
 
@@ -354,94 +204,27 @@ int		check_if_valid_cmd(TokenNode *node)
 	return (1);
 }
 
-// void    set_commands(t_shell *shell)
-// {
-// 	TokenNode	*node;
-	
-// 	// ft_printf("set_commands\n");
-// 	node = shell->token_head;
-// 	if (node)
-// 	{
-// 		if (!check_if_valid_cmd(node))
-// 			node->token.type=TOKEN_INV_COMMAND;
-// 		else if (!isNotEmpty(node->token.value))
-// 			node=node->next;
-// 		if (node)
-// 		{
-// 		node->token.type=TOKEN_COMMAND;
-// 		while (node->next)
-// 			{
-// 				// if (node->token.type == TOKEN_REDIR_OUT && node->next->next)
-// 					// node=node->next->next;
-// 				// else if (node->token.type == TOKEN_PIPE)
-// 				if (node->token.type == TOKEN_PIPE)
-// 				{
-// 					node=node->next;
-// 					if (node->token.type==TOKEN_ARG)
-// 						node->token.type=TOKEN_COMMAND;
-// 				}
-// 				else
-// 					node=node->next;
-// 			}
-// 		}
-// 	}
 
-// }
+int is_valid_cmd(t_shell* shell,char* cmd_name)
+{
+	char	**paths;
+	char	*cmd_path;
 
-	int is_valid_cmd(t_shell* shell,char* cmd_name)
-	{
-		char	**paths;
-		char	*cmd_path;
-
-		paths = find_cmd_paths(shell->envp);
-		cmd_path = locate_cmd(paths, cmd_name);
-		free_array(paths);
-		// ft_putstr_fd(ft_strjoin_nconst("cmd path is ",cmd_path),2);
-		if (cmd_path!=NULL && is_directory(cmd_path)!=1)
-			return 1;
-		else
-			return 0;
-	}
-
-
-
-
-// void    set_commands(t_shell *shell)
-// {
-// 	TokenNode	*node;
-// 	int pipe_exist;
-
-// 	pipe_exist=0;
-// 	node = shell->token_head;
-// 	if (node)
-// 	{
-// 		if (!check_if_valid_cmd(node))
-// 			node->token.type=TOKEN_INV_COMMAND;
-// 		else if (!isNotEmpty(node->token.value))
-// 			node=node->next;
-// 		if (node)
-// 		{	
-// 			node->token.type=TOKEN_COMMAND;
-// 			while (node->next)
-// 			{
-// 				if (node->token.type == TOKEN_PIPE)
-// 					pipe_exist=1;
-// 				if (pipe_exist==1 && is_valid_cmd(shell,node->token.value))
-// 				{
-// 					node->token.type = TOKEN_COMMAND;
-// 					pipe_exist=0;
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
+	paths = find_cmd_paths(shell->envp);
+	cmd_path = locate_cmd(paths, cmd_name);
+	free_array(paths);
+	// ft_putstr_fd(ft_strjoin_nconst("cmd path is ",cmd_path),2);
+	if (cmd_path!=NULL && is_directory(cmd_path)!=1)
+		return 1;
+	else
+		return 0;
+}
 
 void set_commands(t_shell *shell) {
     TokenNode *node = shell->token_head;
     int pipe_exist = 1;
 
-    while (node) 
+    while (node)
 	{
         // if (!check_if_valid_cmd(node))
         //     node->token.type = TOKEN_INV_COMMAND;
@@ -449,13 +232,13 @@ void set_commands(t_shell *shell) {
         //     node = node->next;
         if (node)
 		{
-			if (pipe_exist && is_valid_cmd(shell, node->token.value)) 
+			if (pipe_exist && is_valid_cmd(shell, node->token.value))
 			{
                 node->token.type = TOKEN_COMMAND;
                 pipe_exist = 0;
             }
             // node->token.type = TOKEN_COMMAND;
-            if (node->next && node->next->token.type == TOKEN_PIPE) 
+            if (node->next && node->next->token.type == TOKEN_PIPE)
                 pipe_exist = 1;
         }
 		// if node

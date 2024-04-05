@@ -2,11 +2,11 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+        
+/*                                                    +:+ +:+
 	+:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+      
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+
 	+#+        */
-/*                                                +#+#+#+#+#+  
+/*                                                +#+#+#+#+#+
 	+#+           */
 /*   Created: 2024/03/20 15:57:52 by vitenner          #+#    #+#             */
 /*   Updated: 2024/03/20 15:57:52 by vitenner         ###   ########.fr       */
@@ -75,7 +75,7 @@ typedef enum
 	TOKEN_D_Q,           //              9
 	TOKEN_S_Q,           //              10
 	TOKEN_S_DOL,         //              11
-	TOKEN_EOL, 
+	TOKEN_EOL,
 	TOKEN_INV_COMMAND          //              12
 } TokenType;
 
@@ -108,7 +108,7 @@ typedef struct Command
 	char *redirect_append;
 	// char *redirect_heredoc;
 	char *heredoc_delimiter;
-	char *heredoc_temp_path; 
+	char *heredoc_temp_path;
 	int fd_in;  // File descriptor for input redirection
 	int fd_out; // File descriptor for output redirection
 	int fin;    // File descriptor for input redirection
@@ -151,7 +151,7 @@ typedef struct s_env_var
 */
 typedef struct s_shell
 {
-	t_env_var *env_head;      
+	t_env_var *env_head;
 		// Head of the linked list of environment variables for export
 	int last_exit_status;      // Exit status of the last executed command
 	struct sigaction *signals; // Custom signal handlers
@@ -176,6 +176,8 @@ void	create_env_var_list(t_shell *shell, char **envp);
 void	interactive_mode(t_shell *shell);
 void	w_arg_mode(t_shell *shell, int argc, char **argv);
 void	std_input_mode(int fd, t_shell *shell);
+int		isNotEmpty(const char *str);
+int		end_with_pipe(const char *str);
 /*
 ** -- SIGNALS --
 */
@@ -192,12 +194,14 @@ void	create_tokens(t_shell *shell, const char *s);
 void	addToken(t_shell *shell, const char *value, int type);
 TokenType	get_token_type(const char *token_text);
 char	*parse_tokens(t_shell *shell, const char *s);
+int 	isspace_not_eol(int ch);
 /*
 ** -- QUOTES --
 */
-void	toggleQuoteState(int *quoteState);
-char	*reviewquotes(char *input);
-int	shouldExpandVariable(const char *word);
+char *process_single_quote(const char **s);
+char *process_double_quote(const char **s, t_shell *shell);
+int	get_non_expanded_var_length(char *var);
+
 /*
 ** -- VARIABLE EXPANSION --
 */
@@ -258,12 +262,13 @@ void	shell_cleanup(t_shell *shell);
 char	*shell_strdup(t_shell *shell, const char *s);
 char	*shell_strndup(t_shell *shell, const char *s, size_t n);
 char	*shell_strjoin(t_shell *shell, char const *s1, char const *s2);
+char	*shell_itoa(t_shell *shell, int n);
 /*
 ** ================== UTILS ==================
 */
 const char	*skip_delimiters(const char *s, char c);
 int	find_index_char(const char *str, char c);
-int	intLength(int num);
+int	calc_int_len(int num);
 int isNotEmpty(const char *str);
 int	is_directory(const char *path);
 
@@ -273,6 +278,7 @@ int	is_directory(const char *path);
 void	printTokens(TokenNode *head);
 void	print_command_table(const CommandTable *table);
 int is_token_type_present(TokenNode *head, int type);
+void	print_command(const Command *cmd);
 
 // pipex_and pipex_util
 # define ERR_INVALID_CMD " : command not found\n"
