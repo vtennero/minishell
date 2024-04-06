@@ -13,25 +13,25 @@
 #include "minishell.h"
 
 int isSpecialOperator(const char *str) {
-    if (strncmp(str, "|", 1) == 0) {
-        return 1;
-    } else if (strncmp(str, "<<", 2) == 0) {
-        return 2;
-    } else if (strncmp(str, ">>", 2) == 0) {
-        return 2;
-    } else if (strncmp(str, ">", 1) == 0) {
-        return 1;
-    } else if (strncmp(str, "<", 1) == 0) {
-        return 1;
-    }
-    return 0;
+	if (ft_strncmp(str, "|", 1) == 0) {
+		return 1;
+	} else if (ft_strncmp(str, "<<", 2) == 0) {
+		return 2;
+	} else if (ft_strncmp(str, ">>", 2) == 0) {
+		return 2;
+	} else if (ft_strncmp(str, ">", 1) == 0) {
+		return 1;
+	} else if (ft_strncmp(str, "<", 1) == 0) {
+		return 1;
+	}
+	return 0;
 }
 
 int is_redirect(int type,int* after_redirect)
 {
 	if ((type==2) || (type ==3) || (type==4) || (type==5))
 	{
-		*after_redirect=1;
+		*after_redirect = 1;
 		return 1;
 	}
 	else
@@ -41,27 +41,27 @@ int is_redirect(int type,int* after_redirect)
 
 int	get_non_expanded_var_length(char *var)
 {
-    int count = 1; // Counter for valid characters
-    int index = 0; // Current index in the string
-    int foundLetter = 0; // Flag to track if at least one letter has been found
-    int foundDol = 1; // Flag to track if at least one letter has been found
+	int count = 1; // Counter for valid characters
+	int index = 0; // Current index in the string
+	int foundLetter = 0; // Flag to track if at least one letter has been found
+	int foundDol = 1; // Flag to track if at least one letter has been found
 
 	var++;
-    while(var[index] != '\0')
+	while(var[index] != '\0')
 	{
 		if (var[index] == '$')
 			foundDol++;
-        else if(!ft_isalpha(var[index]) && !ft_isdigit(var[index]) && var[index] != '?') {
-            break;
-        }
+		else if(!ft_isalpha(var[index]) && !ft_isdigit(var[index]) && var[index] != '?') {
+			break;
+		}
 		else if (var[index] == '?' && var[index + 1] == '\"')
 			return(2);
-        else if(ft_isalpha(var[index])) {
-            foundLetter = 1; // Set the flag if a letter is found
-        }
-        count++; // Increment the count of valid characters
-        index++; // Move to the next character
-    }
+		else if(ft_isalpha(var[index])) {
+			foundLetter = 1; // Set the flag if a letter is found
+		}
+		count++; // Increment the count of valid characters
+		index++; // Move to the next character
+	}
 	if (foundDol == count)
 		return (count);
 	else if (!foundLetter)
@@ -69,51 +69,96 @@ int	get_non_expanded_var_length(char *var)
 	return (count);
 }
 
-char *quotevar(t_shell *shell, const char **s) {
-    char *result = shell_strdup(shell, ""); // Start with an empty string
 
-	if (!isSpecialOperator(*s))
+// Define the new function
+char *processQuoting(t_shell *shell, const char **s, char *result)
+{
+	size_t	advancedPosition;
+
+	while (**s && !isspace((unsigned char)**s) && !(isSpecialOperator(*s)))
 	{
-		while (**s && !isspace((unsigned char)**s) && !(isSpecialOperator(*s)))
+		char *temp = NULL;
+		if (**s == '\'')
+			temp = process_single_quote(s);
+		else if (**s == '\"')
+			temp = process_double_quote(s, shell);
+		else if (**s == '$')
 		{
-			char *temp = NULL;
-			int opLength = isSpecialOperator((*s));
-			if (**s == '\'') {
-				temp = process_single_quote(s);
-			} else if (**s == '\"') {
-				temp = process_double_quote(s, shell);
-			} else if (**s == '$') {
-				size_t advancedPosition = 0;
-				temp = expandVariables2(shell, *s, &advancedPosition);
-				*s += advancedPosition; // Adjust for loop increment
-			}
-			else {
-				temp = shell_malloc(shell,2); // Allocate space for char and null terminator
-				temp[0] = **s;
-				temp[1] = '\0';
-				(*s)++;
-			}
-			(void)opLength;
-			if (temp) {
-				char *new_result = ft_strjoin(result, temp);
-				result = shell_strdup(shell,new_result); // Update the result with the new concatenated string
-				free(new_result);
-			}
+			temp = expandVariables2(shell, *s, &advancedPosition);
+			*s += advancedPosition;
 		}
+		else
+		{
+			temp = shell_malloc(shell, 2);
+			temp[0] = **s;
+			temp[1] = '\0';
+			(*s)++;
+		}
+		if (temp)
+			result = shell_strjoin(shell, result, temp);
 	}
-	else if (isSpecialOperator(*s))
-	{
-		result = shell_strndup(shell,(*s), isSpecialOperator(*s));
+	return result;
+}
+
+char *quotevar(t_shell *shell, const char **s)
+{
+	char *result;
+
+	result = shell_strdup(shell, "");
+	if (!isSpecialOperator(*s)) {
+		result = processQuoting(shell, s, result);
+	} else if (isSpecialOperator(*s)) {
+		result = shell_strndup(shell, (*s), isSpecialOperator(*s));
 		*s += isSpecialOperator(*s);
 	}
-    return result; // This is the concatenated final result
+	return (result);
 }
 
 
-char    *parse_tokens(t_shell *shell, const char *s)
+// char *quotevar(t_shell *shell, const char **s)
+// {
+// 	char	*result;
+
+// 	result = shell_strdup(shell, "");
+// 	if (!isSpecialOperator(*s))
+// 	{
+// 		while (**s && !isspace((unsigned char)**s) && !(isSpecialOperator(*s)))
+// 		{
+// 			char *temp = NULL;
+// 			if (**s == '\'') {
+// 				temp = process_single_quote(s);
+// 			} else if (**s == '\"') {
+// 				temp = process_double_quote(s, shell);
+// 			} else if (**s == '$') {
+// 				size_t advancedPosition = 0;
+// 				temp = expandVariables2(shell, *s, &advancedPosition);
+// 				*s += advancedPosition;
+// 			}
+// 			else {
+// 				temp = shell_malloc(shell, 2);
+// 				temp[0] = **s;
+// 				temp[1] = '\0';
+// 				(*s)++;
+// 			}
+// 			if (temp) {
+// 				char *new_result = shell_strjoin(shell, result, temp);
+// 				result = shell_strdup(shell, new_result);
+// 			}
+// 		}
+// 	}
+// 	else if (isSpecialOperator(*s))
+// 	{
+// 		result = shell_strndup(shell,(*s), isSpecialOperator(*s));
+// 		*s += isSpecialOperator(*s);
+// 	}
+//     return (result);
+// }
+
+
+char	*parse_tokens(t_shell *shell, const char *s)
 {
-	char    *wvarexpanded;
-	int     type;
+	char	*wvarexpanded;
+	int		type;
 	int		index;
 
 	index = 0;
@@ -329,27 +374,27 @@ int		check_if_valid_cmd(TokenNode *node)
 
 void set_commands(t_shell *shell)
 {
-    TokenNode *node;
-    int pipe_exist;
+	TokenNode *node;
+	int pipe_exist;
 	int after_redirect;
 
 	node=shell->token_head;
 	pipe_exist = 1;
 	after_redirect=0;
 
-    while (node)
+	while (node)
 	{
-        if (!check_if_valid_cmd(node) && (node == shell->token_head))
-            node->token.type = TOKEN_INV_COMMAND;
+		if (!check_if_valid_cmd(node) && (node == shell->token_head))
+			node->token.type = TOKEN_INV_COMMAND;
 		// else if (!isNotEmpty(node->token.value))
 		// 	node=node->next;
-        // else if (!isNotEmpty(node->token.value) && (node == shell->token_head) && ( node->token.type == TOKEN_REDIR_IN || node->token.type == TOKEN_REDIR_OUT  || node->token.type == TOKEN_REDIR_APPEND  ))
+		// else if (!isNotEmpty(node->token.value) && (node == shell->token_head) && ( node->token.type == TOKEN_REDIR_IN || node->token.type == TOKEN_REDIR_OUT  || node->token.type == TOKEN_REDIR_APPEND  ))
 		else if (is_redirect(node->token.type,&after_redirect) && node->next   && node->next->next)
 		{
-		        node = node->next->next;
+				node = node->next->next;
 				after_redirect=0;
 		}
-        if (node && isNotEmpty(node->token.value) )
+		if (node && isNotEmpty(node->token.value) )
 		{
 			if (!after_redirect && (node == shell->token_head) )
 			{
@@ -359,16 +404,16 @@ void set_commands(t_shell *shell)
 			}
 			else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE)
 			{
-                node->token.type = TOKEN_COMMAND;
-                pipe_exist = 0;
-            }
+				node->token.type = TOKEN_COMMAND;
+				pipe_exist = 0;
+			}
 
 			 if (node->token.type == TOKEN_PIPE)
-                pipe_exist = 1;
-        }
+				pipe_exist = 1;
+		}
 
 		node = node->next;
-    }
+	}
 }
 
 void create_tokens(t_shell *shell, const char *s)

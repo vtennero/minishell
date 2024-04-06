@@ -176,7 +176,8 @@ char	*expandVariables2(t_shell *shell, const char *input, size_t *advancedPositi
 	char	*expanded;
 	size_t	position;
 
-	finalLength = calculateExpandedLength(shell, input, shell->env_head);
+	*advancedPosition = 0;
+    finalLength = calculateExpandedLength(shell, input, shell->env_head);
 	expanded = (char *)shell_malloc(shell, finalLength);
 	if (!expanded) {
 		ft_printf("Memory allocation failed\n");
