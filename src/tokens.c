@@ -70,7 +70,7 @@ int	get_non_expanded_var_length(char *var)
 }
 
 char *quotevar(t_shell *shell, const char **s) {
-    char *result = shell_strdup(shell,""); // Start with an empty string
+    char *result = shell_strdup(shell, ""); // Start with an empty string
 
 	if (!isSpecialOperator(*s))
 	{
@@ -125,10 +125,8 @@ char    *parse_tokens(t_shell *shell, const char *s)
 			break;
 		wvarexpanded = quotevar(shell, &s);
 		type = get_token_type(wvarexpanded);
-
 		if (index == 0 && !is_redirect(type,&after_redirect))
 			type = TOKEN_COMMAND;
-
 		addToken(shell, wvarexpanded, type);
 		index++;
 		s = skip_delimiters(s, ' ');
@@ -329,7 +327,8 @@ int		check_if_valid_cmd(TokenNode *node)
 // }
 
 
-void set_commands(t_shell *shell) {
+void set_commands(t_shell *shell)
+{
     TokenNode *node;
     int pipe_exist;
 	int after_redirect;

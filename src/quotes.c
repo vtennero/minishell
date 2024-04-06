@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:55:49 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/06 18:23:16 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/06 19:02:50 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,15 @@
 
 char *process_single_quote(const char **s)
 {
+
 	(*s)++;
 	const char *start = *s;
 	while (**s && **s != '\'')
 		(*s)++;
 	int len = *s - start;
 	char *result = strndup(start, len);
-	return result;
+	(*s)++;
+	return (result);
 }
 
 char *process_double_quote(const char **s, t_shell *shell)

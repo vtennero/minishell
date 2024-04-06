@@ -202,9 +202,9 @@ int	is_only_spaces(char *str);
 /*
 ** -- QUOTES --
 */
-char *process_single_quote(const char **s);
-char *process_double_quote(const char **s, t_shell *shell);
-int	get_non_expanded_var_length(char *var);
+char	*process_single_quote(const char **s);
+char	*process_double_quote(const char **s, t_shell *shell);
+int		get_non_expanded_var_length(char *var);
 
 /*
 ** -- VARIABLE EXPANSION --

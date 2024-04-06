@@ -37,7 +37,7 @@ void	print_command(const Command *cmd)
 	ft_printf("Command: %s\n", cmd->name);
 	ft_printf("Arguments: ");
 	while (i < cmd->arg_count)
-		ft_printf("\"%s\" ", cmd->args[i++]);
+		ft_printf("|%s| ", cmd->args[i++]);
 	ft_printf("\n");
 	ft_printf("Fin is: %d\n", cmd->fin);
 	ft_printf("Fout is: %d\n", cmd->fout);
