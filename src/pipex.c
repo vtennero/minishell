@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/06 16:11:23 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/06 17:06:48 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ int	custom_cmd(char **cmd_args, char *cmd_path, Command *cmd, t_shell *shell)
 		exit(exit_code);
 	else if (cmd_path)
 	{
+		ft_putstr_fd("in cat now",2);
 		execve(cmd_path, cmd_args, shell->envp);
 		free(cmd_path);
 		free_array(cmd_args);
@@ -85,28 +86,29 @@ void pipe_heredoc(Command *cmd, t_shell *shell)
 {
 	// int fd;
 	cmd->redirect_in = shell_strdup(shell, cmd->heredoc_temp_path);
-    // fd = open(cmd->heredoc_temp_path, O_RDWR);
-	// if (fd!=(-1))
-	// 	cmd->fin=fd;
+    int fd = open(cmd->heredoc_temp_path, O_RDWR);
+	if (fd!=(-1))
+		cmd->fin=fd;
 	// char * heredoc =get_next_line(fd);
 	// ft_putstr_fd(heredoc,2);
-	// // dup2(cmd->fin,STDIN_FILENO);
-	// close(cmd->fin);
+	dup2(cmd->fin,STDIN_FILENO);
+	close(cmd->fin);
 
-	int file =  open(cmd->heredoc_temp_path, O_RDWR);
-	char* heredoc;
-	heredoc=get_next_line(file);
-	while (heredoc)
-	{
-		// ft_putstr_fd(heredoc,2);
-		ft_putstr_fd(heredoc,0);
+	// int file =  open(cmd->heredoc_temp_path, O_RDWR);
+	// char* heredoc;
+	// heredoc=get_next_line(file);
+	// while (heredoc)
+	// {
+	// 	// ft_putstr_fd(heredoc,2);
+	// 	ft_putstr_fd(heredoc,0);
+	// 	free(heredoc);
 
-		heredoc=get_next_line(file);
+	// 	heredoc=get_next_line(file);
 
 
-	}
-	// ft_putstr_fd("end of heredoc",2);
-	close(file);
+	// }
+	// // ft_putstr_fd("end of heredoc",2);
+	// close(file);
 }
 
 
@@ -277,7 +279,7 @@ int	pipex(Command *cmd, t_shell *shell)
 {
 	int	status;
 	int	prev_pipe;
-
+   	// signal(SIGTTIN, SIG_IGN);
 	prev_pipe = cmd->fin;
 	while (cmd->next)
 	{

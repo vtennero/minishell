@@ -53,7 +53,7 @@ void execute_command_table(t_shell *shell, CommandTable* table)
     pipex(current,shell);
     // cleanup_heredocs_in_command_table(table);
 
-    print_command_table(table);
+    // print_command_table(table);
 
 
     // while (current != NULL)
