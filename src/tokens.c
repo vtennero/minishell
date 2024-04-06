@@ -34,7 +34,7 @@ int is_redirect(int type,int* after_redirect)
 		*after_redirect=1;
 		return 1;
 	}
-	else 
+	else
 		return 0;
 
 }
@@ -128,7 +128,7 @@ char    *parse_tokens(t_shell *shell, const char *s)
 
 		if (index == 0 && !is_redirect(type,&after_redirect))
 			type = TOKEN_COMMAND;
-	
+
 		addToken(shell, wvarexpanded, type);
 		index++;
 		s = skip_delimiters(s, ' ');
@@ -178,31 +178,31 @@ TokenType get_token_type(const char* token_text)
 
 
 
-int	is_only_spaces(char *str)
-{
-	int	length;
+// int	is_only_spaces(char *str)
+// {
+// 	int	length;
 
-	length = ft_strlen(str);
-    // Check for single or double quotes at the beginning and end of the string
-    if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"')) {
-        int i = 1;
-        
-        // Check all characters in between the quotes for spaces
-        while (i < length - 1) {
-            // if (str[i] != ' ') {
-            if (!isspace(str[i])) {
-                return 0; // Non-space character found
-            }
-            i++;
-        }
-        
-        // Only spaces found in between quotes
-        return 1;
-    }
-    
-    // First and last characters are not matching quotes
-    return 0;
-}
+// 	length = ft_strlen(str);
+//     // Check for single or double quotes at the beginning and end of the string
+//     if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"')) {
+//         int i = 1;
+
+//         // Check all characters in between the quotes for spaces
+//         while (i < length - 1) {
+//             // if (str[i] != ' ') {
+//             if (!isspace(str[i])) {
+//                 return 0; // Non-space character found
+//             }
+//             i++;
+//         }
+
+//         // Only spaces found in between quotes
+//         return 1;
+//     }
+
+//     // First and last characters are not matching quotes
+//     return 0;
+// }
 
 int		check_if_valid_cmd(TokenNode *node)
 {
@@ -216,7 +216,7 @@ int		check_if_valid_cmd(TokenNode *node)
 // void    set_commands(t_shell *shell)
 // {
 // 	TokenNode	*node;
-	
+
 // 	// ft_printf("set_commands\n");
 // 	node = shell->token_head;
 // 	if (node)
@@ -283,7 +283,7 @@ int		check_if_valid_cmd(TokenNode *node)
 // 		else if (!isNotEmpty(node->token.value))
 // 			node=node->next;
 // 		if (node)
-// 		{	
+// 		{
 // 			node->token.type=TOKEN_COMMAND;
 // 			while (node->next)
 // 			{
@@ -307,7 +307,7 @@ int		check_if_valid_cmd(TokenNode *node)
 // 	node=shell->token_head;
 // 	pipe_exist = 1;
 
-//     while (node) 
+//     while (node)
 // 	{
 //         if (!check_if_valid_cmd(node) && (node == shell->token_head))
 //             node->token.type = TOKEN_INV_COMMAND;
@@ -315,13 +315,13 @@ int		check_if_valid_cmd(TokenNode *node)
 //             node = node->next;
 //         if (node)
 // 		{
-// 			if (pipe_exist && is_valid_cmd(shell, node->token.value)) 
+// 			if (pipe_exist && is_valid_cmd(shell, node->token.value))
 // 			{
 //                 node->token.type = TOKEN_COMMAND;
 //                 pipe_exist = 0;
 //             }
 //             // node->token.type = TOKEN_COMMAND;
-//             if (node->next && node->next->token.type == TOKEN_PIPE) 
+//             if (node->next && node->next->token.type == TOKEN_PIPE)
 //                 pipe_exist = 1;
 //         }
 //         node = node->next;
@@ -338,7 +338,7 @@ void set_commands(t_shell *shell) {
 	pipe_exist = 1;
 	after_redirect=0;
 
-    while (node) 
+    while (node)
 	{
         if (!check_if_valid_cmd(node) && (node == shell->token_head))
             node->token.type = TOKEN_INV_COMMAND;
@@ -351,23 +351,23 @@ void set_commands(t_shell *shell) {
 				after_redirect=0;
 		}
         if (node && isNotEmpty(node->token.value) )
-		{	
+		{
 			if (!after_redirect && (node == shell->token_head) )
 			{
 				node->token.type = TOKEN_COMMAND;
 				pipe_exist = 0;
 
 			}
-			else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE) 
+			else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE)
 			{
                 node->token.type = TOKEN_COMMAND;
                 pipe_exist = 0;
             }
-	
-			 if (node->token.type == TOKEN_PIPE) 
+
+			 if (node->token.type == TOKEN_PIPE)
                 pipe_exist = 1;
         }
-        
+
 		node = node->next;
     }
 }
