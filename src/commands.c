@@ -254,26 +254,29 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
 
 void handle_token(t_shell *shell,TokenNode *current_token,Command* current_command)
 {
-    if(current_token->token.type == TOKEN_ARG)         
-        add_argument(shell, current_command, current_token->token.value);
-    else if (current_token->token.type == TOKEN_REDIR_IN)
+
+    if (current_token->token.type == TOKEN_REDIR_IN)
 	{
         if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG)
             set_redirect_in(shell, current_command, current_token->next->token.value);
-        current_token = current_token->next; // Skip the next token since it's part of the redirection
+        *current_token = *current_token->next; // Skip the next token since it's part of the redirection
     }
 	else if (current_token->token.type == TOKEN_REDIR_OUT || current_token->token.type == TOKEN_REDIR_APPEND)
 	{
         if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG)
             set_redirect_out(shell, current_command, current_token->next->token.value, current_token->token.type == TOKEN_REDIR_APPEND);
-        current_token = current_token->next; // Skip the next token since it's part of the redirection
+        *current_token = *current_token->next; // Skip the next token since it's part of the redirection
     }
     else if (current_token->token.type == TOKEN_REDIR_HEREDOC)
     {
         if (current_token->next != NULL && current_token->next->token.type == TOKEN_ARG) 
             current_command->heredoc_delimiter = shell_strdup(shell, current_token->next->token.value);
-        current_token = current_token->next;
+        *current_token = *current_token->next;
     }
+    else if(current_token->token.type == TOKEN_ARG)         
+        add_argument(shell, current_command, current_token->token.value);
+
+    
 }
 
 void pipe_modify_fin_fout(TokenNode *current_token,Command* current_command,int* pipe_exist)
