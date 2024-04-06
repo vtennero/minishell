@@ -247,7 +247,7 @@ TokenType get_token_type(const char* token_text)
 //     return 0;
 // }
 
-int		check_if_valid_cmd(TokenNode *node)
+int		 check_if_valid_cmd(TokenNode *node)
 {
 	if (!ft_strlen(node->token.value))
 		return (0);
@@ -372,7 +372,27 @@ int		check_if_valid_cmd(TokenNode *node)
 // }
 
 
-void set_commands(t_shell *shell)
+void set_commands_check(t_shell* shell,TokenNode *node,int* after_redirect,int* pipe_exist)
+{
+		if (node && isNotEmpty(node->token.value) )
+		{
+			if (!*after_redirect && (node == shell->token_head) )
+			{
+				node->token.type = TOKEN_COMMAND;
+				*pipe_exist = 0;
+			}
+			else if (*pipe_exist && !*after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE)
+			{
+				node->token.type = TOKEN_COMMAND;
+				*pipe_exist = 0;
+			}
+
+			 if (node->token.type == TOKEN_PIPE)
+				*pipe_exist = 1;
+		}
+	
+}
+void set_token_commands(t_shell *shell)
 {
 	TokenNode *node;
 	int pipe_exist;
@@ -386,31 +406,28 @@ void set_commands(t_shell *shell)
 	{
 		if (!check_if_valid_cmd(node) && (node == shell->token_head))
 			node->token.type = TOKEN_INV_COMMAND;
-		// else if (!isNotEmpty(node->token.value))
-		// 	node=node->next;
-		// else if (!isNotEmpty(node->token.value) && (node == shell->token_head) && ( node->token.type == TOKEN_REDIR_IN || node->token.type == TOKEN_REDIR_OUT  || node->token.type == TOKEN_REDIR_APPEND  ))
 		else if (is_redirect(node->token.type,&after_redirect) && node->next   && node->next->next)
 		{
 				node = node->next->next;
 				after_redirect=0;
 		}
-		if (node && isNotEmpty(node->token.value) )
-		{
-			if (!after_redirect && (node == shell->token_head) )
-			{
-				node->token.type = TOKEN_COMMAND;
-				pipe_exist = 0;
+		set_commands_check(shell,node,&after_redirect,&pipe_exist);
+		// if (node && isNotEmpty(node->token.value) )
+		// {
+		// 	if (!after_redirect && (node == shell->token_head) )
+		// 	{
+		// 		node->token.type = TOKEN_COMMAND;
+		// 		pipe_exist = 0;
+		// 	}
+		// 	else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE)
+		// 	{
+		// 		node->token.type = TOKEN_COMMAND;
+		// 		pipe_exist = 0;
+		// 	}
 
-			}
-			else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE)
-			{
-				node->token.type = TOKEN_COMMAND;
-				pipe_exist = 0;
-			}
-
-			 if (node->token.type == TOKEN_PIPE)
-				pipe_exist = 1;
-		}
+		// 	 if (node->token.type == TOKEN_PIPE)
+		// 		pipe_exist = 1;
+		// }
 
 		node = node->next;
 	}

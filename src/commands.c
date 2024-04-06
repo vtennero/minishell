@@ -241,7 +241,10 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
             }
         temp=temp->next;
 
+
         }
+        if (!current_command)
+            ft_puterr("syntax error near unexpected token `newline'",2);
         current_command->args = (char**)shell_malloc(shell, (argc + 2) * sizeof(char*));
         return current_command;
     }

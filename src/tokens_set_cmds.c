@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokens_set_cmds.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 17:13:35 by root              #+#    #+#             */
-/*   Updated: 2024/04/06 18:43:17 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/07 07:50:04 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,15 @@ int	is_only_spaces(char *str)
 
         while (i < length - 1) {
             if (!isspace(str[i])) {
-                return 1; // Non-space character found
+                return 0; // Non-space character found
             }
             i++;
         }
 
-        return 0;
+        return 1;
     }
 
-    return 1;
+    return 0;
 }
 
 // int		check_if_valid_cmd(TokenNode *node)
@@ -58,25 +58,25 @@ int	is_only_spaces(char *str)
 // 		return 0;
 // }
 
-void set_token_commands(t_shell *shell)
-{
-    TokenNode *node = shell->token_head;
-    int pipe_exist = 1;
+// void set_token_commands(t_shell *shell)
+// {
+//     TokenNode *node = shell->token_head;
+//     int pipe_exist = 1;
 
-    while (node)
-	{
-        if (node)
-		{
-			if (pipe_exist && is_valid_cmd(shell, node->token.value))
-			{
-                node->token.type = TOKEN_COMMAND;
-                pipe_exist = 0;
-            }
-            // node->token.type = TOKEN_COMMAND;
-            if (node->next && node->next->token.type == TOKEN_PIPE)
-                pipe_exist = 1;
-        }
-		// if node
-        node = node->next;
-    }
-}
+//     while (node)
+// 	{
+//         if (node)
+// 		{
+// 			if (pipe_exist && is_valid_cmd(shell, node->token.value))
+// 			{
+//                 node->token.type = TOKEN_COMMAND;
+//                 pipe_exist = 0;
+//             }
+//             // node->token.type = TOKEN_COMMAND;
+//             if (node->next && node->next->token.type == TOKEN_PIPE)
+//                 pipe_exist = 1;
+//         }
+// 		// if node
+//         node = node->next;
+//     }
+// }

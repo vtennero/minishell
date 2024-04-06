@@ -3,23 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/06 18:32:44 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/07 07:22:41 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+int pipe_extension(t_shell* shell,char*input)
+{
+	char			*input2;
+	char			*temp;
+
+	input2 = NULL;
+	while (end_with_pipe(input) == 1 && !isNotEmpty(input2))
+	 {
+
+			if (ft_strnstr(input, "||",ft_strlen(input)))
+			{
+				ft_putstr_fd("syntax error near unexpected token `||'",2);
+				shell->last_exit_status=2;
+				return -1;
+			}
+			input2 = readline("> ");
+			if (isNotEmpty(input2))
+			{
+				temp = ft_strjoin_nconst(input, input2);
+				free(input);
+				input = shell_strdup(shell, temp);
+				free(temp);
+			}
+			input2 = "";
+	}
+	return 0;
+}
+
 
 void	interactive_mode(t_shell *shell)
 {
 	char			*input;
-	char			*input2;
-	char			*temp;
 	CommandTable	*command_table;
 
-	input2 = NULL;
 	while (1)
 	{
 		input = readline("$ ");
@@ -28,29 +53,14 @@ void	interactive_mode(t_shell *shell)
 			ft_printf("exit\n");
 			break ;
 		}
-		else if (end_with_pipe(input) == 1 && !isNotEmpty(input2))
-		{
-			input2 = readline("> ");
-			if (input == NULL)
-			{
-				ft_printf("exit\n");
-				break ;
-			}
-		}
-		if (input2)
-		{
-			temp = ft_strjoin_nconst(input, input2);
-			free(input);
-			input = shell_strdup(shell, temp);
-			free(temp);
-		}
-		input2 = "";
-		if (ft_strlen(input) > 0)
+
+		if (ft_strlen(input) > 0 && pipe_extension(shell,input) !=-1)
 		{
 			add_history(input);
 			create_tokens(shell, input);
-			command_table = create_command_table(shell, shell->token_head);
 			printTokens(shell->token_head);
+
+			command_table = create_command_table(shell, shell->token_head);
 			print_command_table(command_table);
 			execute_command_table(shell, command_table);
 			shell->token_head = NULL;
