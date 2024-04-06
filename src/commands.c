@@ -191,6 +191,32 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
 //     }
 
 
+//    Command*  create_command_set(t_shell *shell,TokenNode *node)
+//     {
+//         Command* current_command = NULL;
+//         TokenNode* temp;
+//         int argc;
+
+//         temp=node;
+//         argc=0;
+//         while (temp && ((temp->next == NULL)|| (temp->next && temp->next->token.type != TOKEN_PIPE)))
+//         {
+//              if (temp->token.type == TOKEN_COMMAND)
+//              {
+//                 current_command = create_command_entry(shell, temp->token.value);
+//                 while (temp->next && temp->next->token.type==TOKEN_ARG)
+//                 {
+//                         argc++;
+//                         temp=temp->next;         
+//                 }
+//             }
+//             temp=temp->next;
+//         }
+//         current_command->args = (char**)shell_malloc(shell, (argc + 2) * sizeof(char*));
+//         return current_command;
+//     }
+
+
    Command*  create_command_set(t_shell *shell,TokenNode *node)
     {
         Command* current_command = NULL;
@@ -199,10 +225,10 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
 
         temp=node;
         argc=0;
-        while (temp && ((temp->next == NULL)|| (temp->next && temp->next->token.type != TOKEN_PIPE)))
+        while (temp && temp!=NULL && temp->token.type != TOKEN_PIPE)
         {
-             if (temp->token.type == TOKEN_COMMAND)
-             {
+            if (temp->token.type == TOKEN_COMMAND)
+            {
                 current_command = create_command_entry(shell, temp->token.value);
                 while (temp->next && temp->next->token.type==TOKEN_ARG)
                 {
@@ -210,11 +236,16 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
                         temp=temp->next;         
                 }
             }
-            temp=temp->next;
+        temp=temp->next;
+
         }
         current_command->args = (char**)shell_malloc(shell, (argc + 2) * sizeof(char*));
         return current_command;
     }
+
+
+
+
 
 
 
