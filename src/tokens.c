@@ -27,6 +27,18 @@ int isSpecialOperator(const char *str) {
     return 0;
 }
 
+int is_redirect(int type,int* after_redirect)
+{
+	if ((type==2) || (type ==3) || (type==4) || (type==5))
+	{
+		*after_redirect=1;
+		return 1;
+	}
+	else 
+		return 0;
+
+}
+
 int	get_non_expanded_var_length(char *var)
 {
     int count = 1; // Counter for valid characters
@@ -105,16 +117,18 @@ char    *parse_tokens(t_shell *shell, const char *s)
 	int		index;
 
 	index = 0;
+	int after_redirect=0;
 	while (*s)
 	{
 		s = skip_delimiters(s, ' ');
 		if (!*s)
 			break;
 		wvarexpanded = quotevar(shell, &s);
-		if (index == 0)
+		type = get_token_type(wvarexpanded);
+
+		if (index == 0 && !is_redirect(type,&after_redirect))
 			type = TOKEN_COMMAND;
-		else
-			type = get_token_type(wvarexpanded);
+	
 		addToken(shell, wvarexpanded, type);
 		index++;
 		s = skip_delimiters(s, ' ');
@@ -160,6 +174,202 @@ TokenType get_token_type(const char* token_text)
 	else if (ft_strcmp(token_text, "$?") == 0)
 		return TOKEN_EXIT_STATUS;
 	return TOKEN_ARG;
+}
+
+
+
+int	is_only_spaces(char *str)
+{
+	int	length;
+
+	length = ft_strlen(str);
+    // Check for single or double quotes at the beginning and end of the string
+    if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"')) {
+        int i = 1;
+        
+        // Check all characters in between the quotes for spaces
+        while (i < length - 1) {
+            // if (str[i] != ' ') {
+            if (!isspace(str[i])) {
+                return 0; // Non-space character found
+            }
+            i++;
+        }
+        
+        // Only spaces found in between quotes
+        return 1;
+    }
+    
+    // First and last characters are not matching quotes
+    return 0;
+}
+
+int		check_if_valid_cmd(TokenNode *node)
+{
+	if (!ft_strlen(node->token.value))
+		return (0);
+	if (is_only_spaces(node->token.value))
+		return (0);
+	return (1);
+}
+
+// void    set_commands(t_shell *shell)
+// {
+// 	TokenNode	*node;
+	
+// 	// ft_printf("set_commands\n");
+// 	node = shell->token_head;
+// 	if (node)
+// 	{
+// 		if (!check_if_valid_cmd(node))
+// 			node->token.type=TOKEN_INV_COMMAND;
+// 		else if (!isNotEmpty(node->token.value))
+// 			node=node->next;
+// 		if (node)
+// 		{
+// 		node->token.type=TOKEN_COMMAND;
+// 		while (node->next)
+// 			{
+// 				// if (node->token.type == TOKEN_REDIR_OUT && node->next->next)
+// 					// node=node->next->next;
+// 				// else if (node->token.type == TOKEN_PIPE)
+// 				if (node->token.type == TOKEN_PIPE)
+// 				{
+// 					node=node->next;
+// 					if (node->token.type==TOKEN_ARG)
+// 						node->token.type=TOKEN_COMMAND;
+// 				}
+// 				else
+// 					node=node->next;
+// 			}
+// 		}
+// 	}
+
+// }
+
+	int is_valid_cmd(t_shell* shell,char* cmd_name)
+	{
+		char	**paths;
+		char	*cmd_path;
+		int 	is_custom_cmd;
+
+		is_custom_cmd=0;
+		if ((ft_strcmp(cmd_name,"cd")==0) ||  (ft_strcmp(cmd_name,"env")==0) || (ft_strcmp(cmd_name,"exit")==0)|| (ft_strcmp(cmd_name,"unset")==0)|| (ft_strcmp(cmd_name,"export")==0)|| (ft_strcmp(cmd_name,"echo")==0)|| (ft_strcmp(cmd_name,"pwd")==0))
+			is_custom_cmd=1;
+		paths = find_cmd_paths(shell->envp);
+		cmd_path = locate_cmd(paths, cmd_name);
+		free_array(paths);
+		// ft_putstr_fd(ft_strjoin_nconst("cmd path is ",cmd_path),2);
+		if ((cmd_path!=NULL && is_directory(cmd_path)!=1) || is_custom_cmd==1)
+			return 1;
+		else
+			return 0;
+	}
+
+
+
+
+// void    set_commands(t_shell *shell)
+// {
+// 	TokenNode	*node;
+// 	int pipe_exist;
+
+// 	pipe_exist=0;
+// 	node = shell->token_head;
+// 	if (node)
+// 	{
+// 		if (!check_if_valid_cmd(node))
+// 			node->token.type=TOKEN_INV_COMMAND;
+// 		else if (!isNotEmpty(node->token.value))
+// 			node=node->next;
+// 		if (node)
+// 		{	
+// 			node->token.type=TOKEN_COMMAND;
+// 			while (node->next)
+// 			{
+// 				if (node->token.type == TOKEN_PIPE)
+// 					pipe_exist=1;
+// 				if (pipe_exist==1 && is_valid_cmd(shell,node->token.value))
+// 				{
+// 					node->token.type = TOKEN_COMMAND;
+// 					pipe_exist=0;
+// 				}
+// 			}
+// 		}
+// 	}
+// }
+
+
+// void set_commands(t_shell *shell) {
+//     TokenNode *node;
+//     int pipe_exist;
+
+// 	node=shell->token_head;
+// 	pipe_exist = 1;
+
+//     while (node) 
+// 	{
+//         if (!check_if_valid_cmd(node) && (node == shell->token_head))
+//             node->token.type = TOKEN_INV_COMMAND;
+//         else if (!isNotEmpty(node->token.value) && (node == shell->token_head))
+//             node = node->next;
+//         if (node)
+// 		{
+// 			if (pipe_exist && is_valid_cmd(shell, node->token.value)) 
+// 			{
+//                 node->token.type = TOKEN_COMMAND;
+//                 pipe_exist = 0;
+//             }
+//             // node->token.type = TOKEN_COMMAND;
+//             if (node->next && node->next->token.type == TOKEN_PIPE) 
+//                 pipe_exist = 1;
+//         }
+//         node = node->next;
+//     }
+// }
+
+
+void set_commands(t_shell *shell) {
+    TokenNode *node;
+    int pipe_exist;
+	int after_redirect;
+
+	node=shell->token_head;
+	pipe_exist = 1;
+	after_redirect=0;
+
+    while (node) 
+	{
+        if (!check_if_valid_cmd(node) && (node == shell->token_head))
+            node->token.type = TOKEN_INV_COMMAND;
+		// else if (!isNotEmpty(node->token.value))
+		// 	node=node->next;
+        // else if (!isNotEmpty(node->token.value) && (node == shell->token_head) && ( node->token.type == TOKEN_REDIR_IN || node->token.type == TOKEN_REDIR_OUT  || node->token.type == TOKEN_REDIR_APPEND  ))
+		else if (is_redirect(node->token.type,&after_redirect) && node->next   && node->next->next)
+		{
+		        node = node->next->next;
+				after_redirect=0;
+		}
+        if (node && isNotEmpty(node->token.value) )
+		{	
+			if (!after_redirect && (node == shell->token_head) )
+			{
+				node->token.type = TOKEN_COMMAND;
+				pipe_exist = 0;
+
+			}
+			else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE) 
+			{
+                node->token.type = TOKEN_COMMAND;
+                pipe_exist = 0;
+            }
+	
+			 if (node->token.type == TOKEN_PIPE) 
+                pipe_exist = 1;
+        }
+        
+		node = node->next;
+    }
 }
 
 void create_tokens(t_shell *shell, const char *s)
