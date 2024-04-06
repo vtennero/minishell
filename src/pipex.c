@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/02 22:06:52 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/06 12:35:24 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,27 @@ int	run_cmd(Command *command, t_shell *shell)
 	return (0);
 }
 
+
+void pipe_heredoc(Command *cmd, t_shell *shell)
+{
+	int fd;
+	cmd->redirect_in = shell_strdup(shell, cmd->heredoc_temp_path);
+    fd = open(cmd->heredoc_temp_path, O_RDWR);
+	if (fd!=(-1))
+		cmd->fin=fd;
+	dup2(cmd->fin,STDIN_FILENO);
+	close(cmd->fin);
+
+
+}
+
+
 void	check_finfout(int prev_pipe, Command *cmd, t_shell *shell)
 {
 	if (cmd->fin == -99 && prev_pipe != STDIN_FILENO)
 		dup2(prev_pipe, STDIN_FILENO);
+	else if(cmd->fin==-9)
+		pipe_heredoc(cmd,shell);
 	else if (cmd->fin != 0)
 	{
 		dup2(cmd->fin, STDIN_FILENO);

@@ -47,6 +47,9 @@ void set_redirect_in(t_shell *shell, Command* cmd, char* filename) {
         cmd->fin = fd;
 }
 
+
+
+
 void set_redirect_out(t_shell *shell, Command* cmd, char* filename, int append) {
     if (!cmd || !filename) return;
     int fd = 0;
