@@ -200,6 +200,7 @@ void prepare_heredocs_in_command_table(CommandTable* table)
     while (cmd) {
         if (cmd->heredoc_delimiter) {
             cmd->heredoc_temp_path = handle_heredoc(cmd->heredoc_delimiter);
+            cmd->fin=-9;
         }
         cmd = cmd->next;
     }

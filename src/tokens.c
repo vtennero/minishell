@@ -498,7 +498,7 @@ void set_commands(t_shell *shell) {
 		// else if (!isNotEmpty(node->token.value))
 		// 	node=node->next;
         // else if (!isNotEmpty(node->token.value) && (node == shell->token_head) && ( node->token.type == TOKEN_REDIR_IN || node->token.type == TOKEN_REDIR_OUT  || node->token.type == TOKEN_REDIR_APPEND  ))
-		else if (is_redirect(node->token.type,&after_redirect) && node->next->next)
+		else if (is_redirect(node->token.type,&after_redirect) && node->next   && node->next->next)
 		{
 		        node = node->next->next;
 				after_redirect=0;
