@@ -12,25 +12,6 @@
 
 #include "minishell.h"
 
-// process_env_arg_helpers
-
-// int is_valid_var_name(const char *str, int n)
-// {
-//     int foundLetter = 0; // Flag to track if at least one letter has been found
-
-//     for(int i = 0; i < n; i++) {
-//         if(str[i] == '\0') { // If end of string is reached before n
-//             break;
-//         }
-//         if(!ft_isalpha(str[i]) && !ft_isdigit(str[i])) { // If not a letter or digit
-//             return 0; // Return 0 if any character doesn't meet the criteria
-//         }
-//         if(ft_isalpha(str[i])) { // If the character is a letter
-//             foundLetter = 1; // Set the flag
-//         }
-//     }
-//     return foundLetter; // Return the flag value (0 if only numbers, 1 otherwise)
-// }
 int is_valid_var_name(const char *str,int n)
 {
     int foundLetter; // Flag to track if at least one letter has been found
@@ -39,12 +20,12 @@ int is_valid_var_name(const char *str,int n)
 
     if (n!=-1)
         len = n;
-    else 
+    else
         len=(int)ft_strlen(str);
     i=0;
     foundLetter=0;
-    
-    
+
+
     while (i < len) {
         if (str[i] == '\0') { // If end of string is reached before n
             break;
@@ -167,11 +148,7 @@ int process_env_arg(t_shell *shell, const char *arg)
     }
     else if (is_alloc_str(arg))
 	{
-	    // printf("Valid variable assignment\n");
-        // processedQuotes = reviewquotes(strdup(arg + nchar + 1));
-        // wvarexpanded = expandVariables(processedQuotes, shell->env_head);
-        // ft_printf("with variables expanded with |%s| %s\n", processedQuotes, wvarexpanded);
-        // handle_alloc_str(shell, wvarexpanded + nchar + 1, ft_strlen(wvarexpanded));
+
         handle_alloc_str(shell, arg, nchar);
         return 0; // Valid and requires assignment action
     }
@@ -242,7 +219,7 @@ void remove_var(t_shell *shell, const char *key, int nchar)
             t_env_var *to_delete = *tracer;
             *tracer = (*tracer)->next;
             (void)to_delete;
-            
+
             // free(to_delete->key);
             // free(to_delete->value);
             // free(to_delete);

@@ -22,7 +22,7 @@ t_env_var *findEnvVar(t_env_var *head, const char *key) {
 	return NULL;
 }
 
-int getEnvVarLength(t_shell *shell, const char **input, t_env_var *envVars)
+int getEnvVarLength(t_shell *shell, const char **input, t_env_var *env_vars)
 {
 	const char  *varStart;
 	int         varNameLength;
@@ -35,7 +35,7 @@ int getEnvVarLength(t_shell *shell, const char **input, t_env_var *envVars)
 		(*input)++;
 	varNameLength = *input - varStart;
 	varName = shell_strndup(shell, varStart, varNameLength);
-	var = findEnvVar(envVars, varName);
+	var = findEnvVar(env_vars, varName);
 	if (var)
 		return ft_strlen(var->value);
 	else
@@ -48,7 +48,7 @@ void incrementLengthAndInput(const char** input, int* length, int a, int b)
     *length += b;
 }
 
-int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *envVars)
+int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *env_vars)
 {
 	int	length;
 
@@ -67,7 +67,7 @@ int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *envVar
 			    	incrementLengthAndInput(&input, &length, 1, 1);
 			}
 			else
-				incrementLengthAndInput(&input, &length, 1, getEnvVarLength(shell, &input, envVars));
+				incrementLengthAndInput(&input, &length, 1, getEnvVarLength(shell, &input, env_vars));
 		}
 		else
 			incrementLengthAndInput(&input, &length, 1, 1);
@@ -75,7 +75,7 @@ int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *envVar
 	return (length + 1);
 }
 
-void replaceEnvVar(t_shell *shell, const char **input, char **output, t_env_var *envVars)
+void replaceEnvVar(t_shell *shell, const char **input, char **output, t_env_var *env_vars)
 {
 	const char	*varStart;
 	int			varNameLength;
@@ -87,7 +87,7 @@ void replaceEnvVar(t_shell *shell, const char **input, char **output, t_env_var 
 		(*input)++;
 	varNameLength = *input - varStart;
 	varName = shell_strndup(shell, varStart, varNameLength);
-	var = findEnvVar(envVars, varName);
+	var = findEnvVar(env_vars, varName);
 	if (var)
 	{
 		ft_strcpy(*output, var->value);
@@ -112,23 +112,24 @@ char	*cpy_exit_code(char *str, int n)
 	return (str);
 }
 
-size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_var *envVars)
+void handleExitCode(t_shell *shell, const char **input, char **output)
 {
-	const char	*startInput;
-	
-	startInput = input;
+    cpy_exit_code(*output, shell->last_exit_status);
+    *output += calc_int_len(shell->last_exit_status);
+    *input += 2;
+}
+
+size_t  replaceVariables(t_shell *shell, const char *input, char *output, t_env_var *env_vars)
+{
+	const char	*start_input;
+
+	start_input = input;
 	while (*input)
 	{
 		if (*input == '$')
 		{
-			if (*(input + 1) == ' ')
-				break;
-			else if (*(input + 1) == '?' )
-			{
-				cpy_exit_code(output, shell->last_exit_status);
-				output += calc_int_len(shell->last_exit_status);
-				input += 2;
-			}
+			if (*(input + 1) == '?' )
+                handleExitCode(shell, &input, &output);
 			else if (*(input + 1) == '$' || *(input + 1) == '\"')
 			{
 				*output++ = *input++;
@@ -138,20 +139,18 @@ size_t replaceVariables(t_shell *shell, const char *input, char *output, t_env_v
 						*output++ = *input++;
 				}
 			}
-			else if (*(input + 1) == '\0')
+			else if (*(input + 1) == '\0' || isspace_not_eol(*(input + 1)) == 1)
 				*output++ = *input++;
 			else
-				replaceEnvVar(shell, &input, &output, envVars);
+				replaceEnvVar(shell, &input, &output, env_vars);
 		}
-		else if (*input == '\"' || *input == '\'' || *input == ' ')
+		else if (*input == '\"' || *input == '\'' || isspace_not_eol(*input) == 1)
 			break ;
-		else {
+		else
 			*output++ = *input++;
-		}
 	}
 	*output = '\0';
-	return input - startInput;
-
+	return (input - start_input);
 }
 
 char	*expandVariables(t_shell *shell, const char *input)
@@ -163,7 +162,7 @@ char	*expandVariables(t_shell *shell, const char *input)
 	finalLength = calculateExpandedLength(shell, input, shell->env_head);
 	expanded = (char *)shell_malloc(shell, finalLength);
 	if (!expanded) {
-		printf("Memory allocation failed\n");
+		ft_printf("Memory allocation failed\n");
 		return NULL;
 	}
 	advancedPosition = replaceVariables(shell, input, expanded, shell->env_head);
