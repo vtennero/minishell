@@ -227,7 +227,7 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
         argc=0;
         while (temp && temp!=NULL && temp->token.type != TOKEN_PIPE)
         {
-            if (temp->token.type == TOKEN_COMMAND)
+            if (temp->token.type == TOKEN_COMMAND || temp->token.type == 13 )
             {
                 current_command = create_command_entry(shell, temp->token.value);
                 while (temp->next && temp->next->token.type==TOKEN_ARG)
