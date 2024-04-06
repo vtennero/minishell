@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/06 12:35:24 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/06 16:11:23 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,15 +83,30 @@ int	run_cmd(Command *command, t_shell *shell)
 
 void pipe_heredoc(Command *cmd, t_shell *shell)
 {
-	int fd;
+	// int fd;
 	cmd->redirect_in = shell_strdup(shell, cmd->heredoc_temp_path);
-    fd = open(cmd->heredoc_temp_path, O_RDWR);
-	if (fd!=(-1))
-		cmd->fin=fd;
-	dup2(cmd->fin,STDIN_FILENO);
-	close(cmd->fin);
+    // fd = open(cmd->heredoc_temp_path, O_RDWR);
+	// if (fd!=(-1))
+	// 	cmd->fin=fd;
+	// char * heredoc =get_next_line(fd);
+	// ft_putstr_fd(heredoc,2);
+	// // dup2(cmd->fin,STDIN_FILENO);
+	// close(cmd->fin);
+
+	int file =  open(cmd->heredoc_temp_path, O_RDWR);
+	char* heredoc;
+	heredoc=get_next_line(file);
+	while (heredoc)
+	{
+		// ft_putstr_fd(heredoc,2);
+		ft_putstr_fd(heredoc,0);
+
+		heredoc=get_next_line(file);
 
 
+	}
+	// ft_putstr_fd("end of heredoc",2);
+	close(file);
 }
 
 
