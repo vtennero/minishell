@@ -1,5 +1,9 @@
 0
+1
 139
+2
+3
+4
 abcd.txt
 abc.txt
 dadfa
@@ -20,6 +24,7 @@ infile
 infile_big
 input.txt
 invalid_permission
+kaka
 lala
 lalala
 lala.txt
