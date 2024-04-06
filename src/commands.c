@@ -165,6 +165,32 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
 
 
 // }
+//    Command*  create_command_set(t_shell *shell,TokenNode *node)
+//     {
+//         Command* current_command = NULL;
+//         TokenNode* temp;
+//         int argc;
+
+//         temp=node;
+//         argc=0;
+//         while (temp->next && temp->next->token.type != TOKEN_PIPE)
+//         {
+//              if (temp->token.type == TOKEN_COMMAND)
+//              {
+//                 current_command = create_command_entry(shell, temp->token.value);
+//                 while (temp->next->token.type==TOKEN_ARG)
+//                 {
+//                         argc++;
+//                         temp=temp->next;         
+//                 }
+//             }
+//             temp=temp->next;
+//         }
+//         current_command->args = (char**)shell_malloc(shell, (argc + 2) * sizeof(char*));
+//         return current_command;
+//     }
+
+
    Command*  create_command_set(t_shell *shell,TokenNode *node)
     {
         Command* current_command = NULL;
@@ -173,12 +199,12 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
 
         temp=node;
         argc=0;
-        while (temp->next && temp->next->token.type != TOKEN_PIPE)
+        while (temp && ((temp->next == NULL)|| (temp->next && temp->next->token.type != TOKEN_PIPE)))
         {
              if (temp->token.type == TOKEN_COMMAND)
              {
                 current_command = create_command_entry(shell, temp->token.value);
-                while (temp->next->token.type==TOKEN_ARG)
+                while (temp->next && temp->next->token.type==TOKEN_ARG)
                 {
                         argc++;
                         temp=temp->next;         
@@ -189,6 +215,7 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
         current_command->args = (char**)shell_malloc(shell, (argc + 2) * sizeof(char*));
         return current_command;
     }
+
 
 
 
@@ -265,7 +292,7 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
     {
         if (pipe_exist==1 || table->head==NULL)
              current_command=create_command_set(shell,current_token); // By end of this function, we populated current command and command->args, to populate the rest
-        while (current_token->token.type != TOKEN_PIPE && current_token!=NULL)
+        while (current_token!=NULL && current_token->token.type != TOKEN_PIPE )
         {
             handle_token(shell,current_token,current_command);
             pipe_modify_fin_fout(current_token,current_command,&pipe_exist);
