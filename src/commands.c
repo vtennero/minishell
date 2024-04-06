@@ -149,23 +149,23 @@ void add_argument(t_shell *shell, Command* cmd, char* arg)
 
 
 
-int set_fd(t_shell *shell, char* filename,int type) {
-    // if (cmd->redirect_in) free(cmd->redirect_in);
-    // cmd->redirect_in = shell_strdup(shell, filename);
-    int fd;
+// int set_fd(t_shell *shell, char* filename,int type) {
+//     // if (cmd->redirect_in) free(cmd->redirect_in);
+//     // cmd->redirect_in = shell_strdup(shell, filename);
+//     int fd;
     
-    if( type==TOKEN_REDIR_IN)
-        fd = open(filename, O_RDWR);
-    else if (type==TOKEN_REDIR_APPEND)
-        fd = open(filename, O_RDWR | O_CREAT | O_APPEND,0666);
-    else if (type==TOKEN_REDIR_OUT)
-        fd = open(filename, O_RDWR | O_CREAT|O_TRUNC ,0666);
+//     if( type==TOKEN_REDIR_IN)
+//         fd = open(filename, O_RDWR);
+//     else if (type==TOKEN_REDIR_APPEND)
+//         fd = open(filename, O_RDWR | O_CREAT | O_APPEND,0666);
+//     else if (type==TOKEN_REDIR_OUT)
+//         fd = open(filename, O_RDWR | O_CREAT|O_TRUNC ,0666);
 
-    return fd;
+//     return fd;
 
 
-}
-   int create_command_set(t_shell *shell,TokenNode *node)
+// }
+   Command*  create_command_set(t_shell *shell,TokenNode *node)
     {
         Command* current_command = NULL;
         TokenNode* temp;
@@ -176,14 +176,14 @@ int set_fd(t_shell *shell, char* filename,int type) {
         while (temp->next && temp->next->token.type != TOKEN_PIPE)
         {
              if (temp->token.type == TOKEN_COMMAND)
+             {
                 current_command = create_command_entry(shell, temp->token.value);
+                while (temp->next->token.type==TOKEN_ARG)
                 {
-                    while (temp->next->token.type==TOKEN_ARG)
-                    {
                         argc++;
                         temp=temp->next;         
-                    }
                 }
+            }
             temp=temp->next;
         }
         current_command->args = (char**)shell_malloc(shell, (argc + 2) * sizeof(char*));
@@ -191,33 +191,6 @@ int set_fd(t_shell *shell, char* filename,int type) {
     }
 
 
-
-    //     while (node->next && node->next->token.type != TOKEN_PIPE)
-    //     {
-    //         if (node->token.type == TOKEN_REDIR_IN && node->next)
-
-
-
-    //     }
-    //     if (node->token.type == TOKEN_REDIR_IN && node->next)
-    //         {
-    //             fin=set_fd(shell,node->next->token.value,node->token.type);
-    //             node=node->next
-    //         }
-    //         else   if( ((node->token.type == TOKEN_REDIR_OUT) || (node->token.type == TOKEN_REDIR_APPEND))  && node->next)
-    //         {
-    //             fout=set_fd(shell,node->next->token.value,node->token.type);
-    //             node=node->next
-    //         }
-    //         else
-            
-    //         if (node->nex)
-    //             node=node->next;
-    // }
-//  current_command->args = (char**)shell_malloc(shell, (arg_count + 2) * sizeof(char*)); // +1 for NULL terminator
-
-//             // Add to command table
-        
 
 
 
@@ -245,21 +218,21 @@ void handle_token(t_shell *shell,TokenNode *current_token,Command* current_comma
     }
 }
 
-void pipe_modify_fin_fout(t_shell *shell,TokenNode *current_token,Command* current_command,int* pipe_exist)
+void pipe_modify_fin_fout(TokenNode *current_token,Command* current_command,int* pipe_exist)
 {
-        if (pipe_exist==1 && current_token->token.type !=  TOKEN_PIPE)
+        if (*pipe_exist==1 && current_token->token.type !=  TOKEN_PIPE)
         {
             if (ft_strcmp(current_command->name,"ls") != 0 && ft_strcmp(current_command->name,"echo") != 0)
                 if (current_command->fin!=-1)
                     current_command->fin=-99;
-            pipe_exist =0;
+            *pipe_exist =0;
         }
 
         if (current_token->next && current_token->next->token.type == TOKEN_PIPE)
         {
             if (current_command->fout==0 )
                 current_command->fout=-99;
-            pipe_exist =1;
+            *pipe_exist =1;
         }
 }
 
@@ -295,10 +268,10 @@ CommandTable    *create_command_table(t_shell *shell, TokenNode* tokens)
         while (current_token->token.type != TOKEN_PIPE && current_token!=NULL)
         {
             handle_token(shell,current_token,current_command);
-            pipe_modify_fin_fout(shell,current_token,current_command,&pipe_exist);
+            pipe_modify_fin_fout(current_token,current_command,&pipe_exist);
             current_token=current_token->next;
         }   
-        if (current_token!=NULL);
+        if (current_token!=NULL)
             current_token=current_token->next;
         update_head(current_command,table);
     }
