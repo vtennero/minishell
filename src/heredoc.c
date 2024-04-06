@@ -55,11 +55,11 @@ int create_and_unlink_temp_file(const char* tempFilePath) {
     }
 
     // Immediately unlink the file so it's removed upon closing
-    if (unlink(tempFilePath) == -1) {
-        perror("Failed to unlink temporary file");
-        close(fd);
-        return -1;
-    }
+    // if (unlink(tempFilePath) == -1) {
+    //     perror("Failed to unlink temporary file");
+    //     close(fd);
+    //     return -1;
+    // }
 
     return fd;
 }
@@ -76,7 +76,7 @@ int create_temp_file(char **tempFilePath) {
         return -1;
     }
 
-    *tempFilePath = create_temp_file_path("/tmp/shell_heredoc_", timeStr, counterStr);
+    *tempFilePath = create_temp_file_path("/tmp/", timeStr, counterStr);
 
     // Clean up
     free(timeStr);

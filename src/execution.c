@@ -40,6 +40,7 @@ void execute_command_table(t_shell *shell, CommandTable* table)
 
     current = table->head;
     (void)shell;
+    
     // if (is_token_type_present(shell->token_head, TOKEN_REDIR_HEREDOC))
     // {
     //     ft_printf("heredoc detected\n");
@@ -47,8 +48,13 @@ void execute_command_table(t_shell *shell, CommandTable* table)
     // else
     // prepare_heredocs_in_command_table(table);
     // print_command_table(table);
+
+
     pipex(current,shell);
-    cleanup_heredocs_in_command_table(table);
+    // cleanup_heredocs_in_command_table(table);
+
+    print_command_table(table);
+
 
     // while (current != NULL)
     // {
