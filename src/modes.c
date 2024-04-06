@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/06 17:09:25 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/06 17:45:05 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,10 +83,10 @@ void	interactive_mode(t_shell *shell)
 				// ft_printf("if (ft_strlen(input) > 0)\n");
 				add_history(input);
 				create_tokens(shell, input);
-				// printTokens(shell->token_head);
+				printTokens(shell->token_head);
 
 				command_table = create_command_table(shell, shell->token_head);
-				// print_command_table(command_table);
+				print_command_table(command_table);
 				execute_command_table(shell, command_table);
 				shell->token_head = NULL;
 			}

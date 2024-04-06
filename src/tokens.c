@@ -511,7 +511,7 @@ void set_commands(t_shell *shell) {
 				pipe_exist = 0;
 
 			}
-			else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE) 
+			else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE) 
 			{
                 node->token.type = TOKEN_COMMAND;
                 pipe_exist = 0;
