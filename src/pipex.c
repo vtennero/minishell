@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/07 08:39:22 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/07 08:56:08 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,14 @@ int	custom_cmd(char **cmd_args, char *cmd_path, Command *cmd, t_shell *shell)
 		exit_code = builtin_echo(shell, cmd->args, cmd->arg_count, cmd);
 	else if (ft_strcmp(cmd->name, "env") == 0)
 		exit_code = builtin_env(shell);
+	else if (ft_strcmp(cmd->name, "cd") == 0)
+		exit_code = builtin_cd(shell, cmd->args, cmd->arg_count);
+	else if (ft_strcmp(cmd->name, "unset") == 0)
+		exit_code = builtin_unset(shell, cmd->args, cmd->arg_count);
+	else if (ft_strcmp(cmd->name, "export") == 0)
+		exit_code = builtin_export(shell, cmd->args, cmd->arg_count);
+	else if (ft_strcmp(cmd->name, "exit") == 0)
+		exit_code = builtin_exit(shell, cmd->args, cmd->arg_count);
 	if (exit_code != -999)
 		exit(exit_code);
 	else if (cmd_path)
@@ -175,7 +183,7 @@ int	is_directory(const char *path)
 	return (1);
 }
 
-int	check_error(Command *cmd, t_shell *shell)
+int	check_error(Command *cmd, t_shell *shell,int parent)
 {
 	if (is_directory(cmd->name) == 1)
 	{
@@ -183,8 +191,11 @@ int	check_error(Command *cmd, t_shell *shell)
 		shell->last_exit_status = 126;
 		return (1);
 	}
-	if (builtin_cmd(cmd, shell))
-		return (1);
+	if (parent)
+	{
+		if (builtin_cmd(cmd, shell))
+			return (1);
+	}
 
 	return (0);
 }
@@ -279,33 +290,50 @@ int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell, int paren
 	}
 }
 
-int	execute_command_pipex_built_in_parent(int prev_pipe, Command *cmd, t_shell *shell)
-{
-	pid_t	pid;
-	char	*error;
+// int	execute_command_pipex_built_in_parent(int prev_pipe, Command *cmd, t_shell *shell)
+// {
+// 	pid_t	pid;
+// 	char	*error;
 
-	error = NULL;
-	if (check_error(cmd, shell))
-		return (1);
-	assign_cmd_args(shell, cmd, shell->envp);
-	pid = fork();
-	if (pid < 0)
-		return (write(STDOUT_FILENO, "Error forking\n", 15));
-	if (pid == 0)
+// 	error = NULL;
+// 	if (check_error(cmd, shell))
+// 		return (1);
+// 	assign_cmd_args(shell, cmd, shell->envp);
+// 	pid = fork();
+// 	if (pid < 0)
+// 		return (write(STDOUT_FILENO, "Error forking\n", 15));
+// 	if (pid == 0)
+// 	{
+// 		check_child_error(shell,cmd, error);
+// 		check_finfout(prev_pipe, cmd, shell);
+// 		run_cmd(cmd, shell);
+// 		exit(1);
+// 	}
+// 	else
+// 	{
+// 		shell->pid = pid;
+// 		return (0);
+// 	}
+// }
+
+void last_pipe(t_shell*shell,Command *cmd,int prev_pipe,int *status)
+{
+	if  (shell->table->command_count!=1)
 	{
-		check_child_error(shell,cmd, error);
-		check_finfout(prev_pipe, cmd, shell);
-		run_cmd(cmd, shell);
-		exit(1);
+		if (!execute_command_pipex(prev_pipe, cmd, shell,0))
+		{
+			waitpid(shell->pid, status, WUNTRACED);
+			handle_status_error(*status, cmd, shell);
+		}
 	}
-	else
-	{
-		shell->pid = pid;
-		return (0);
+	else {
+			if (!execute_command_pipex(prev_pipe, cmd, shell,1))
+		{
+			waitpid(shell->pid, status, WUNTRACED);
+			handle_status_error(*status, cmd, shell);
+		}
 	}
 }
-
-
 int	pipex(Command *cmd, t_shell *shell)
 {
 	int	status;
@@ -318,11 +346,11 @@ int	pipex(Command *cmd, t_shell *shell)
 			return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
 		if (cmd->fout == 0)
 		{
-			if (!execute_command_pipex(prev_pipe, cmd, shell))
+			if (!execute_command_pipex(prev_pipe, cmd, shell,0))
 				waitpid(shell->pid, &status, WUNTRACED);
 		}
 		else
-			execute_command_pipex(prev_pipe, cmd, shell);
+			execute_command_pipex(prev_pipe, cmd, shell,0);
 		prev_pipe = shell->pipefd[0];
 		close(shell->pipefd[1]);
 		free_cmd(cmd);
@@ -338,21 +366,3 @@ int	pipex(Command *cmd, t_shell *shell)
 	return (0);
 }
 
-last_pipe(t_shell*shell,Command *cmd,int prev_pipe,int *status)
-{
-	if  (shell->table->command_count!=1)
-	{
-		if (!execute_command_pipex(prev_pipe, cmd, shell))
-		{
-			waitpid(shell->pid, &status, WUNTRACED);
-			handle_status_error(status, cmd, shell);
-		}
-	}
-	else {
-			if (!execute_command_pipex_built_in_parent(prev_pipe, cmd, shell))
-		{
-			waitpid(shell->pid, &status, WUNTRACED);
-			handle_status_error(status, cmd, shell);
-		}
-	}
-}

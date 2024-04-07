@@ -300,7 +300,7 @@ int	ft_strchr_count(const char *s, int c);
 char	*ft_strjoin_nconst(char *s1, char *s2);
 int	ft_puterr(char *s, int ret);
 
-int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell);
+int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell,int parent);
 char	**find_cmd_paths(char **envp);
 char	**ft_split_cmd_args(char *s);
 // int			run_cmd(char *cmd, char **envp);
