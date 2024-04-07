@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/06 18:32:58 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/07 08:23:26 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,12 +185,7 @@ int	check_error(Command *cmd, t_shell *shell)
 	}
 	if (builtin_cmd(cmd, shell))
 		return (1);
-	// if (!find_env_var(shell->env_head, "PATH"))
-	// {
-	// 	perror("Command not found");
-	// 	shell->last_exit_status = 127;
-	// 	return (1);
-	// }
+
 	return (0);
 }
 
@@ -286,3 +281,5 @@ int	pipex(Command *cmd, t_shell *shell)
 	clean_fd(shell, shell->std_in, shell->std_out, cmd);
 	return (0);
 }
+
+last_pi
