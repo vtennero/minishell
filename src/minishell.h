@@ -163,6 +163,7 @@ typedef struct s_shell
 	pid_t pid;
 	MemTracker mem_tracker;
 	TokenNode *token_head;
+	CommandTable *table;
 } t_shell;
 /*
 ** ================== INITIALIZATION ==================

@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/07 08:23:26 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/07 08:39:22 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,62 @@ void	check_child_error(t_shell* shell, Command *cmd, char *error)
 	}
 }
 
-int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell)
+// int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell)
+// {
+// 	pid_t	pid;
+// 	char	*error;
+
+// 	error = NULL;
+// 	if (check_error(cmd, shell))
+// 		return (1);
+// 	assign_cmd_args(shell, cmd, shell->envp);
+// 	pid = fork();
+// 	if (pid < 0)
+// 		return (write(STDOUT_FILENO, "Error forking\n", 15));
+// 	if (pid == 0)
+// 	{
+// 		check_child_error(shell,cmd, error);
+// 		check_finfout(prev_pipe, cmd, shell);
+// 		run_cmd(cmd, shell);
+// 		exit(1);
+// 	}
+// 	else
+// 	{
+// 		shell->pid = pid;
+// 		return (0);
+// 	}
+// }
+
+
+
+int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell, int parent)
+{
+	pid_t	pid;
+	char	*error;
+
+	error = NULL;
+	if (check_error(cmd, shell,parent))
+		return (1);
+	assign_cmd_args(shell, cmd, shell->envp);
+	pid = fork();
+	if (pid < 0)
+		return (write(STDOUT_FILENO, "Error forking\n", 15));
+	if (pid == 0)
+	{
+
+	check_child_error(shell,cmd, error);
+	check_finfout(prev_pipe, cmd, shell);
+	run_cmd(cmd, shell);
+	exit(1);
+	}
+	else
+	{
+		shell->pid = pid;
+		return (0);
+	}
+}
+
+int	execute_command_pipex_built_in_parent(int prev_pipe, Command *cmd, t_shell *shell)
 {
 	pid_t	pid;
 	char	*error;
@@ -241,7 +296,6 @@ int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell)
 		check_child_error(shell,cmd, error);
 		check_finfout(prev_pipe, cmd, shell);
 		run_cmd(cmd, shell);
-		// free_cmd(cmd);
 		exit(1);
 	}
 	else
@@ -250,6 +304,7 @@ int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell)
 		return (0);
 	}
 }
+
 
 int	pipex(Command *cmd, t_shell *shell)
 {
@@ -273,13 +328,31 @@ int	pipex(Command *cmd, t_shell *shell)
 		free_cmd(cmd);
 		*cmd = *(cmd->next);
 	}
-	if (!execute_command_pipex(prev_pipe, cmd, shell))
-	{
-		waitpid(shell->pid, &status, WUNTRACED);
-		handle_status_error(status, cmd, shell);
-	}
+	last_pipe(shell,cmd,prev_pipe,&status);
+	// if (!execute_command_pipex(prev_pipe, cmd, shell))
+	// {
+	// 	waitpid(shell->pid, &status, WUNTRACED);
+	// 	handle_status_error(status, cmd, shell);
+	// }
 	clean_fd(shell, shell->std_in, shell->std_out, cmd);
 	return (0);
 }
 
-last_pi
+last_pipe(t_shell*shell,Command *cmd,int prev_pipe,int *status)
+{
+	if  (shell->table->command_count!=1)
+	{
+		if (!execute_command_pipex(prev_pipe, cmd, shell))
+		{
+			waitpid(shell->pid, &status, WUNTRACED);
+			handle_status_error(status, cmd, shell);
+		}
+	}
+	else {
+			if (!execute_command_pipex_built_in_parent(prev_pipe, cmd, shell))
+		{
+			waitpid(shell->pid, &status, WUNTRACED);
+			handle_status_error(status, cmd, shell);
+		}
+	}
+}
