@@ -308,10 +308,22 @@ void pipe_modify_fin_fout(TokenNode *current_token,Command* current_command,int*
 
 void update_head(Command* current_command,CommandTable *table)
 {
+    Command* last_command;
+
     if (table->head == NULL)
         table->head = current_command;
-    else
-        table->head->next = current_command;
+    else{
+        last_command=table->head;
+
+        while (last_command->next != NULL)
+        {
+            last_command = last_command->next;
+        }
+        // Add the new command to the end of the linked list
+        last_command->next = current_command;
+    }
+
+
     table->command_count++;
 
 }
