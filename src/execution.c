@@ -15,7 +15,8 @@
 void	execute_command_table(t_shell *shell, CommandTable *table)
 {
 	Command	*current;
-	shell->table=table;
+	if (table)
+		shell->table=table;
     current = table->head;
     (void)shell;
     

@@ -115,46 +115,6 @@ char *quotevar(t_shell *shell, const char **s)
 }
 
 
-// char *quotevar(t_shell *shell, const char **s)
-// {
-// 	char	*result;
-
-// 	result = shell_strdup(shell, "");
-// 	if (!isSpecialOperator(*s))
-// 	{
-// 		while (**s && !isspace((unsigned char)**s) && !(isSpecialOperator(*s)))
-// 		{
-// 			char *temp = NULL;
-// 			if (**s == '\'') {
-// 				temp = process_single_quote(s);
-// 			} else if (**s == '\"') {
-// 				temp = process_double_quote(s, shell);
-// 			} else if (**s == '$') {
-// 				size_t advancedPosition = 0;
-// 				temp = expandVariables2(shell, *s, &advancedPosition);
-// 				*s += advancedPosition;
-// 			}
-// 			else {
-// 				temp = shell_malloc(shell, 2);
-// 				temp[0] = **s;
-// 				temp[1] = '\0';
-// 				(*s)++;
-// 			}
-// 			if (temp) {
-// 				char *new_result = shell_strjoin(shell, result, temp);
-// 				result = shell_strdup(shell, new_result);
-// 			}
-// 		}
-// 	}
-// 	else if (isSpecialOperator(*s))
-// 	{
-// 		result = shell_strndup(shell,(*s), isSpecialOperator(*s));
-// 		*s += isSpecialOperator(*s);
-// 	}
-//     return (result);
-// }
-
-
 char	*parse_tokens(t_shell *shell, const char *s)
 {
 	char	*wvarexpanded;
@@ -220,33 +180,6 @@ TokenType get_token_type(const char* token_text)
 }
 
 
-
-// int	is_only_spaces(char *str)
-// {
-// 	int	length;
-
-// 	length = ft_strlen(str);
-//     // Check for single or double quotes at the beginning and end of the string
-//     if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"')) {
-//         int i = 1;
-
-//         // Check all characters in between the quotes for spaces
-//         while (i < length - 1) {
-//             // if (str[i] != ' ') {
-//             if (!isspace(str[i])) {
-//                 return 0; // Non-space character found
-//             }
-//             i++;
-//         }
-
-//         // Only spaces found in between quotes
-//         return 1;
-//     }
-
-//     // First and last characters are not matching quotes
-//     return 0;
-// }
-
 int		 check_if_valid_cmd(TokenNode *node)
 {
 	if (!ft_strlen(node->token.value))
@@ -255,40 +188,6 @@ int		 check_if_valid_cmd(TokenNode *node)
 		return (0);
 	return (1);
 }
-
-// void    set_commands(t_shell *shell)
-// {
-// 	TokenNode	*node;
-
-// 	// ft_printf("set_commands\n");
-// 	node = shell->token_head;
-// 	if (node)
-// 	{
-// 		if (!check_if_valid_cmd(node))
-// 			node->token.type=TOKEN_INV_COMMAND;
-// 		else if (!isNotEmpty(node->token.value))
-// 			node=node->next;
-// 		if (node)
-// 		{
-// 		node->token.type=TOKEN_COMMAND;
-// 		while (node->next)
-// 			{
-// 				// if (node->token.type == TOKEN_REDIR_OUT && node->next->next)
-// 					// node=node->next->next;
-// 				// else if (node->token.type == TOKEN_PIPE)
-// 				if (node->token.type == TOKEN_PIPE)
-// 				{
-// 					node=node->next;
-// 					if (node->token.type==TOKEN_ARG)
-// 						node->token.type=TOKEN_COMMAND;
-// 				}
-// 				else
-// 					node=node->next;
-// 			}
-// 		}
-// 	}
-
-// }
 
 	int is_valid_cmd(t_shell* shell,char* cmd_name)
 	{
@@ -308,68 +207,6 @@ int		 check_if_valid_cmd(TokenNode *node)
 		else
 			return 0;
 	}
-
-
-
-
-// void    set_commands(t_shell *shell)
-// {
-// 	TokenNode	*node;
-// 	int pipe_exist;
-
-// 	pipe_exist=0;
-// 	node = shell->token_head;
-// 	if (node)
-// 	{
-// 		if (!check_if_valid_cmd(node))
-// 			node->token.type=TOKEN_INV_COMMAND;
-// 		else if (!isNotEmpty(node->token.value))
-// 			node=node->next;
-// 		if (node)
-// 		{
-// 			node->token.type=TOKEN_COMMAND;
-// 			while (node->next)
-// 			{
-// 				if (node->token.type == TOKEN_PIPE)
-// 					pipe_exist=1;
-// 				if (pipe_exist==1 && is_valid_cmd(shell,node->token.value))
-// 				{
-// 					node->token.type = TOKEN_COMMAND;
-// 					pipe_exist=0;
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
-
-// void set_commands(t_shell *shell) {
-//     TokenNode *node;
-//     int pipe_exist;
-
-// 	node=shell->token_head;
-// 	pipe_exist = 1;
-
-//     while (node)
-// 	{
-//         if (!check_if_valid_cmd(node) && (node == shell->token_head))
-//             node->token.type = TOKEN_INV_COMMAND;
-//         else if (!isNotEmpty(node->token.value) && (node == shell->token_head))
-//             node = node->next;
-//         if (node)
-// 		{
-// 			if (pipe_exist && is_valid_cmd(shell, node->token.value))
-// 			{
-//                 node->token.type = TOKEN_COMMAND;
-//                 pipe_exist = 0;
-//             }
-//             // node->token.type = TOKEN_COMMAND;
-//             if (node->next && node->next->token.type == TOKEN_PIPE)
-//                 pipe_exist = 1;
-//         }
-//         node = node->next;
-//     }
-// }
 
 
 void set_commands_check(t_shell* shell,TokenNode *node,int* after_redirect,int* pipe_exist)
@@ -415,23 +252,6 @@ void set_token_commands(t_shell *shell)
 			}
 		}
 		set_commands_check(shell,node,&after_redirect,&pipe_exist);
-		// if (node && isNotEmpty(node->token.value) )
-		// {
-		// 	if (!after_redirect && (node == shell->token_head) )
-		// 	{
-		// 		node->token.type = TOKEN_COMMAND;
-		// 		pipe_exist = 0;
-		// 	}
-		// 	else if (pipe_exist && !after_redirect && node->token.type != TOKEN_PIPE  && node->token.type != TOKEN_PIPE)
-		// 	{
-		// 		node->token.type = TOKEN_COMMAND;
-		// 		pipe_exist = 0;
-		// 	}
-
-		// 	 if (node->token.type == TOKEN_PIPE)
-		// 		pipe_exist = 1;
-		// }
-
 		node = node->next;
 	}
 }
