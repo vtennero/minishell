@@ -158,6 +158,7 @@ void cleanup_heredocs_in_command_table(CommandTable* table)
     Command* cmd = table->head;
     while (cmd) {
         if (cmd->heredoc_temp_path) {
+            unlink(cmd->heredoc_temp_path);
             cleanup_temp_file(cmd->heredoc_temp_path);
             cmd->heredoc_temp_path = NULL; // Ensure the pointer is cleared after cleanup.
         }
