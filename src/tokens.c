@@ -406,10 +406,13 @@ void set_token_commands(t_shell *shell)
 	{
 		if (!check_if_valid_cmd(node) && (node == shell->token_head))
 			node->token.type = TOKEN_INV_COMMAND;
-		else if (is_redirect(node->token.type,&after_redirect) && node->next   && node->next->next)
+		else 
 		{
-				node = node->next->next;
-				after_redirect=0;
+			while (is_redirect(node->token.type,&after_redirect) && node->next   && node->next->next)
+			{
+					node = node->next->next;
+					after_redirect=0;
+			}
 		}
 		set_commands_check(shell,node,&after_redirect,&pipe_exist);
 		// if (node && isNotEmpty(node->token.value) )
