@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 int pipe_extension(t_shell* shell,char*input)
 {
 	char			*input2;
@@ -39,7 +40,9 @@ int pipe_extension(t_shell* shell,char*input)
 	return 0;
 }
 
-
+/*
+Interactive mode but with arguments
+*/
 void	interactive_mode(t_shell *shell)
 {
 	char			*input;
@@ -53,13 +56,11 @@ void	interactive_mode(t_shell *shell)
 			ft_printf("exit\n");
 			break ;
 		}
-
 		if (ft_strlen(input) > 0 && pipe_extension(shell,input) !=-1)
 		{
 			add_history(input);
 			create_tokens(shell, input);
 			printTokens(shell->token_head);
-
 			command_table = create_command_table(shell, shell->token_head);
 			print_command_table(command_table);
 			execute_command_table(shell, command_table);

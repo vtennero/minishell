@@ -39,6 +39,7 @@ char *handleNoEndQuote(t_shell *shell, const char **s)
 char *handleDollarInQuote(const char **s, t_shell *shell, char *buf) {
     char *newBuf;
     size_t textLen = get_non_expanded_var_length((char *)(*s));
+    ft_printf("get_non_expanded_var_length returns %d\n", textLen);
     char *expanded = expandVariables(shell, *s);
 
     if (!buf)
