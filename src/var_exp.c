@@ -120,6 +120,22 @@ void	handle_exit_code(t_shell *shell, const char **input, char **output)
 	*input += 2;
 }
 
+void	p_dol(t_shell *shell, const char **in, char **out, t_env_var *env_v)
+{
+	if (*(*in + 1) == '?')
+		handle_exit_code(shell, in, out);
+	else if (*(*in + 1) == '$' || *(*in + 1) == '\"')
+	{
+		*(*out)++ = *(*in)++;
+		while (**in == '$')
+			*(*out)++ = *(*in)++;
+	}
+	else if (*(*in + 1) == '\0' || isspace_not_eol(*(*in + 1)) == 1)
+		*(*out)++ = *(*in)++;
+	else
+		rep_var(shell, in, out, env_v);
+}
+
 size_t	parse_var(t_shell *shell, const char *in, char *out, t_env_var *env_v)
 {
 	const char	*start_in;
@@ -128,23 +144,7 @@ size_t	parse_var(t_shell *shell, const char *in, char *out, t_env_var *env_v)
 	while (*in)
 	{
 		if (*in == '$')
-		{
-			if (*(in + 1) == '?' )
-				handle_exit_code(shell, &in, &out);
-			else if (*(in + 1) == '$' || *(in + 1) == '\"')
-			{
-				*out++ = *in++;
-				if (*(in) == '$')
-				{
-					while (*in == '$')
-						*out++ = *in++;
-				}
-			}
-			else if (*(in + 1) == '\0' || isspace_not_eol(*(in + 1)) == 1)
-				*out++ = *in++;
-			else
-				rep_var(shell, &in, &out, env_v);
-		}
+			p_dol(shell, &in, &out, env_v);
 		else if (*in == '\"' || *in == '\'' || isspace_not_eol(*in) == 1)
 			break ;
 		else
