@@ -17,7 +17,7 @@
 
 CommandTable	*initialize_command_table(t_shell *shell)
 {
-	CommandTable    *table;
+	CommandTable	*table;
 
 	table = (CommandTable *)shell_malloc(shell, sizeof(CommandTable));
 	if (!table)
@@ -32,17 +32,18 @@ CommandTable	*initialize_command_table(t_shell *shell)
 
 void	set_rin(t_shell *shell, Command *cmd, char *filename)
 {
-	int fd;
+	int	fd;
+
 	cmd->redirect_in = shell_strdup(shell, filename);
 	fd = open(filename, O_RDWR);
 	if (cmd->fin != -1)
 		cmd->fin = fd;
 }
 
-void	set_rout(t_shell *shell, Command *cmd, char *filename,
-		int append)
+void	set_rout(t_shell *shell, Command *cmd, char *filename, int append)
 {
-	int fd;
+	int	fd;
+
 	if (!cmd || !filename)
 		return ;
 	fd = 0;
@@ -68,9 +69,9 @@ void	set_rout(t_shell *shell, Command *cmd, char *filename,
 
 void	free_command_table(CommandTable *table)
 {
-	Command *cmd;
-	Command *next_cmd;
-	int i;
+	Command	*cmd;
+	Command	*next_cmd;
+	int		i;
 
 	if (!table)
 		return ;
@@ -94,19 +95,16 @@ void	free_command_table(CommandTable *table)
 
 Command	*create_command_entry(t_shell *shell, char *name)
 {
-	Command *cmd;
+	Command	*cmd;
 
 	cmd = (Command *)shell_malloc(shell, sizeof(Command));
-
 	if (!cmd)
 	{
 		perror("Failed to allocate Command");
 		exit(EXIT_FAILURE);
 	}
-
 	cmd->name = shell_strdup(shell, name);
 	cmd->type = CMD_EXTERNAL;
-
 	cmd->fin = 0;
 	cmd->fout = 0;
 	return (cmd);
@@ -120,10 +118,11 @@ void	add_argument(t_shell *shell, Command *cmd, char *arg)
 
 Command	*create_command_set(t_shell *shell, TokenNode *node)
 {
-	Command *current_command = NULL;
-	TokenNode *temp;
-	int argc;
+	Command		*current_command;
+	TokenNode	*temp;
+	int			argc;
 
+	current_command = NULL;
 	temp = node;
 	argc = 0;
 	while (temp && temp != NULL && temp->token.type != TOKEN_PIPE)
@@ -146,30 +145,30 @@ Command	*create_command_set(t_shell *shell, TokenNode *node)
 	return (current_command);
 }
 
-void	handle_token(t_shell *shell, TokenNode *ct,Command *cc)
+void	handle_token(t_shell *shell, TokenNode *ct, Command *cc)
 {
 	if (ct->token.type == TOKEN_REDIR_IN && ct->next)
 	{
 		if (ct->next != NULL && ct->next->token.type == 1)
-			set_rin(shell, cc,ct->next->token.value);
+			set_rin(shell, cc, ct->next->token.value);
 		*ct = *ct->next;
 	}
 	else if ((ct->token.type == 3 || ct->token.type == 4) && ct->next)
 	{
 		if (ct->next != NULL && ct->next->token.type == 1)
-			set_rout(shell, cc,ct->next->token.value,ct->token.type == 4);
+			set_rout(shell, cc, ct->next->token.value, ct->token.type == 4);
 		*ct = *ct->next;
 	}
 	else if (ct->token.type == 5)
 	{
 		if (ct->next != NULL && ct->next->token.type == 1)
-			cc->heredoc_delimiter = shell_strdup(shell,ct->next->token.value);
+			cc->heredoc_delimiter = shell_strdup(shell, ct->next->token.value);
 		*ct = *ct->next;
 	}
 	else if (ct->token.type == 1)
 		add_argument(shell, cc, ct->token.value);
-	else if (((ct->token.type == 2)|| (ct->token.type == 3)
-			|| (ct->token.type == 4)|| (ct->token.type == 5)) && !ct->next)
+	else if (((ct->token.type == 2) || (ct->token.type == 3)
+			|| (ct->token.type == 4) || (ct->token.type == 5)) && !ct->next)
 		ft_puterr("syntax error near unexpected token `newline'", 2);
 }
 
@@ -184,7 +183,6 @@ void	pipe_modify_fin_fout(TokenNode *current_token, Command *current_command,
 				current_command->fin = -99;
 		*pipe_exist = 0;
 	}
-
 	if (current_token->next && current_token->next->token.type == TOKEN_PIPE)
 	{
 		if (current_command->fout == 0)
@@ -195,30 +193,28 @@ void	pipe_modify_fin_fout(TokenNode *current_token, Command *current_command,
 
 void	update_head(Command *current_command, CommandTable *table)
 {
-	Command *last_command;
+	Command	*last_command;
 
 	if (table->head == NULL)
 		table->head = current_command;
 	else
 	{
 		last_command = table->head;
-
 		while (last_command->next != NULL)
 		{
 			last_command = last_command->next;
 		}
 		last_command->next = current_command;
 	}
-
 	table->command_count++;
 }
 
 CommandTable	*create_command_table(t_shell *shell, TokenNode *tokens)
 {
-	CommandTable *table;
-	TokenNode *ct;
-	Command *cc;
-	int pipe_exist;
+	CommandTable	*table;
+	TokenNode		*ct;
+	Command			*cc;
+	int				pipe_exist;
 
 	table = initialize_command_table(shell);
 	ct = tokens;
