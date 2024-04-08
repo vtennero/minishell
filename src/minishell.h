@@ -192,7 +192,7 @@ void	setup_signals(t_shell *shell);
 ** -- TOKENIZATION --
 */
 void	create_tokens(t_shell *shell, const char *s);
-void	addToken(t_shell *shell, const char *value, int type);
+void	add_token(t_shell *shell, const char *value, int type);
 TokenType	get_token_type(const char *token_text);
 char	*parse_tokens(t_shell *shell, const char *s);
 int 	isspace_not_eol(int ch);

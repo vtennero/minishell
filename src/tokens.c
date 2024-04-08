@@ -178,14 +178,14 @@ char	*parse_tokens(t_shell *shell, const char *s)
 		type = get_token_type(wvarexpanded);
 		if (index == 0 && !is_redirect(type, &after_redirect))
 			type = TOKEN_COMMAND;
-		addToken(shell, wvarexpanded, type);
+		add_token(shell, wvarexpanded, type);
 		index++;
 		s = skip_delimiters(s, ' ');
 	}
 	return (NULL);
 }
 
-void	addToken(t_shell *shell, const char *value, int type)
+void	add_token(t_shell *shell, const char *value, int type)
 {
 	TokenNode	*newNode;
 	TokenNode	*current;
