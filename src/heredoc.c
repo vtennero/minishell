@@ -2,9 +2,12 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
+/*                                                    +:+ +:+        
+	+:+     */
+/*   By: toto <toto@student.42.fr>                  +#+  +:+      
+	+#+        */
+/*                                                +#+#+#+#+#+  
+	+#+           */
 /*   Created: 2024/02/26 15:02:35 by toto              #+#    #+#             */
 /*   Updated: 2024/02/26 15:56:55 by toto             ###   ########.fr       */
 /*                                                                            */
@@ -12,196 +15,143 @@
 
 #include "minishell.h"
 
-char* create_temp_file_path(const char* basePath, const char* timeStr, const char* counterStr) {
-    // Calculate required buffer size (+2 for underscore and null terminator)
-    int bufferSize = strlen(basePath) + strlen(timeStr) + strlen(counterStr) + 2;
-    char* tempFilePath = malloc(bufferSize);
-    if (tempFilePath == NULL) {
-        perror("malloc failed");
-        return NULL;
-    }
-
-    // Pointer to current position in tempFilePath
-    char *ptr = tempFilePath;
-
-    // Copy the base path into tempFilePath and increment pointer by length of basePath
-    memcpy(ptr, basePath, strlen(basePath));
-    ptr += strlen(basePath);
-
-    // Copy the time string and increment pointer by length of timeStr
-    memcpy(ptr, timeStr, strlen(timeStr));
-    ptr += strlen(timeStr);
-
-    // Add the underscore and increment pointer by 1
-    *ptr = '_';
-    ptr++;
-
-    // Copy the counter string
-    memcpy(ptr, counterStr, strlen(counterStr) + 1); // +1 to include the null terminator
-
-    return tempFilePath; // The caller is responsible for freeing this memory
-}
-
-
-
-
-
-int create_and_unlink_temp_file(const char* tempFilePath) {
-    // Attempt to create the file exclusively with read and write permissions for the user
-    int fd = open(tempFilePath, O_RDWR | O_CREAT | O_EXCL, 0600);
-    if (fd == -1) {
-        perror("Cannot create temporary file for heredoc");
-        return -1;
-    }
-
-    // Immediately unlink the file so it's removed upon closing
-    // if (unlink(tempFilePath) == -1) {
-    //     perror("Failed to unlink temporary file");
-    //     close(fd);
-    //     return -1;
-    // }
-
-    return fd;
-}
-
-
-int create_temp_file(char **tempFilePath) {
-    static int counter = 0; // Static counter to ensure uniqueness within the same second
-    char *timeStr = ft_itoa((int)time(NULL));
-    char *counterStr = ft_itoa(counter++);
-
-    if (timeStr == NULL || counterStr == NULL) {
-        free(timeStr); // In case one succeeded but the other didn't
-        free(counterStr);
-        return -1;
-    }
-
-    *tempFilePath = create_temp_file_path("/tmp/", timeStr, counterStr);
-
-    // Clean up
-    free(timeStr);
-    free(counterStr);
-
-    if (*tempFilePath == NULL) {
-        return -1;
-    }
-
-    int fd = create_and_unlink_temp_file(*tempFilePath);
-    if (fd == -1) {
-        free(*tempFilePath);
-        *tempFilePath = NULL;
-    }
-
-    return fd;
-}
-
-
-// int create_temp_file(char **tempFilePath) {
-//     static int counter = 0; // Static counter to ensure uniqueness within the same second
-//     time_t now = time(NULL); // Get the current time
-//     char *timeStr = ft_itoa((int)now);
-//     char *counterStr = ft_itoa(counter++);
-
-//     // Calculate required buffer size
-//     int bufferSize = strlen("/tmp/shell_heredoc_") + strlen(timeStr) + strlen(counterStr) + 2; // +2 for underscore and null terminator
-//     *tempFilePath = malloc(bufferSize);
-//     if (*tempFilePath == NULL) {
-//         perror("malloc failed");
-//         free(timeStr);
-//         free(counterStr);
-//         return -1;
-//     }
-
-//     // Construct file path
-//     strcpy(*tempFilePath, "/tmp/shell_heredoc_");
-//     strcat(*tempFilePath, timeStr);
-//     strcat(*tempFilePath, "_");
-//     strcat(*tempFilePath, counterStr);
-
-//     // Clean up
-//     free(timeStr);
-//     free(counterStr);
-
-//     // Attempt to create the file exclusively with read and write permissions for the user
-//     int fd = open(*tempFilePath, O_RDWR | O_CREAT | O_EXCL, 0600);
-//     if (fd == -1) {
-//         perror("Cannot create temporary file for heredoc");
-//         free(*tempFilePath);
-//         *tempFilePath = NULL;
-//         return -1;
-//     }
-
-//     // Immediately unlink the file so it's removed upon closing
-//     if (unlink(*tempFilePath) == -1) {
-//         perror("Failed to unlink temporary file");
-//         close(fd);
-//         free(*tempFilePath);
-//         *tempFilePath = NULL;
-//         return -1;
-//     }
-
-//     return fd;
-// }
-
-
-void cleanup_temp_file(char *tempFilePath) {
-    if (tempFilePath) {
-        // Assuming unlinking is deferred to this stage for any reason
-        unlink(tempFilePath);
-        free(tempFilePath);
-    }
-}
-
-
-void cleanup_heredocs_in_command_table(CommandTable* table)
+char	*create_temp_file_path(const char *basePath, const char *timeStr,
+		const char *counterStr)
 {
-    Command* cmd = table->head;
-    while (cmd) {
-        if (cmd->heredoc_temp_path) {
-            // unlink(cmd->heredoc_temp_path);
-            cleanup_temp_file(cmd->heredoc_temp_path);
-            cmd->heredoc_temp_path = NULL; // Ensure the pointer is cleared after cleanup.
-        }
-        cmd = cmd->next;
-    }
+	int		buffer_size;
+	char	*temp_file_path;
+	char	*ptr;
+
+	buffer_size = strlen(basePath) + strlen(timeStr) + strlen(counterStr) + 2;
+	temp_file_path = malloc(buffer_size);
+	if (temp_file_path == NULL)
+	{
+		perror("malloc failed");
+		return (NULL);
+	}
+	ptr = temp_file_path;
+	memcpy(ptr, basePath, strlen(basePath));
+	ptr += strlen(basePath);
+	memcpy(ptr, timeStr, strlen(timeStr));
+	ptr += strlen(timeStr);
+	*ptr = '_';
+	ptr++;
+	memcpy(ptr, counterStr, strlen(counterStr) + 1);
+	return (temp_file_path);
 }
 
-void write_heredoc_to_file(int fd, const char* delimiter) {
-    char *line;
-
-    while ((line = readline("> ")) != NULL) {
-        if (strcmp(line, delimiter) == 0) {
-            free(line);
-            break; // Delimiter found, stop reading input
-        }
-        write(fd, line, strlen(line));
-        write(fd, "\n", 1); // Add newline
-        free(line); // Free readline-allocated buffer -> double free
-    }
-}
-
-
-char* handle_heredoc(const char* delimiter)
+int	create_and_unlink_temp_file(const char *tempFilePath)
 {
-    char *tempFilePath;
-    int fd = create_temp_file(&tempFilePath);
-    if (fd == -1) {
-        return NULL; // Error message already printed by create_temp_file
-    }
+	int	fd;
 
-    write_heredoc_to_file(fd, delimiter);
-    close(fd);
-    return tempFilePath; // Caller is responsible for freeing this
+	fd = open(tempFilePath, O_RDWR | O_CREAT | O_EXCL, 0600);
+	if (fd == -1)
+	{
+		perror("Cannot create temporary file for heredoc");
+		return (-1);
+	}
+	return (fd);
 }
 
-void prepare_heredocs_in_command_table(CommandTable* table)
+int	create_temp_file(char **tempFilePath)
 {
-    Command* cmd = table->head;
-    while (cmd) {
-        if (cmd->heredoc_delimiter) {
-            cmd->heredoc_temp_path = handle_heredoc(cmd->heredoc_delimiter);
-            cmd->fin=-9;
-        }
-        cmd = cmd->next;
-    }
+	static int	counter;
+	char		*time_str;
+	char		*counter_str;
+	int			fd;
+
+	counter = 0;
+	time_str = ft_itoa((int)time(NULL));
+	counter_str = ft_itoa(counter++);
+	if (time_str == NULL || counter_str == NULL)
+	{
+		free(time_str);
+		free(counter_str);
+		return (-1);
+	}
+	*tempFilePath = create_temp_file_path("/tmp/", time_str, counter_str);
+	free(time_str);
+	free(counter_str);
+	if (*tempFilePath == NULL)
+	{
+		return (-1);
+	}
+	fd = create_and_unlink_temp_file(*tempFilePath);
+	if (fd == -1)
+	{
+		free(*tempFilePath);
+		*tempFilePath = NULL;
+	}
+	return (fd);
+}
+
+void	cleanup_temp_file(char *tempFilePath)
+{
+	if (tempFilePath)
+	{
+		unlink(tempFilePath);
+		free(tempFilePath);
+	}
+}
+
+void	cleanup_heredocs_in_command_table(CommandTable *table)
+{
+	Command*cmd;
+
+	cmd = table->head;
+	while (cmd)
+	{
+		if (cmd->heredoc_temp_path)
+		{
+			cleanup_temp_file(cmd->heredoc_temp_path);
+			cmd->heredoc_temp_path = NULL;
+		}
+		cmd = cmd->next;
+	}
+}
+
+void	write_heredoc_to_file(int fd, const char *delimiter)
+{
+	char	*line;
+
+	while ((line = readline("> ")) != NULL)
+	{
+		if (strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(fd, line, strlen(line));
+		write(fd, "\n", 1);
+		free(line);
+	}
+}
+
+char	*handle_heredoc(const char *delimiter)
+{
+	char	*temp_path;
+	int		fd;
+
+	fd = create_temp_file(&temp_path);
+	if (fd == -1)
+		return (NULL);
+	write_heredoc_to_file(fd, delimiter);
+	close(fd);
+	return (temp_path);
+}
+
+void	prepare_heredocs_in_command_table(CommandTable *table)
+{
+	Command	*cmd;
+
+	cmd = table->head;
+	while (cmd)
+	{
+		if (cmd->heredoc_delimiter)
+		{
+			cmd->heredoc_temp_path = handle_heredoc(cmd->heredoc_delimiter);
+			cmd->fin = -9;
+		}
+		cmd = cmd->next;
+	}
 }
