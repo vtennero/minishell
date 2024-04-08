@@ -15,25 +15,15 @@
 int	isSpecialOperator(const char *str)
 {
 	if (ft_strncmp(str, "|", 1) == 0)
-	{
 		return (1);
-	}
 	else if (ft_strncmp(str, "<<", 2) == 0)
-	{
 		return (2);
-	}
 	else if (ft_strncmp(str, ">>", 2) == 0)
-	{
 		return (2);
-	}
 	else if (ft_strncmp(str, ">", 1) == 0)
-	{
 		return (1);
-	}
 	else if (ft_strncmp(str, "<", 1) == 0)
-	{
 		return (1);
-	}
 	return (0);
 }
 
@@ -60,13 +50,13 @@ int	isvalidvarchar(char c)
 
 int	check_first_var_char(char *var, int *baselen)
 {
-	if (var[1] == "\"")
+	if (var[1] == '\"')
 	{
 		*baselen = 2;
 		return (0);
 	}
-	else if (!var[1] || isspace_not_eol(var[1] || var[1] == "\""
-			|| var[1] == "$"))
+	else if (!var[1] || isspace_not_eol(var[1] || var[1] == '\"'
+			|| var[1] == '$'))
 		return (0);
 	else if (var[1] == '?')
 	{
@@ -119,68 +109,39 @@ int	get_non_expanded_var_length(char *var)
 	return (baselen);
 }
 
-int	get_non_expanded_var_length1(char *var)
-{
-	int count = 1;       // Counter for valid characters
-	int index = 0;       // Current index in the string
-	int foundLetter = 0; // Flag to track if at least one letter has been found
-	int foundDol = 1;    // Flag to track if at least one letter has been found
-	var++;
-	while (var[index] != '\0')
-	{
-		if (var[index] == '$')
-			foundDol++;
-		else if (!ft_isalpha(var[index]) && !ft_isdigit(var[index])
-			&& var[index] != '?')
-		{
-			break ;
-		}
-		else if (var[index] == '?' && var[index + 1] == '\"')
-			return (2);
-		else if (ft_isalpha(var[index]))
-		{
-			foundLetter = 1; // Set the flag if a letter is found
-		}
-		count++; // Increment the count of valid characters
-		index++; // Move to the next character
-	}
-	if (foundDol == count)
-		return (count);
-	else if (!foundLetter)
-		count = 1;
-	return (count);
-}
+// int	get_non_expanded_var_length1(char *var)
+// {
+// 	int count = 1;       // Counter for valid characters
+// 	int index = 0;       // Current index in the string
+// 	int foundLetter = 0; // Flag to track if at least one letter has been found
+// 	int foundDol = 1;    // Flag to track if at least one letter has been found
+// 	var++;
+// 	while (var[index] != '\0')
+// 	{
+// 		if (var[index] == '$')
+// 			foundDol++;
+// 		else if (!ft_isalpha(var[index]) && !ft_isdigit(var[index])
+// 			&& var[index] != '?')
+// 		{
+// 			break ;
+// 		}
+// 		else if (var[index] == '?' && var[index + 1] == '\"')
+// 			return (2);
+// 		else if (ft_isalpha(var[index]))
+// 		{
+// 			foundLetter = 1; // Set the flag if a letter is found
+// 		}
+// 		count++; // Increment the count of valid characters
+// 		index++; // Move to the next character
+// 	}
+// 	if (foundDol == count)
+// 		return (count);
+// 	else if (!foundLetter)
+// 		count = 1;
+// 	return (count);
+// }
 
-// Define the new function
-char	*processQuoting(t_shell *shell, const char **s, char *result)
-{
-	size_t	advancedPosition;
-	char	*temp;
 
-	while (**s && !isspace((unsigned char)**s) && !(isSpecialOperator(*s)))
-	{
-		temp = NULL;
-		if (**s == '\'')
-			temp = process_single_quote(s);
-		else if (**s == '\"')
-			temp = process_double_quote(s, shell);
-		else if (**s == '$')
-		{
-			temp = expandVariables2(shell, *s, &advancedPosition);
-			*s += advancedPosition;
-		}
-		else
-		{
-			temp = shell_malloc(shell, 2);
-			temp[0] = **s;
-			temp[1] = '\0';
-			(*s)++;
-		}
-		if (temp)
-			result = shell_strjoin(shell, result, temp);
-	}
-	return (result);
-}
 
 char	*quotevar(t_shell *shell, const char **s)
 {
@@ -189,7 +150,7 @@ char	*quotevar(t_shell *shell, const char **s)
 	result = shell_strdup(shell, "");
 	if (!isSpecialOperator(*s))
 	{
-		result = processQuoting(shell, s, result);
+		result = process_quoting(shell, s, result);
 	}
 	else if (isSpecialOperator(*s))
 	{

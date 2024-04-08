@@ -199,20 +199,20 @@ int 	isspace_not_eol(int ch);
 void	set_token_commands(t_shell *shell);
 int is_valid_cmd(t_shell* shell,char* cmd_name);
 int	is_only_spaces(char *str);
-
+int	isSpecialOperator(const char *str);
 /*
 ** -- QUOTES --
 */
-char	*process_single_quote(const char **s);
+char	*process_quoting(t_shell *shell, const char **s, char *result);
+char	*process_single_quote(t_shell *shell, const char **s);
 char	*process_double_quote(const char **s, t_shell *shell);
 int		get_non_expanded_var_length(char *var);
-
 /*
 ** -- VARIABLE EXPANSION --
 */
-char	*expandVariables(t_shell *shell, const char *input);
-char	*expandVariables2(t_shell *shell, const char *input,
-		size_t *advancedPosition);
+char	*expand_var_one(t_shell *shell, const char *input);
+char	*expand_var_two(t_shell *shell, const char *input,
+		size_t *adv_pos);
 /*
 ** -- HEREDOC --
 */
@@ -249,9 +249,9 @@ int	adjust_exit_code(int n);
 /*
 ** :: EXPORT ::
 */
-int	builtin_export(t_shell *shell, char **args, int n_args);
-int	process_env_arg(t_shell *shell, const char *arg);
-int	check_duplicates(t_shell *shell, const char *key, int nchar);
+int		builtin_export(t_shell *shell, char **args, int n_args);
+int		process_env_arg(t_shell *shell, const char *arg);
+int		check_duplicates(t_shell *shell, const char *key, int nchar);
 void	update_var(t_shell *shell, const char *key, const char *value);
 void	add_new_var(t_shell *shell, const char *key, const char *value);
 void	decl_new_var(t_shell *shell, const char *key);

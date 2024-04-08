@@ -12,86 +12,87 @@
 
 #include "minishell.h"
 
-t_env_var *findEnvVar(t_env_var *head, const char *key) {
-	while (head != NULL) {
-		if (ft_strcmp(head->key, key) == 0) {
-			return head;
-		}
+t_env_var	*find_return_env_var(t_env_var *head, const char *key)
+{
+	while (head != NULL)
+	{
+		if (ft_strcmp(head->key, key) == 0)
+			return (head);
 		head = head->next;
 	}
-	return NULL;
+	return (NULL);
 }
 
-int getEnvVarLength(t_shell *shell, const char **input, t_env_var *env_vars)
+int	get_env_var_len(t_shell *shell, const char **input, t_env_var *env_vars)
 {
-	const char  *varStart;
-	int         varNameLength;
-	char        *varName;
+	const char	*var_start;
+	int			var_name_len;
+	char		*var_name;
 	t_env_var	*var;
 
-	varNameLength = 0;
-	varStart = *input + 1;
+	var_name_len = 0;
+	var_start = *input + 1;
 	while (ft_isalnum((unsigned char)**input) || **input == '_')
 		(*input)++;
-	varNameLength = *input - varStart;
-	varName = shell_strndup(shell, varStart, varNameLength);
-	var = findEnvVar(env_vars, varName);
+	var_name_len = *input - var_start;
+	var_name = shell_strndup(shell, var_start, var_name_len);
+	var = find_return_env_var(env_vars, var_name);
 	if (var)
-		return ft_strlen(var->value);
+		return (ft_strlen(var->value));
 	else
 		return (0);
 }
 
-void incrementLengthAndInput(const char** input, int* length, int a, int b)
+void	inc(const char **input, int *length, int a, int b)
 {
-    *input += a;
-    *length += b;
+	*input += a;
+	*length += b;
 }
 
-int calculateExpandedLength(t_shell *shell, const char *input, t_env_var *env_vars)
+int	calc_expanded_len(t_shell *shell, const char *input, t_env_var *env_vars)
 {
-	int	length;
+	int	len;
 
-	length = 0;
+	len = 0;
 	while (*input)
 	{
 		if (*input == '$')
 		{
 			if (*(input + 1) == ' ')
-			    incrementLengthAndInput(&input, &length, 2, 2);
+				inc(&input, &len, 2, 2);
 			else if (*(input + 1) == '?')
-			    incrementLengthAndInput(&input, &length, 2, calc_int_len(shell->last_exit_status));
+				inc(&input, &len, 2, calc_int_len(shell->last_exit_status));
 			else if (*(input + 1) == '$')
 			{
 				while (*input == '$')
-			    	incrementLengthAndInput(&input, &length, 1, 1);
+					inc(&input, &len, 1, 1);
 			}
 			else
-				incrementLengthAndInput(&input, &length, 1, getEnvVarLength(shell, &input, env_vars));
+				inc(&input, &len, 1, get_env_var_len(shell, &input, env_vars));
 		}
 		else
-			incrementLengthAndInput(&input, &length, 1, 1);
+			inc(&input, &len, 1, 1);
 	}
-	return (length + 1);
+	return (len + 1);
 }
 
-void replaceEnvVar(t_shell *shell, const char **input, char **output, t_env_var *env_vars)
+void	rep_var(t_shell *shell, const char **in, char **out, t_env_var *env_v)
 {
-	const char	*varStart;
-	int			varNameLength;
-	char		*varName;
+	const char	*var_start;
+	int			var_name_len;
+	char		*var_name;
 	t_env_var	*var;
 
-	varStart = ++(*input);
-	while (ft_isalnum((unsigned char)**input) || **input == '_')
-		(*input)++;
-	varNameLength = *input - varStart;
-	varName = shell_strndup(shell, varStart, varNameLength);
-	var = findEnvVar(env_vars, varName);
+	var_start = ++(*in);
+	while (ft_isalnum((unsigned char)**in) || **in == '_')
+		(*in)++;
+	var_name_len = *in - var_start;
+	var_name = shell_strndup(shell, var_start, var_name_len);
+	var = find_return_env_var(env_v, var_name);
 	if (var)
 	{
-		ft_strcpy(*output, var->value);
-		*output += ft_strlen(var->value);
+		ft_strcpy(*out, var->value);
+		*out += ft_strlen(var->value);
 	}
 }
 
@@ -112,79 +113,81 @@ char	*cpy_exit_code(char *str, int n)
 	return (str);
 }
 
-void handleExitCode(t_shell *shell, const char **input, char **output)
+void	handle_exit_code(t_shell *shell, const char **input, char **output)
 {
-    cpy_exit_code(*output, shell->last_exit_status);
-    *output += calc_int_len(shell->last_exit_status);
-    *input += 2;
+	cpy_exit_code(*output, shell->last_exit_status);
+	*output += calc_int_len(shell->last_exit_status);
+	*input += 2;
 }
 
-size_t  replaceVariables(t_shell *shell, const char *input, char *output, t_env_var *env_vars)
+size_t	parse_var(t_shell *shell, const char *in, char *out, t_env_var *env_v)
 {
-	const char	*start_input;
+	const char	*start_in;
 
-	start_input = input;
-	while (*input)
+	start_in = in;
+	while (*in)
 	{
-		if (*input == '$')
+		if (*in == '$')
 		{
-			if (*(input + 1) == '?' )
-                handleExitCode(shell, &input, &output);
-			else if (*(input + 1) == '$' || *(input + 1) == '\"')
+			if (*(in + 1) == '?' )
+				handle_exit_code(shell, &in, &out);
+			else if (*(in + 1) == '$' || *(in + 1) == '\"')
 			{
-				*output++ = *input++;
-				if (*(input) == '$')
+				*out++ = *in++;
+				if (*(in) == '$')
 				{
-					while (*input == '$')
-						*output++ = *input++;
+					while (*in == '$')
+						*out++ = *in++;
 				}
 			}
-			else if (*(input + 1) == '\0' || isspace_not_eol(*(input + 1)) == 1)
-				*output++ = *input++;
+			else if (*(in + 1) == '\0' || isspace_not_eol(*(in + 1)) == 1)
+				*out++ = *in++;
 			else
-				replaceEnvVar(shell, &input, &output, env_vars);
+				rep_var(shell, &in, &out, env_v);
 		}
-		else if (*input == '\"' || *input == '\'' || isspace_not_eol(*input) == 1)
+		else if (*in == '\"' || *in == '\'' || isspace_not_eol(*in) == 1)
 			break ;
 		else
-			*output++ = *input++;
+			*out++ = *in++;
 	}
-	*output = '\0';
-	return (input - start_input);
+	*out = '\0';
+	return (in - start_in);
 }
 
-char	*expandVariables(t_shell *shell, const char *input)
+char	*expand_var_one(t_shell *shell, const char *input)
 {
-	int		finalLength;
+	int		final_len;
 	char	*expanded;
-	size_t	advancedPosition;
+	size_t	adv_pos;
 
-	finalLength = calculateExpandedLength(shell, input, shell->env_head);
-	expanded = (char *)shell_malloc(shell, finalLength);
-	if (!expanded) {
+	final_len = calc_expanded_len(shell, input, shell->env_head);
+	expanded = (char *)shell_malloc(shell, final_len);
+	if (!expanded)
+	{
 		ft_printf("Memory allocation failed\n");
-		return NULL;
+		return (NULL);
 	}
-	advancedPosition = replaceVariables(shell, input, expanded, shell->env_head);
-	(void)advancedPosition;
+	adv_pos = parse_var(shell, input, expanded, shell->env_head);
+	(void)adv_pos;
 	return (expanded);
 }
 
-char	*expandVariables2(t_shell *shell, const char *input, size_t *advancedPosition)
+char	*expand_var_two(t_shell *shell, const char *input, size_t *adv_pos)
 {
-	int		finalLength;
+	int		final_len;
 	char	*expanded;
 	size_t	position;
 
-	*advancedPosition = 0;
-    finalLength = calculateExpandedLength(shell, input, shell->env_head);
-	expanded = (char *)shell_malloc(shell, finalLength);
-	if (!expanded) {
+	*adv_pos = 0;
+	final_len = calc_expanded_len(shell, input, shell->env_head);
+	expanded = (char *)shell_malloc(shell, final_len);
+	if (!expanded)
+	{
 		ft_printf("Memory allocation failed\n");
-		return NULL;
+		return (NULL);
 	}
-	position = replaceVariables(shell, input, expanded, shell->env_head);
-	if (advancedPosition != NULL)
-		*advancedPosition = position;
+	position = parse_var(shell, input, expanded, shell->env_head);
+	if (adv_pos != NULL)
+		*adv_pos = position;
 	return (expanded);
 }

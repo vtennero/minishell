@@ -6,140 +6,146 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:55:49 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/06 20:26:23 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/08 14:18:50 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char *process_single_quote(const char **s)
+char	*process_single_quote(t_shell *shell, const char **s)
 {
+	char		*result;
+	const char	*start;
+	int			len;
 
 	(*s)++;
-	const char *start = *s;
+	start = *s;
 	while (**s && **s != '\'')
 		(*s)++;
-	int len = *s - start;
-	char *result = strndup(start, len);
+	len = *s - start;
+	result = shell_strndup(shell, start, len);
 	(*s)++;
 	return (result);
 }
 
-char *handleNoEndQuote(t_shell *shell, const char **s)
+char	*handle_no_e_quote(t_shell *shell, const char **s)
 {
-    char *buf = shell_malloc(shell, 2); // Allocate memory for 2 characters (1 character + '\0')
-    if (buf) {
-        buf[0] = **s; // Assign the current character to the first position of buf
-        buf[1] = '\0'; // Null-terminate the string
-    }
-    (*s)++; // Advance the pointer to the next character
-    return (buf); // Return the created buffer
+	char	*buf;
+
+	buf = shell_malloc(shell, 2);
+	if (buf)
+	{
+		buf[0] = **s;
+		buf[1] = '\0';
+	}
+	(*s)++;
+	return (buf);
 }
 
-char *handleDollarInQuote(const char **s, t_shell *shell, char *buf) {
-    char *newBuf;
-    size_t textLen = get_non_expanded_var_length((char *)(*s));
-    ft_printf("get_non_expanded_var_length returns %d\n", textLen);
-    char *expanded = expandVariables(shell, *s);
-
-    if (!buf)
-        newBuf = expanded;
-    else {
-        newBuf = shell_strjoin(shell, buf, expanded);
-        free(buf); // Assuming shell_strjoin allocates a new buffer
-    }
-
-    *s += textLen;
-    return newBuf;
-}
-
-char *handleOtherInQuote(const char **s, t_shell *shell, const char *endQuote, char *buf) {
-    char *newBuf;
-    const char *nextDollar = ft_strchr(*s, '$');
-    if (!nextDollar || nextDollar > endQuote) {
-        nextDollar = endQuote; // If no $ is found, copy until the end quote
-    }
-    size_t textLen = nextDollar - *s;
-    char *duplicatedText = shell_strndup(shell, *s, textLen);
-
-    if (!buf)
-        newBuf = duplicatedText;
-    else {
-        newBuf = shell_strjoin(shell, buf, duplicatedText);
-        free(buf); // Assuming shell_strjoin allocates a new buffer
-    }
-
-    *s += textLen;
-    return newBuf;
-}
-
-
-// char *handleWithEndQuote(const char **s, t_shell *shell, const char *endQuote) {
-//     char *buf = NULL;
-//     char *newBuf;
-//     size_t textLen;
-
-//     while (*s < endQuote) {
-//         if (**s == '$') {
-//             char *expanded = expandVariables(shell, *s);
-//             if (!buf)
-//                 newBuf = expanded;
-//             else {
-//                 newBuf = shell_strjoin(shell, buf, expanded);
-//                 free(buf); // Free the old buffer to prevent memory leaks
-//             }
-//             buf = newBuf;
-//             textLen = get_non_expanded_var_length((char *)(*s));
-//             *s += textLen;
-//         } else {
-//             const char *nextDollar = ft_strchr(*s, '$');
-//             if (!nextDollar || nextDollar > endQuote) {
-//                 nextDollar = endQuote; // If no $ is found, copy until the end quote
-//             }
-//             textLen = nextDollar - *s;
-//             char *duplicatedText = shell_strndup(shell, *s, textLen);
-//             if (!buf)
-//                 newBuf = duplicatedText;
-//             else {
-//                 newBuf = shell_strjoin(shell, buf, duplicatedText);
-//                 free(buf); // Free the old buffer
-//             }
-//             buf = newBuf;
-//             *s += textLen;
-//         }
-//     }
-//     if (**s == '\"')
-//         (*s)++;
-//     return buf;
-// }
-
-char *handleWithEndQuote(const char **s, t_shell *shell, const char *endQuote) {
-    char *buf = NULL;
-
-    while (*s < endQuote) {
-        if (**s == '$') {
-            buf = handleDollarInQuote(s, shell, buf);
-        } else {
-            buf = handleOtherInQuote(s, shell, endQuote, buf);
-        }
-    }
-    if (**s == '\"')
-        (*s)++;
-    return buf;
-}
-
-
-
-
-char *process_double_quote(const char **s, t_shell *shell)
+char	*handle_dol_in_quote(const char **s, t_shell *shell, char *buf)
 {
-    char *result;
-    (*s)++; // Skip the initial double quote
-    const char *endQuote = ft_strchr(*s, '\"');
+	char	*new;
+	size_t	text_len;
+	char	*expanded;
 
-    if (!endQuote)
-        result = handleNoEndQuote(shell, s);
-    else
-        result = handleWithEndQuote(s, shell, endQuote);
-    return (result);
+	expanded = expand_var_one(shell, *s);
+	text_len = get_non_expanded_var_length((char *)(*s));
+	if (!buf)
+		new = expanded;
+	else
+	{
+		new = shell_strjoin(shell, buf, expanded);
+		free(buf);
+	}
+	*s += text_len;
+	return (new);
+}
+
+char	*norm_char_quote(const char **s, t_shell *shell, const char *e_quote, char *buf)
+{
+	char		*new;
+	const char	*next_dol;
+	size_t		text_len;
+	char		*duplicated_text;
+
+	next_dol = ft_strchr(*s, '$');
+	if (!next_dol || next_dol > e_quote)
+		next_dol = e_quote;
+	text_len = next_dol - *s;
+	duplicated_text = shell_strndup(shell, *s, text_len);
+	if (!buf)
+		new = duplicated_text;
+	else
+		new = shell_strjoin(shell, buf, duplicated_text);
+	*s += text_len;
+	return (new);
+}
+
+char	*create_one_char_str(t_shell *shell, char c)
+{
+	char	*temp;
+
+	temp = shell_malloc(shell, 2);
+	temp[0] = c;
+	temp[1] = '\0';
+	return (temp);
+}
+
+char	*process_quoting(t_shell *shell, const char **s, char *result)
+{
+	size_t	adv_position;
+	char	*temp;
+
+	while (**s && !ft_isspace((unsigned char)**s) && !(isSpecialOperator(*s)))
+	{
+		temp = NULL;
+		if (**s == '\'')
+			temp = process_single_quote(shell, s);
+		else if (**s == '\"')
+			temp = process_double_quote(s, shell);
+		else if (**s == '$')
+		{
+			temp = expand_var_two(shell, *s, &adv_position);
+			*s += adv_position;
+		}
+		else
+		{
+			temp = create_one_char_str(shell, **s);
+			(*s)++;
+		}
+		if (temp)
+			result = shell_strjoin(shell, result, temp);
+	}
+	return (result);
+}
+
+char	*handle_w_e_quote(const char **s, t_shell *shell, const char *e_quote)
+{
+	char	*buf;
+
+	buf = NULL;
+	while (*s < e_quote)
+	{
+		if (**s == '$')
+			buf = handle_dol_in_quote(s, shell, buf);
+		else
+			buf = norm_char_quote(s, shell, e_quote, buf);
+	}
+	if (**s == '\"')
+		(*s)++;
+	return (buf);
+}
+
+char	*process_double_quote(const char **s, t_shell *shell)
+{
+	char		*result;
+	const char	*e_quote;
+
+	(*s)++;
+	e_quote = ft_strchr(*s, '\"');
+	if (!e_quote)
+		result = handle_no_e_quote(shell, s);
+	else
+		result = handle_w_e_quote(s, shell, e_quote);
+	return (result);
 }
