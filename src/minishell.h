@@ -177,7 +177,7 @@ void	create_env_var_list(t_shell *shell, char **envp);
 void	interactive_mode(t_shell *shell);
 void	w_arg_mode(t_shell *shell, int argc, char **argv);
 void	std_input_mode(int fd, t_shell *shell);
-int		isNotEmpty(const char *str);
+int		not_empty(const char *str);
 int		end_with_pipe(const char *str);
 /*
 ** -- SIGNALS --
@@ -199,7 +199,7 @@ int 	isspace_not_eol(int ch);
 void	set_token_commands(t_shell *shell);
 int is_valid_cmd(t_shell* shell,char* cmd_name);
 int	is_only_spaces(char *str);
-int	isSpecialOperator(const char *str);
+int	is_special(const char *str);
 /*
 ** -- QUOTES --
 */
@@ -274,7 +274,7 @@ char	*shell_itoa(t_shell *shell, int n);
 const char	*skip_delimiters(const char *s, char c);
 int	find_index_char(const char *str, char c);
 int	calc_int_len(int num);
-int isNotEmpty(const char *str);
+int not_empty(const char *str);
 int	is_directory(const char *path);
 
 /*

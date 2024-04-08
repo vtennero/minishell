@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:55:49 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/08 14:18:50 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/08 22:49:39 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ char	*process_quoting(t_shell *shell, const char **s, char *result)
 	size_t	adv_position;
 	char	*temp;
 
-	while (**s && !ft_isspace((unsigned char)**s) && !(isSpecialOperator(*s)))
+	while (**s && !ft_isspace((unsigned char)**s) && !(is_special(*s)))
 	{
 		temp = NULL;
 		if (**s == '\'')
