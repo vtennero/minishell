@@ -42,7 +42,9 @@ void	shell_cleanup(t_shell *shell)
 	{
 		next = current->next;
 		free(current->ptr);
+		current->ptr = NULL;
 		free(current);
+		current = NULL;
 		current = next;
 	}
 	shell->mem_tracker.head = NULL;
@@ -55,6 +57,7 @@ void	shexit(t_shell *shell, int exit_code)
 	exit_s = shell->last_exit_status;
 	shell_cleanup(shell);
 	free(shell);
+	shell = NULL;
 	exit(exit_s);
 	(void)exit_code;
 }

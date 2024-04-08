@@ -148,7 +148,7 @@ void	decl_new_var(t_shell *shell, const char *key)
 	t_env_var	**tracer;
 
 	new_var = shell_malloc(shell, sizeof(t_env_var));
-	new_var->key = strdup(key);
+	new_var->key = shell_strdup(shell, key);
 	new_var->value = "";
 	new_var->next = NULL;
 	tracer = &shell->env_head;
