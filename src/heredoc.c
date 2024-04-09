@@ -2,11 +2,11 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+        
+/*                                                    +:+ +:+
 	+:+     */
-/*   By: toto <toto@student.42.fr>                  +#+  +:+      
+/*   By: toto <toto@student.42.fr>                  +#+  +:+
 	+#+        */
-/*                                                +#+#+#+#+#+  
+/*                                                +#+#+#+#+#+
 	+#+           */
 /*   Created: 2024/02/26 15:02:35 by toto              #+#    #+#             */
 /*   Updated: 2024/02/26 15:56:55 by toto             ###   ########.fr       */
@@ -53,6 +53,14 @@ int	create_and_unlink_temp_file(const char *tempFilePath)
 	return (fd);
 }
 
+void	free_two(void *ptr1, void *ptr2)
+{
+	if (ptr1 != NULL)
+		free(ptr1);
+	if (ptr2 != NULL)
+		free(ptr2);
+}
+
 int	create_temp_file(char **tempFilePath)
 {
 	static int	counter;
@@ -65,17 +73,13 @@ int	create_temp_file(char **tempFilePath)
 	counter_str = ft_itoa(counter++);
 	if (time_str == NULL || counter_str == NULL)
 	{
-		free(time_str);
-		free(counter_str);
+		free_two(time_str, counter_str);
 		return (-1);
 	}
 	*tempFilePath = create_temp_file_path("/tmp/", time_str, counter_str);
-	free(time_str);
-	free(counter_str);
+	free_two(time_str, counter_str);
 	if (*tempFilePath == NULL)
-	{
 		return (-1);
-	}
 	fd = create_and_unlink_temp_file(*tempFilePath);
 	if (fd == -1)
 	{
@@ -96,7 +100,7 @@ void	cleanup_temp_file(char *tempFilePath)
 
 void	cleanup_heredocs_in_command_table(CommandTable *table)
 {
-	Command*cmd;
+	Command	*cmd;
 
 	cmd = table->head;
 	while (cmd)
@@ -114,7 +118,8 @@ void	write_heredoc_to_file(int fd, const char *delimiter)
 {
 	char	*line;
 
-	while ((line = readline("> ")) != NULL)
+	line = readline("> ");
+	while (line != NULL)
 	{
 		if (strcmp(line, delimiter) == 0)
 		{
@@ -124,6 +129,7 @@ void	write_heredoc_to_file(int fd, const char *delimiter)
 		write(fd, line, strlen(line));
 		write(fd, "\n", 1);
 		free(line);
+		line = readline("> ");
 	}
 }
 
