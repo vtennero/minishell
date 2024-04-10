@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 17:01:20 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 17:34:42 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,10 +205,10 @@ int	check_error(t_cmd *cmd, t_shell *shell, int parent)
 		shell->last_exit_status = 126;
 		return (1);
 	}
-	if (ft_strcmp(cmd->name,"")==0)
+	if (ft_strcmp(cmd->name, "") == 0)
 	{
 		shell->last_exit_status = 0;
-		return 1;
+		return (1);
 	}
 	if (parent)
 	{
@@ -253,8 +253,7 @@ void	check_child_error(t_shell *shell, t_cmd *cmd, char *error)
 	}
 }
 
-int	execute_command_pipex(int prev_pipe, t_cmd *cmd, t_shell *shell,
-		int parent)
+int	execute_command_pipex(int prev_pipe, t_cmd *cmd, t_shell *shell, int parent)
 {
 	pid_t	pid;
 	char	*error;

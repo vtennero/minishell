@@ -114,9 +114,9 @@ void	add_argument(t_shell *shell, t_cmd *cmd, char *arg)
 
 t_cmd	*create_command_set(t_shell *shell, t_token_node *node)
 {
-	t_cmd		*current_command;
+	t_cmd			*current_command;
 	t_token_node	*temp;
-	int			argc;
+	int				argc;
 
 	current_command = NULL;
 	temp = node;
@@ -168,21 +168,21 @@ void	handle_token(t_shell *shell, t_token_node *ct, t_cmd *cc)
 		ft_puterr("syntax error near unexpected token `newline'", 2);
 }
 
-void	pipe_modify_fin_fout(t_token_node *current_token, t_cmd *current_command,
+void	pipe_modify_fin_fout(t_token_node *current_token, t_cmd *cc,
 		int *pipe_exist)
 {
 	if (*pipe_exist == 1 && current_token->token.type != TOKEN_PIPE)
 	{
-		if (ft_strcmp(current_command->name, "ls") != 0
-			&& ft_strcmp(current_command->name, "echo") != 0)
-			if (current_command->fin != -1)
-				current_command->fin = -99;
+		if (ft_strcmp(cc->name, "ls") != 0
+			&& ft_strcmp(cc->name, "echo") != 0)
+			if (cc->fin != -1)
+				cc->fin = -99;
 		*pipe_exist = 0;
 	}
 	if (current_token->next && current_token->next->token.type == TOKEN_PIPE)
 	{
-		if (current_command->fout == 0)
-			current_command->fout = -99;
+		if (cc->fout == 0)
+			cc->fout = -99;
 		*pipe_exist = 1;
 	}
 }
@@ -205,34 +205,72 @@ void	update_head(t_cmd *current_command, t_cmd_table *table)
 	table->command_count++;
 }
 
-t_cmd_table	*create_command_table(t_shell *shell, t_token_node *tokens)
-{
-	t_cmd_table	*table;
-	t_token_node		*ct;
-	t_cmd			*cc;
-	int				pipe_exist;
+// t_cmd_table	*create_command_table(t_shell *shell, t_token_node *tokens)
+// {
+// 	t_cmd_table		*table;
+// 	t_token_node	*ct;
+// 	t_cmd			*cc;
+// 	int				pipe_exist;
 
-	table = initialize_command_table(shell);
-	ct = tokens;
-	if (ct==NULL)
-		return table;
-	pipe_exist = 0;
-	cc = NULL;
-	while (ct != NULL)
-	{
-		if (pipe_exist == 1 || table->head == NULL)
-			cc = create_command_set(shell, ct);
-		while (ct != NULL && ct->token.type != TOKEN_PIPE)
-		{
-			handle_token(shell, ct, cc);
-			pipe_modify_fin_fout(ct, cc, &pipe_exist);
-			ct = ct->next;
-		}
-		if (ct != NULL)
-			ct = ct->next;
-		update_head(cc, table);
-	}
-	if (!table || !table->head)
-		prepare_heredocs_in_command_table(table);
-	return (table);
+// 	table = initialize_command_table(shell);
+// 	ct = tokens;
+// 	if (ct == NULL)
+// 		return (table);
+// 	pipe_exist = 0;
+// 	cc = NULL;
+// 	while (ct != NULL)
+// 	{
+// 		if (pipe_exist == 1 || table->head == NULL)
+// 			cc = create_command_set(shell, ct);
+// 		while (ct != NULL && ct->token.type != TOKEN_PIPE)
+// 		{
+// 			handle_token(shell, ct, cc);
+// 			pipe_modify_fin_fout(ct, cc, &pipe_exist);
+// 			ct = ct->next;
+// 		}
+// 		if (ct != NULL)
+// 			ct = ct->next;
+
+// 		update_head(cc, table);
+// 	}
+// 	if (!table || !table->head)
+// 		prepare_heredocs_in_command_table(table);
+// 	return (table);
+// }
+t_cmd *process_command_set(t_shell *shell, t_cmd_table *table, t_token_node **ct, int *pipe_exist) {
+    t_cmd *cc = NULL;
+    if (*pipe_exist == 1 || table->head == NULL)
+        cc = create_command_set(shell, *ct);
+    while (*ct != NULL && (*ct)->token.type != TOKEN_PIPE) {
+        handle_token(shell, *ct, cc);
+        pipe_modify_fin_fout(*ct, cc, pipe_exist);
+        *ct = (*ct)->next;
+    }
+    return cc;
+}
+
+void update_token_node(t_token_node **ct) {
+    if (*ct != NULL)
+        *ct = (*ct)->next;
+}
+
+void process_token_nodes(t_shell *shell, t_cmd_table *table, t_token_node *tokens) {
+    int pipe_exist = 0;
+    t_token_node *ct = tokens;
+    t_cmd *cc;
+    while (ct != NULL) {
+        cc = process_command_set(shell, table, &ct, &pipe_exist);
+        update_token_node(&ct);
+        update_head(cc, table);
+    }
+}
+
+t_cmd_table *create_command_table(t_shell *shell, t_token_node *tokens) {
+    t_cmd_table *table = initialize_command_table(shell);
+    if (tokens == NULL)
+        return table;
+    process_token_nodes(shell, table, tokens);
+    if (!table || !table->head)
+        prepare_heredocs_in_command_table(table);
+    return table;
 }
