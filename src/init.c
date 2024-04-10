@@ -89,11 +89,6 @@ t_shell	*initialize_shell(char **envp)
 	shell->std_in = dup(STDIN_FILENO);
 	shell->std_out = dup(STDOUT_FILENO);
 	shell->table = NULL;
-	// if (isatty(STDIN_FILENO))
-	// {
-	// 	if (isatty(STDOUT_FILENO))
-	// 		shell->is_interactive = 1;
-	// }
 	setup_signals(shell);
 	create_env_var_list(shell, envp);
 	return (shell);

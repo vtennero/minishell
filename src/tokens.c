@@ -42,7 +42,7 @@ char	*parse_tokens(t_shell *shell, const char *s)
 		if (!*s)
 			break ;
 		wvarexpanded = parse_quotes_and_vars(shell, &s);
-		type = gee_token_type(wvarexpanded);
+		type = get_token_type(wvarexpanded);
 		if (index == 0 && !is_redirect(type, &after_redirect))
 			type = TOKEN_COMMAND;
 		add_token(shell, wvarexpanded, type);
