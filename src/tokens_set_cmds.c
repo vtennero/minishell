@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 17:13:35 by root              #+#    #+#             */
-/*   Updated: 2024/04/10 11:03:26 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 17:04:46 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	is_only_spaces(char *str)
 	return 0;
 }
 
-int	check_if_valid_cmd(TokenNode *node)
+int	check_if_valid_cmd(t_token_node *node)
 {
 	if (!ft_strlen(node->token.value))
 		return (0);
@@ -76,7 +76,7 @@ int	is_valid_cmd(t_shell *shell, char *cmd_name)
 		return (0);
 }
 
-void	set_commands_check(t_shell *shell, TokenNode *node, int *after_redirect,
+void	set_commands_check(t_shell *shell, t_token_node *node, int *after_redirect,
 		int *pipe_exist)
 {
 	if (node && not_empty(node->token.value))
@@ -99,7 +99,7 @@ void	set_commands_check(t_shell *shell, TokenNode *node, int *after_redirect,
 
 void	set_token_commands(t_shell *shell)
 {
-	TokenNode	*node;
+	t_token_node	*node;
 	int			pipe_exist;
 	int			after_redirect;
 

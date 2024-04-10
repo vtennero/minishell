@@ -12,29 +12,29 @@
 
 #include "minishell.h"
 
-void	print_tokens(TokenNode *head)
+void	print_tokens(t_token_node *head)
 {
-	TokenNode	*current;
+	t_token_node	*current;
 
 	current = head;
 	ft_printf("\n");
 	while (current != NULL)
 	{
-		ft_printf("Token: %s \t | Type: %d\n", current->token.value,
+		ft_printf("t_token: %s \t | Type: %d\n", current->token.value,
 			current->token.type);
 		current = current->next;
 	}
 	ft_printf("*********************************\n");
 }
 
-void	print_command(const Command *cmd)
+void	print_command(const t_cmd *cmd)
 {
 	int	i;
 
 	i = 0;
 	if (!cmd)
 		return ;
-	ft_printf("Command: %s\n", cmd->name);
+	ft_printf("t_cmd: %s\n", cmd->name);
 	ft_printf("Arguments: ");
 	while (i < cmd->arg_count)
 		ft_printf("|%s| ", cmd->args[i++]);
@@ -55,16 +55,16 @@ void	print_command(const Command *cmd)
 		ft_printf("Piped to next command\n");
 }
 
-void	print_command_table(const CommandTable *table)
+void	print_command_table(const t_cmd_table *table)
 {
-	Command	*current;
+	t_cmd	*current;
 
 	if (!table || !table->head)
 	{
-		ft_printf("Command table is empty.\n");
+		ft_printf("t_cmd table is empty.\n");
 		return ;
 	}
-	ft_printf("\nCommand Table (Count: %d):\n", table->command_count);
+	ft_printf("\nt_cmd Table (Count: %d):\n", table->command_count);
 	current = table->head;
 	while (current)
 	{
@@ -78,9 +78,9 @@ void	print_command_table(const CommandTable *table)
 	ft_printf("*********************************\n\n");
 }
 
-int	is_token_type_present(TokenNode *head, int type)
+int	is_token_type_present(t_token_node *head, int type)
 {
-	TokenNode	*current;
+	t_token_node	*current;
 
 	current = head;
 	while (current != NULL)
@@ -92,10 +92,10 @@ int	is_token_type_present(TokenNode *head, int type)
 	return (0);
 }
 
-int	get_token_list_length(TokenNode *head)
+int	get_token_list_length(t_token_node *head)
 {
 	int			length;
-	TokenNode	*current;
+	t_token_node	*current;
 
 	length = 0;
 	current = head;

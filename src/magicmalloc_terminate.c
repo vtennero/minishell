@@ -14,8 +14,8 @@
 
 void	shell_free(t_shell *shell, void *ptr)
 {
-	MemNode	**current;
-	MemNode	*entry;
+	t_memnode	**current;
+	t_memnode	*entry;
 
 	current = &shell->mem_tracker.head;
 	while (*current)
@@ -34,8 +34,8 @@ void	shell_free(t_shell *shell, void *ptr)
 
 void	shell_cleanup(t_shell *shell)
 {
-	MemNode	*current;
-	MemNode	*next;
+	t_memnode	*current;
+	t_memnode	*next;
 
 	current = shell->mem_tracker.head;
 	while (current)

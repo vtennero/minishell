@@ -42,7 +42,7 @@ char	*parse_tokens(t_shell *shell, const char *s)
 		if (!*s)
 			break ;
 		wvarexpanded = parse_quotes_and_vars(shell, &s);
-		type = get_token_type(wvarexpanded);
+		type = gee_token_type(wvarexpanded);
 		if (index == 0 && !is_redirect(type, &after_redirect))
 			type = TOKEN_COMMAND;
 		add_token(shell, wvarexpanded, type);
@@ -54,10 +54,10 @@ char	*parse_tokens(t_shell *shell, const char *s)
 
 void	add_token(t_shell *shell, const char *value, int type)
 {
-	TokenNode	*new_node;
-	TokenNode	*current;
+	t_token_node	*new_node;
+	t_token_node	*current;
 
-	new_node = (TokenNode *)shell_malloc(shell, sizeof(TokenNode));
+	new_node = (t_token_node *)shell_malloc(shell, sizeof(t_token_node));
 	if (!new_node)
 		return ;
 	new_node->token.value = shell_strdup(shell, value);

@@ -17,14 +17,17 @@
 # include <fcntl.h>
 # include <signal.h>
 # include <stdio.h>
-// # include <sys/types.h>
 # include <errno.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
 # include <sys/wait.h>
 # include <termios.h>
-#include <sys/stat.h>
+# include <sys/stat.h>
+
+# define ERR_INVALID_CMD " : command not found"
+# define STDIN_FILENO 0
+# define STDOUT_FILENO 1
 
 extern volatile sig_atomic_t g_signal_received;
 /*
@@ -33,107 +36,80 @@ extern volatile sig_atomic_t g_signal_received;
 /*
 ** -- MEMORY --
 */
-typedef struct MemNode
+typedef struct	s_memnode
 {
-	void *ptr;            // Pointer to the allocated memory
-	struct MemNode *next; // Next node in the list
-} MemNode;
+	void				*ptr;
+	struct s_memnode	*next;
+} t_memnode;
 
-typedef struct
+typedef struct s_memtracker
 {
-	MemNode *head; // Head of the list of allocated memory blocks
-} MemTracker;
+	t_memnode *head;
+} t_memtracker;
 /*
 ** -- PARSING --
 */
-typedef struct
+typedef struct	s_token
 {
-	char *value; // The actual token, e.g., "ls", "-l", ">", etc.
-	int type;    // Type of the token (command, argument, redirection, pipe,etc.
-} Token;
+	char *value;
+	int type;
+} t_token;
 
-typedef struct TokenNode
+typedef struct s_token_node
 {
-	Token token;
-	struct TokenNode *next;
-} TokenNode;
+	t_token token;
+	struct s_token_node *next;
+} t_token_node;
 
 typedef enum
 {
-	TOKEN_COMMAND,       // 0
-	TOKEN_ARG,           // 1
-	TOKEN_REDIR_IN,      // <       2
-	TOKEN_REDIR_OUT,     // >       3
-	TOKEN_REDIR_APPEND,  // >>  4
-	TOKEN_REDIR_HEREDOC, // << 5
-	TOKEN_PIPE,          // |        6
-	TOKEN_ENV_VAR,       // $VAR     7
-	TOKEN_EXIT_STATUS,   // $?    8
-	TOKEN_D_Q,           //              9
-	TOKEN_S_Q,           //              10
-	TOKEN_S_DOL,         //              11
+	TOKEN_COMMAND,
+	TOKEN_ARG,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_OUT,
+	TOKEN_REDIR_APPEND,
+	TOKEN_REDIR_HEREDOC,
+	TOKEN_PIPE,
+	TOKEN_ENV_VAR,
+	TOKEN_EXIT_STATUS,
+	TOKEN_D_Q,
+	TOKEN_S_Q,
+	TOKEN_S_DOL,
 	TOKEN_EOL,
-	TOKEN_INV_COMMAND          //              12
-} TokenType;
+	TOKEN_INV_COMMAND
+} e_token_type;
 
-typedef enum
-{
-	NO_QUOTES,
-	SINGLE_QUOTES,
-	DOUBLE_QUOTES
-} QuoteType;
 /*
 ** -- COMMANDS --
 */
-typedef enum
+typedef struct s_cmd
 {
-	CMD_BUILTIN,
-	CMD_EXTERNAL
-} CommandType;
-
-typedef struct Command
-{
-	CommandType type;
 	char *name;
 	char **args;
 	char **execv_args;
 	char	*cmd_path;
-
 	int arg_count;
 	char *redirect_in;
 	char *redirect_out;
 	char *redirect_append;
-	// char *redirect_heredoc;
 	char *heredoc_delimiter;
 	char *heredoc_temp_path;
-	int fd_in;  // File descriptor for input redirection
-	int fd_out; // File descriptor for output redirection
-	int fin;    // File descriptor for input redirection
-	int fout;   // File descriptor for output redirection
-	struct Command *next;
-} Command;
+	int fd_in;
+	int fd_out;
+	int fin;
+	int fout;
+	struct s_cmd *next;
+} t_cmd;
 
 
-typedef struct
+typedef struct	s_cmd_table
 {
-	Command *head;     // Head of the list of commands
+	t_cmd *head;     // Head of the list of commands
 	int command_count; // Number of commands in the table
-} CommandTable;
+} t_cmd_table;
 
 
-typedef struct
-{
-	int command_count; // Number of commands in the table
-} Temp_CommandTable;
 
-
-typedef enum
-{
-	REDIRECT_NONE,   // No redirection
-	REDIRECT_INPUT,  // Input redirection ('<')
-	REDIRECT_OUTPUT, // Output redirection ('>')
-	REDIRECT_APPEND  // Output append redirection ('>>')
-} RedirectionType;
 /*
 ** -- ENV --
 */
@@ -160,9 +136,9 @@ typedef struct s_shell
 	int line_count;
 	char	*readfile;
 	pid_t pid;
-	MemTracker mem_tracker;
-	TokenNode *token_head;
-	CommandTable *table;
+	t_memtracker	mem_tracker;
+	t_token_node *token_head;
+	t_cmd_table *table;
 } t_shell;
 /*
 ** ================== INITIALIZATION ==================
@@ -192,7 +168,7 @@ void	setup_signals(t_shell *shell);
 */
 void		create_tokens(t_shell *shell, const char *s);
 void		add_token(t_shell *shell, const char *value, int type);
-TokenType	get_token_type(const char *token_text);
+e_token_type	gee_token_type(const char *token_text);
 char		*parse_tokens(t_shell *shell, const char *s);
 int			isspace_not_eol(int ch);
 void		set_token_commands(t_shell *shell);
@@ -219,32 +195,29 @@ char		*cpy_exit_code(char *str, int n);
 /*
 ** -- HEREDOC --
 */
-void		parse_heredoc(t_shell *shell);
-void 		prepare_heredocs_in_command_table(CommandTable* table);
-void 		handle_heredoc_for_commands(t_shell *shell, CommandTable* table);
-void 		cleanup_heredocs_in_command_table(CommandTable* table);
+void 		prepare_heredocs_in_command_table(t_cmd_table* table);
+void 		cleanup_heredocs_in_command_table(t_cmd_table* table);
 /*
 ** ================== COMMANDS ==================
 */
 /*
 ** -- COMMAND TABLE --
 */
-CommandTable	*create_command_table(t_shell *shell, TokenNode *tokens);
-void			execute_command_table(t_shell *shell, CommandTable *table);
-void			free_command_table(CommandTable *table);
+t_cmd_table	*create_command_table(t_shell *shell, t_token_node *tokens);
+void			execute_command_table(t_shell *shell, t_cmd_table *table);
+void			free_command_table(t_cmd_table *table);
 /*
 ** -- BUILT_IN COMMANDS --
 */
 int				builtin_cd(t_shell *shell, char **args, int n_args);
 int				builtin_pwd(void);
-int				builtin_echo(t_shell *shell, char **args, int n_args,Command* cmd);
+int				builtin_echo(t_shell *shell, char **args, int n_args,t_cmd* cmd);
 int				builtin_unset(t_shell *shell, char **args, int n_args);
 int				builtin_env(t_shell *shell);
 /*
 ** :: EXIT ::
 */
 int	builtin_exit(t_shell *shell, char **args, int n_args);
-char	*export_exit_code(t_shell *shell);
 int	is_valid_number(const char *str);
 int	adjust_exit_code(int n);
 /*
@@ -263,6 +236,24 @@ int		handle_decl_str(t_shell *shell, const char *key, int nchar);
 int		handle_alloc_str(t_shell *shell, const char *key, int nchar);
 int		is_alloc_str(const char *str);
 int		is_valid_var_name(const char *str, int n);
+/*
+** ================== PIPES ==================
+*/
+char	*check_path(char **envp);
+char	*locate_cmd(char **paths, char *cmd);
+int find_env_var(t_env_var *list, const char *key);
+char	*find_env_path(char **envp);
+void	free_array(char **v);
+char	*ft_strdup_ignore(const char *s, char ignore);
+int	ft_strchr_count(const char *s, int c);
+char	*ft_strjoin_nconst(char *s1, char *s2);
+int	ft_puterr(char *s, int ret);
+
+int	execute_command_pipex(int prev_pipe,t_cmd *cmd,t_shell *shell,int parent);
+char	**find_cmd_paths(char **envp);
+int		run_cmd(t_cmd *command, t_shell *shell);
+int	pipex( t_cmd *cmd, t_shell *shell);
+
 /*
 ** ================== MEMORY ==================
 */
@@ -286,34 +277,10 @@ int	is_directory(const char *path);
 /*
 ** -- DEBUG --
 */
-void	print_tokens(TokenNode *head);
-void	print_command_table(const CommandTable *table);
-int 	is_token_type_present(TokenNode *head, int type);
-void	print_command(const Command *cmd);
+void	print_tokens(t_token_node *head);
+void	print_command_table(const t_cmd_table *table);
+int 	is_token_type_present(t_token_node *head, int type);
+void	print_command(const t_cmd *cmd);
 
-// pipex_and pipex_util
-# define ERR_INVALID_CMD " : command not found"
-# define STDIN_FILENO 0
-# define STDOUT_FILENO 1
-
-char	*check_path(char **envp);
-char	*locate_cmd(char **paths, char *cmd);
-int find_env_var(t_env_var *list, const char *key);
-char	*find_env_path(char **envp);
-void	free_array(char **v);
-char	*ft_strdup_ignore(const char *s, char ignore);
-int	ft_strchr_count(const char *s, int c);
-char	*ft_strjoin_nconst(char *s1, char *s2);
-int	ft_puterr(char *s, int ret);
-
-int	execute_command_pipex(int prev_pipe,Command *cmd,t_shell *shell,int parent);
-char	**find_cmd_paths(char **envp);
-char	**ft_split_cmd_args(char *s);
-// int			run_cmd(char *cmd, char **envp);
-// int	run_cmd(Command *command, char **envp, t_shell *shell);
-int	run_cmd(Command *command, t_shell *shell);
-
-// int pipex(t_in in,Command cmd,t_shell *shell);
-int	pipex( Command *cmd, t_shell *shell);
 
 #endif

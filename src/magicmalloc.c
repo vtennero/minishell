@@ -100,12 +100,12 @@ char	*shell_itoa(t_shell *shell, int n)
 void	*shell_malloc(t_shell *shell, size_t size)
 {
 	void	*ptr;
-	MemNode	*node;
+	t_memnode	*node;
 
 	ptr = ft_calloc(1, size);
 	if (ptr)
 	{
-		node = (MemNode *)malloc(sizeof(MemNode));
+		node = (t_memnode *)malloc(sizeof(t_memnode));
 		if (node)
 		{
 			node->ptr = ptr;

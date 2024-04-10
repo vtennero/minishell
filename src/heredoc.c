@@ -95,9 +95,9 @@ void	cleanup_temp_file(char *tempFilePath)
 	}
 }
 
-void	cleanup_heredocs_in_command_table(CommandTable *table)
+void	cleanup_heredocs_in_command_table(t_cmd_table *table)
 {
-	Command	*cmd;
+	t_cmd	*cmd;
 
 	cmd = table->head;
 	while (cmd)
@@ -143,9 +143,9 @@ char	*handle_heredoc(const char *delimiter)
 	return (temp_path);
 }
 
-void	prepare_heredocs_in_command_table(CommandTable *table)
+void	prepare_heredocs_in_command_table(t_cmd_table *table)
 {
-	Command	*cmd;
+	t_cmd	*cmd;
 
 	cmd = table->head;
 	while (cmd)

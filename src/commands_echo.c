@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	echo_wo_nl(t_shell *shell, char **args, int n_args, Command *cmd)
+static int	echo_wo_nl(t_shell *shell, char **args, int n_args, t_cmd *cmd)
 {
 	int	i;
 
@@ -37,7 +37,7 @@ static int	echo_wo_nl(t_shell *shell, char **args, int n_args, Command *cmd)
 	return (0);
 }
 
-static int	echo_w_nl(t_shell *shell, char **args, int n_args, Command *cmd)
+static int	echo_w_nl(t_shell *shell, char **args, int n_args, t_cmd *cmd)
 {
 	int	i;
 
@@ -58,7 +58,7 @@ static int	echo_w_nl(t_shell *shell, char **args, int n_args, Command *cmd)
 	return (0);
 }
 
-int	builtin_echo(t_shell *shell, char **args, int n_args, Command *cmd)
+int	builtin_echo(t_shell *shell, char **args, int n_args, t_cmd *cmd)
 {
 	if (n_args == 0)
 		ft_printf("\n");

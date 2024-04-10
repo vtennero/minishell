@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-void	execute_command_table(t_shell *shell, CommandTable *table)
+void	execute_command_table(t_shell *shell, t_cmd_table *table)
 {
-	Command	*current;
+	t_cmd	*current;
 
 	if (table && table->head)
 	{

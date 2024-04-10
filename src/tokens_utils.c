@@ -56,7 +56,7 @@ int	isspace_not_eol(int c)
 	return (c == ' ' || c == '\f' || c == '\r' || c == '\t' || c == '\v');
 }
 
-TokenType	get_token_type(const char *token_text)
+e_token_type	gee_token_type(const char *token_text)
 {
 	if (ft_strcmp(token_text, "<") == 0)
 		return (TOKEN_REDIR_IN);

@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 15:44:09 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 17:05:03 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	pipe_extension(t_shell *shell, char *input)
 void	interactive_mode(t_shell *shell)
 {
 	char			*input;
-	CommandTable	*command_table;
+	t_cmd_table	*command_table;
 
 	while (1)
 	{
@@ -67,7 +67,7 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 {
 	char			**line;
 	int				fd;
-	CommandTable	*command_table;
+	t_cmd_table	*command_table;
 
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
@@ -88,7 +88,7 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 
 // void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 // {
-// 	CommandTable	*command_table;
+// 	t_cmd_table	*command_table;
 // 	char			**line;
 // 	int				fd;
 
@@ -104,12 +104,12 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 // 		while ((old_get_next_line(fd, line)) == 1)
 // 		{
 // 			create_tokens(shell, *line);
-// 			// printTokens(shell->token_head);
+// 			// printt_tokens(shell->token_head);
 // 			free(*line);
 // 		}
 // 		free(line);
 // 		create_tokens(shell, argv[1]);
-// 		printTokens(shell->token_head);
+// 		printt_tokens(shell->token_head);
 // 		command_table = create_command_table(shell, shell->token_head);
 // 		execute_command_table(shell, command_table);
 // 	}
@@ -122,7 +122,7 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 
 void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 {
-	CommandTable	*command_table;
+	t_cmd_table	*command_table;
 	char			**line;
 	int				fd;
 
@@ -161,7 +161,7 @@ void	w_arg_mode(t_shell *shell, int argc, char **argv)
 void	std_input_mode(int fd, t_shell *shell)
 {
 	char			**line;
-	CommandTable	*command_table;
+	t_cmd_table	*command_table;
 
 	line = (char **)malloc(sizeof(char *));
 	while ((old_get_next_line(fd, line)) == 1)

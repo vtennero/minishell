@@ -12,14 +12,14 @@
 
 #include "minishell.h"
 
-CommandTable	*initialize_command_table(t_shell *shell)
+t_cmd_table	*initialize_command_table(t_shell *shell)
 {
-	CommandTable	*table;
+	t_cmd_table	*table;
 
-	table = (CommandTable *)shell_malloc(shell, sizeof(CommandTable));
+	table = (t_cmd_table *)shell_malloc(shell, sizeof(t_cmd_table));
 	if (!table)
 	{
-		ft_putstr_fd("Failed to allocate CommandTable", 2);
+		ft_putstr_fd("Failed to allocate t_cmd_table", 2);
 		exit(EXIT_FAILURE);
 	}
 	table->head = NULL;
@@ -27,7 +27,7 @@ CommandTable	*initialize_command_table(t_shell *shell)
 	return (table);
 }
 
-void	set_rin(t_shell *shell, Command *cmd, char *filename)
+void	set_rin(t_shell *shell, t_cmd *cmd, char *filename)
 {
 	int	fd;
 
@@ -37,7 +37,7 @@ void	set_rin(t_shell *shell, Command *cmd, char *filename)
 		cmd->fin = fd;
 }
 
-void	set_rout(t_shell *shell, Command *cmd, char *filename, int append)
+void	set_rout(t_shell *shell, t_cmd *cmd, char *filename, int append)
 {
 	int	fd;
 
@@ -64,10 +64,10 @@ void	set_rout(t_shell *shell, Command *cmd, char *filename, int append)
 	}
 }
 
-void	free_command_table(CommandTable *table)
+void	free_command_table(t_cmd_table *table)
 {
-	Command	*cmd;
-	Command	*next_cmd;
+	t_cmd	*cmd;
+	t_cmd	*next_cmd;
 	int		i;
 
 	if (!table)
@@ -90,33 +90,32 @@ void	free_command_table(CommandTable *table)
 	free(table);
 }
 
-Command	*create_command_entry(t_shell *shell, char *name)
+t_cmd	*create_command_entry(t_shell *shell, char *name)
 {
-	Command	*cmd;
+	t_cmd	*cmd;
 
-	cmd = (Command *)shell_malloc(shell, sizeof(Command));
+	cmd = (t_cmd *)shell_malloc(shell, sizeof(t_cmd));
 	if (!cmd)
 	{
-		ft_putstr_fd("Failed to allocate Command", 2);
+		ft_putstr_fd("Failed to allocate t_cmd", 2);
 		exit(EXIT_FAILURE);
 	}
 	cmd->name = shell_strdup(shell, name);
-	cmd->type = CMD_EXTERNAL;
 	cmd->fin = 0;
 	cmd->fout = 0;
 	return (cmd);
 }
 
-void	add_argument(t_shell *shell, Command *cmd, char *arg)
+void	add_argument(t_shell *shell, t_cmd *cmd, char *arg)
 {
 	cmd->args[cmd->arg_count++] = shell_strdup(shell, arg);
 	cmd->args[cmd->arg_count] = NULL;
 }
 
-Command	*create_command_set(t_shell *shell, TokenNode *node)
+t_cmd	*create_command_set(t_shell *shell, t_token_node *node)
 {
-	Command		*current_command;
-	TokenNode	*temp;
+	t_cmd		*current_command;
+	t_token_node	*temp;
 	int			argc;
 
 	current_command = NULL;
@@ -142,7 +141,7 @@ Command	*create_command_set(t_shell *shell, TokenNode *node)
 	return (current_command);
 }
 
-void	handle_token(t_shell *shell, TokenNode *ct, Command *cc)
+void	handle_token(t_shell *shell, t_token_node *ct, t_cmd *cc)
 {
 	if (ct->token.type == TOKEN_REDIR_IN && ct->next)
 	{
@@ -169,7 +168,7 @@ void	handle_token(t_shell *shell, TokenNode *ct, Command *cc)
 		ft_puterr("syntax error near unexpected token `newline'", 2);
 }
 
-void	pipe_modify_fin_fout(TokenNode *current_token, Command *current_command,
+void	pipe_modify_fin_fout(t_token_node *current_token, t_cmd *current_command,
 		int *pipe_exist)
 {
 	if (*pipe_exist == 1 && current_token->token.type != TOKEN_PIPE)
@@ -188,9 +187,9 @@ void	pipe_modify_fin_fout(TokenNode *current_token, Command *current_command,
 	}
 }
 
-void	update_head(Command *current_command, CommandTable *table)
+void	update_head(t_cmd *current_command, t_cmd_table *table)
 {
-	Command	*last_command;
+	t_cmd	*last_command;
 
 	if (table->head == NULL)
 		table->head = current_command;
@@ -206,11 +205,11 @@ void	update_head(Command *current_command, CommandTable *table)
 	table->command_count++;
 }
 
-CommandTable	*create_command_table(t_shell *shell, TokenNode *tokens)
+t_cmd_table	*create_command_table(t_shell *shell, t_token_node *tokens)
 {
-	CommandTable	*table;
-	TokenNode		*ct;
-	Command			*cc;
+	t_cmd_table	*table;
+	t_token_node		*ct;
+	t_cmd			*cc;
 	int				pipe_exist;
 
 	table = initialize_command_table(shell);

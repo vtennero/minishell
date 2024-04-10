@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 16:09:18 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 17:01:20 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_cmd(Command *cmd)
+void	free_cmd(t_cmd *cmd)
 {
 	free(cmd->cmd_path);
 }
 
-int	builtin_cmd(Command *command, t_shell *shell)
+int	builtin_cmd(t_cmd *command, t_shell *shell)
 {
 	int	exit_code;
 
@@ -44,7 +44,7 @@ void	run_execv(char **cmd_args, char *cmd_path, t_shell *shell)
 	exit(EXIT_FAILURE);
 }
 
-int	custom_cmd(char **cmd_args, char *cmd_path, Command *cmd, t_shell *shell)
+int	custom_cmd(char **cmd_args, char *cmd_path, t_cmd *cmd, t_shell *shell)
 {
 	int	exit_code;
 
@@ -88,7 +88,7 @@ void	prepend_linecount(t_shell *shell)
 	}
 }
 
-int	run_cmd(Command *command, t_shell *shell)
+int	run_cmd(t_cmd *command, t_shell *shell)
 {
 	int	status;
 
@@ -103,7 +103,7 @@ int	run_cmd(Command *command, t_shell *shell)
 	return (0);
 }
 
-void	pipe_heredoc(Command *cmd, t_shell *shell)
+void	pipe_heredoc(t_cmd *cmd, t_shell *shell)
 {
 	int	fd;
 
@@ -115,7 +115,7 @@ void	pipe_heredoc(Command *cmd, t_shell *shell)
 	close(cmd->fin);
 }
 
-void	check_finfout(int prev_pipe, Command *cmd, t_shell *shell)
+void	check_finfout(int prev_pipe, t_cmd *cmd, t_shell *shell)
 {
 	if (cmd->fin == -99 && prev_pipe != STDIN_FILENO)
 		dup2(prev_pipe, STDIN_FILENO);
@@ -141,7 +141,7 @@ void	check_finfout(int prev_pipe, Command *cmd, t_shell *shell)
 		close(shell->pipefd[0]);
 }
 
-void	clean_fd(t_shell *shell, int std_in, int std_out, Command *cmd)
+void	clean_fd(t_shell *shell, int std_in, int std_out, t_cmd *cmd)
 {
 	close(shell->pipefd[0]);
 	close(shell->pipefd[1]);
@@ -152,7 +152,7 @@ void	clean_fd(t_shell *shell, int std_in, int std_out, Command *cmd)
 	free_cmd(cmd);
 }
 
-void	handle_status_error(int status, Command *cmd, t_shell *shell)
+void	handle_status_error(int status, t_cmd *cmd, t_shell *shell)
 {
 	int	status2;
 
@@ -165,7 +165,7 @@ void	handle_status_error(int status, Command *cmd, t_shell *shell)
 		shell->last_exit_status = status;
 }
 
-int	assign_cmd_args(t_shell *shell, Command *command, char **envp)
+int	assign_cmd_args(t_shell *shell, t_cmd *command, char **envp)
 {
 	int		i;
 	char	**paths;
@@ -197,7 +197,7 @@ int	is_directory(const char *path)
 	return (1);
 }
 
-int	check_error(Command *cmd, t_shell *shell, int parent)
+int	check_error(t_cmd *cmd, t_shell *shell, int parent)
 {
 	if (is_directory(cmd->name) == 1)
 	{
@@ -229,7 +229,7 @@ int	is_custom_cmd(char *name)
 		return (0);
 }
 
-void	check_child_error(t_shell *shell, Command *cmd, char *error)
+void	check_child_error(t_shell *shell, t_cmd *cmd, char *error)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
@@ -242,7 +242,7 @@ void	check_child_error(t_shell *shell, Command *cmd, char *error)
 	else if (!find_env_var(shell->env_head, "PATH")
 		&& !is_custom_cmd(cmd->name))
 	{
-		error = ft_strjoin_nconst(cmd->name, " : Command not found");
+		error = ft_strjoin_nconst(cmd->name, " : t_cmd not found");
 		shell->last_exit_status = 127;
 	}
 	if (error != NULL)
@@ -253,7 +253,7 @@ void	check_child_error(t_shell *shell, Command *cmd, char *error)
 	}
 }
 
-int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell,
+int	execute_command_pipex(int prev_pipe, t_cmd *cmd, t_shell *shell,
 		int parent)
 {
 	pid_t	pid;
@@ -280,7 +280,7 @@ int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell,
 	}
 }
 
-void	last_pipe(t_shell *shell, Command *cmd, int prev_pipe, int *status)
+void	last_pipe(t_shell *shell, t_cmd *cmd, int prev_pipe, int *status)
 {
 	if (shell->table->command_count != 1)
 	{
@@ -300,7 +300,7 @@ void	last_pipe(t_shell *shell, Command *cmd, int prev_pipe, int *status)
 	}
 }
 
-int	pipex(Command *cmd, t_shell *shell)
+int	pipex(t_cmd *cmd, t_shell *shell)
 {
 	int	status;
 	int	prev_pipe;
