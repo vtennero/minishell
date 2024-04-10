@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/08 22:11:47 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 13:55:26 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,7 @@ void	interactive_mode(t_shell *shell)
 		{
 			add_history(input);
 			create_tokens(shell, input);
-			// printTokens(shell->token_head);
 			command_table = create_command_table(shell, shell->token_head);
-			// print_command_table(command_table);
 			execute_command_table(shell, command_table);
 			shell->token_head = NULL;
 		}
@@ -74,7 +72,7 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
 	{
-		perror("error reading file\n");
+		ft_putstr_fd("error reading file\n", 2);
 		return ;
 	}
 	line = (char **)malloc(sizeof(char *));
@@ -88,19 +86,73 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 	execute_command_table(shell, command_table);
 }
 
+// void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
+// {
+// 	CommandTable	*command_table;
+// 	char			**line;
+// 	int				fd;
+
+// 	fd = open(argv[1], O_RDONLY);
+// 	ft_printf("w_arg_mode_read_file %d\n", argc);
+// 	ft_printf("w_arg_mode_read_file %s\n", argv[0]);
+// 	ft_printf("w_arg_mode_read_file %s\n", argv[1]);
+// 	(void)argc;
+// 	if (argv[1])
+// 	// if (argv[2] && argc == 3)
+// 	{
+// 		line = (char **)malloc(sizeof(char *));
+// 		while ((old_get_next_line(fd, line)) == 1)
+// 		{
+// 			create_tokens(shell, *line);
+// 			// printTokens(shell->token_head);
+// 			free(*line);
+// 		}
+// 		free(line);
+// 		create_tokens(shell, argv[1]);
+// 		printTokens(shell->token_head);
+// 		command_table = create_command_table(shell, shell->token_head);
+// 		execute_command_table(shell, command_table);
+// 	}
+// 	else
+// 	{
+// 		ft_putstr_fd("bash: option requires an argument\n", 2);
+// 		return ;
+// 	}
+// }
+
 void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 {
 	CommandTable	*command_table;
+	char			**line;
+	int				fd;
 
-	if (argv[2] && argc == 3)
+	fd = open(argv[1], O_RDONLY);
+	ft_printf("w_arg_mode_read_file %d\n", argc);
+	ft_printf("w_arg_mode_read_file %s\n", argv[0]);
+	ft_printf("w_arg_mode_read_file %s\n", argv[1]);
+	(void)argc;
+	if (argv[1])
+	// if (argv[2] && argc == 3)
 	{
-		create_tokens(shell, argv[2]);
-		command_table = create_command_table(shell, shell->token_head);
-		execute_command_table(shell, command_table);
+		line = (char **)malloc(sizeof(char *));
+		while ((old_get_next_line(fd, line)) == 1)
+		{
+			create_tokens(shell, *line);
+			command_table = create_command_table(shell, shell->token_head);
+			print_command_table(command_table);
+			execute_command_table(shell, command_table);
+			// printTokens(shell->token_head);
+			free(*line);
+		}
+		free(line);
+		// create_tokens(shell, argv[1]);
+		// printTokens(shell->token_head);
+		// command_table = create_command_table(shell, shell->token_head);
+		// execute_command_table(shell, command_table);
 	}
 	else
 	{
-		perror("bash: option requires an argument\n");
+		ft_putstr_fd("bash: option requires an argument\n", 2);
 		return ;
 	}
 }

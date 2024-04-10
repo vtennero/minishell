@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/08 21:05:40 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 13:36:01 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,9 +129,9 @@ void	clean_fd(t_shell *shell, int std_in, int std_out, Command *cmd)
 	close(shell->pipefd[0]);
 	close(shell->pipefd[1]);
 	if (dup2(std_in, STDIN_FILENO) == -1)
-		perror("dup2");
+		ft_putstr_fd("dup2", 2);
 	if (dup2(std_out, STDOUT_FILENO) == -1)
-		perror("dup2");
+		ft_putstr_fd("dup2", 2);
 	free_cmd(cmd);
 }
 

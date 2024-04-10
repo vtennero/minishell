@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:55:49 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 11:10:42 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 13:39:04 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,6 @@ char	*process_quoting(t_shell *shell, const char **s, char *result)
 	size_t	adv_position;
 	char	*temp;
 
-	ft_printf("process_quoting START result = |%s|\n", result);
 	while (**s && !ft_isspace((unsigned char)**s) && !(is_special(*s)))
 	{
 		temp = NULL;
@@ -114,11 +113,9 @@ char	*process_quoting(t_shell *shell, const char **s, char *result)
 			temp = create_one_char_str(shell, **s);
 			(*s)++;
 		}
-		ft_printf("process_quoting temp = |%s|\n", temp);
 		if (temp)
 			result = shell_strjoin(shell, result, temp);
 	}
-	ft_printf("process_quoting result = |%s|\n", result);
 	return (result);
 }
 

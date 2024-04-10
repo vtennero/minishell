@@ -24,7 +24,7 @@ int	builtin_pwd(void)
 	}
 	else
 	{
-		perror("pwd: error");
+		ft_putstr_fd("pwd: error", 2);
 		return (1);
 	}
 	return (0);

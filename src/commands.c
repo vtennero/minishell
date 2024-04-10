@@ -19,7 +19,7 @@ CommandTable	*initialize_command_table(t_shell *shell)
 	table = (CommandTable *)shell_malloc(shell, sizeof(CommandTable));
 	if (!table)
 	{
-		perror("Failed to allocate CommandTable");
+		ft_putstr_fd("Failed to allocate CommandTable", 2);
 		exit(EXIT_FAILURE);
 	}
 	table->head = NULL;
@@ -97,7 +97,7 @@ Command	*create_command_entry(t_shell *shell, char *name)
 	cmd = (Command *)shell_malloc(shell, sizeof(Command));
 	if (!cmd)
 	{
-		perror("Failed to allocate Command");
+		ft_putstr_fd("Failed to allocate Command", 2);
 		exit(EXIT_FAILURE);
 	}
 	cmd->name = shell_strdup(shell, name);

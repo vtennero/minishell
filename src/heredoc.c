@@ -23,7 +23,7 @@ char	*create_temp_file_path(const char *basePath, const char *timeStr,
 	temp_file_path = malloc(buffer_size);
 	if (temp_file_path == NULL)
 	{
-		perror("malloc failed");
+		ft_putstr_fd("malloc failed", 2);
 		return (NULL);
 	}
 	ptr = temp_file_path;
@@ -44,7 +44,7 @@ int	create_and_unlink_temp_file(const char *tempFilePath)
 	fd = open(tempFilePath, O_RDWR | O_CREAT | O_EXCL, 0600);
 	if (fd == -1)
 	{
-		perror("Cannot create temporary file for heredoc");
+		ft_putstr_fd("Cannot create temporary file for heredoc", 2);
 		return (-1);
 	}
 	return (fd);

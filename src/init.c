@@ -77,7 +77,7 @@ t_shell	*initialize_shell(char **envp)
 	shell = (t_shell *)ft_calloc(1, sizeof(t_shell));
 	if (!shell)
 	{
-		perror("Failed to initialize shell");
+		ft_putstr_fd("Failed to initialize shell", 2);
 		exit(EXIT_FAILURE);
 	}
 	shell->mem_tracker.head = NULL;
