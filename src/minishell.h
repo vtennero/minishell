@@ -284,7 +284,7 @@ int is_token_type_present(TokenNode *head, int type);
 void	print_command(const Command *cmd);
 
 // pipex_and pipex_util
-# define ERR_INVALID_CMD " : command not found\n"
+# define ERR_INVALID_CMD " : command not found"
 # define STDIN_FILENO 0
 # define STDOUT_FILENO 1
 

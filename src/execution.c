@@ -16,10 +16,11 @@ void	execute_command_table(t_shell *shell, CommandTable *table)
 {
 	Command	*current;
 
-	if (table)
+	if (table && table->head)
+	{
 		shell->table = table;
 	current = table->head;
-	(void)shell;
 	pipex(current, shell);
 	cleanup_heredocs_in_command_table(table);
+	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 13:36:01 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:08:58 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ void	check_child_error(t_shell *shell, Command *cmd, char *error)
 	else if (!find_env_var(shell->env_head, "PATH")
 		&& !is_custom_cmd(cmd->name))
 	{
-		error = ft_strjoin_nconst(cmd->name, " : Command not found\n");
+		error = ft_strjoin_nconst(cmd->name, " : Command not found");
 		shell->last_exit_status = 127;
 	}
 	if (error != NULL)
