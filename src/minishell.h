@@ -158,6 +158,7 @@ typedef struct s_shell
 	int std_in;
 	int std_out;
 	int line_count;
+	char	*readfile;
 	pid_t pid;
 	MemTracker mem_tracker;
 	TokenNode *token_head;

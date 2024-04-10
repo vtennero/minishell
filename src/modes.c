@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 15:39:04 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:44:09 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,11 +127,11 @@ void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 	int				fd;
 
 	fd = open(argv[1], O_RDONLY);
-
 	(void)argc;
 	if (argv[1])
 	{
 		line = (char **)malloc(sizeof(char *));
+		shell->readfile = shell_strdup(shell, argv[1]);
 		while ((old_get_next_line(fd, line)) == 1)
 		{
 			create_tokens(shell, *line);

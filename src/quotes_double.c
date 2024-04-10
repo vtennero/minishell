@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 14:09:19 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 14:19:57 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:47:26 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,7 @@ char	*handle_dol_in_quote(const char **s, t_shell *shell, char *buf)
 	if (!buf)
 		new = expanded;
 	else
-	{
 		new = shell_strjoin(shell, buf, expanded);
-		free(buf);
-	}
 	*s += text_len;
 	return (new);
 }
