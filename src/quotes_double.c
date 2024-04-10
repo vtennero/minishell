@@ -6,12 +6,11 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 14:09:19 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 15:47:26 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 17:30:53 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 char	*handle_dol_in_quote(const char **s, t_shell *shell, char *buf)
 {
