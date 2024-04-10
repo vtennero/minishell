@@ -30,8 +30,9 @@ int	get_env_var_len(t_shell *shell, const char **input, t_env_var *env_vars)
 	char		*var_name;
 	t_env_var	*var;
 
+	(*input)++;
 	var_name_len = 0;
-	var_start = *input + 1;
+	var_start = *input;
 	while (ft_isalnum((unsigned char)**input) || **input == '_')
 		(*input)++;
 	var_name_len = *input - var_start;

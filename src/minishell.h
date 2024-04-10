@@ -197,6 +197,7 @@ void	set_token_commands(t_shell *shell);
 int is_valid_cmd(t_shell* shell,char* cmd_name);
 int	is_only_spaces(char *str);
 int	is_special(const char *str);
+int	is_redirect(int type, int *after_redirect);
 /*
 ** -- QUOTES --
 */
