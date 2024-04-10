@@ -83,16 +83,17 @@ t_shell	*initialize_shell(char **envp)
 	shell->mem_tracker.head = NULL;
 	shell->token_head = NULL;
 	shell->last_exit_status = 0;
+	shell->line_count = 1;
 	shell->is_interactive = 0;
 	shell->envp = envp;
 	shell->std_in = dup(STDIN_FILENO);
 	shell->std_out = dup(STDOUT_FILENO);
 	shell->table = NULL;
-	if (isatty(STDIN_FILENO))
-	{
-		if (isatty(STDOUT_FILENO))
-			shell->is_interactive = 1;
-	}
+	// if (isatty(STDIN_FILENO))
+	// {
+	// 	if (isatty(STDOUT_FILENO))
+	// 		shell->is_interactive = 1;
+	// }
 	setup_signals(shell);
 	create_env_var_list(shell, envp);
 	return (shell);

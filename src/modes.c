@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 15:04:38 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 15:39:04 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,9 +139,9 @@ void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 			execute_command_table(shell, command_table);
 			free(*line);
 			shell->token_head = NULL;
+			shell->line_count++;
 		}
 		free(line);
-
 	}
 	else
 	{

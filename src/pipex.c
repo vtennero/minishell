@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 15:08:58 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 15:38:58 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,20 @@ int	custom_cmd(char **cmd_args, char *cmd_path, Command *cmd, t_shell *shell)
 	return (0);
 }
 
+void	prepend_linecount(t_shell *shell)
+{
+	char	*linecount;
+
+	if (shell->is_interactive==0)
+	{
+		linecount = ft_itoa(shell->line_count);
+		ft_putstr_fd("line ", 2);
+		ft_putstr_fd(linecount, 2);
+		ft_putstr_fd(": ", 2);
+		free(linecount);
+	}
+}
+
 int	run_cmd(Command *command, t_shell *shell)
 {
 	int	status;
@@ -80,6 +94,7 @@ int	run_cmd(Command *command, t_shell *shell)
 	if (!custom_cmd(command->execv_args, command->cmd_path, command, shell))
 	{
 		shell->last_exit_status = status;
+		prepend_linecount(shell);
 		return (ft_puterr(ft_strjoin_nconst(command->name, ERR_INVALID_CMD),
 				127));
 	}
