@@ -3,6 +3,18 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
+#    By: cliew <cliew@student.42.fr>                +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/04/10 18:37:20 by cliew             #+#    #+#              #
+#    Updated: 2024/04/10 18:37:20 by cliew            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/21 13:24:40 by vitenner          #+#    #+#              #
 #    Updated: 2024/02/26 15:06:24 by toto             ###   ########.fr        #
@@ -27,6 +39,8 @@ tokens_utils.c \
 tokens_set_cmds.c \
 signals.c \
 commands.c \
+commands2.c \
+commands3.c \
 debug_commands.c \
 commands_cd.c \
 commands_echo.c \
@@ -41,6 +55,7 @@ execution.c \
 magicmalloc.c \
 magicmalloc_terminate.c \
 heredoc.c \
+heredoc2.c \
 parse_var.c \
 pipex.c \
 pipex2.c \
