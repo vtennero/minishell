@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 15:44:19 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 16:09:18 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,11 @@ int	check_error(Command *cmd, t_shell *shell, int parent)
 		ft_putstr_fd("is a directory\n", 2);
 		shell->last_exit_status = 126;
 		return (1);
+	}
+	if (ft_strcmp(cmd->name,"")==0)
+	{
+		shell->last_exit_status = 0;
+		return 1;
 	}
 	if (parent)
 	{
