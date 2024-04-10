@@ -197,6 +197,14 @@ char			*cpy_exit_code(char *str, int n);
 */
 void			prepare_heredocs_in_command_table(t_cmd_table *table);
 void			cleanup_heredocs_in_command_table(t_cmd_table *table);
+
+void			cleanup_heredocs_in_command_table(t_cmd_table *table);
+void			write_heredoc_to_file(int fd, const char *delimiter);
+char			*handle_heredoc(const char *delimiter);
+void			prepare_heredocs_in_command_table(t_cmd_table *table);
+void			cleanup_temp_file(char *tempFilePath);
+int				create_temp_file(char **tempFilePath);
+
 /*
 ** ================== COMMANDS ==================
 */
@@ -217,6 +225,30 @@ int				builtin_echo(t_shell *shell, \
 char **args, int n_args, t_cmd *cmd);
 int				builtin_unset(t_shell *shell, char **args, int n_args);
 int				builtin_env(t_shell *shell);
+
+
+
+
+t_cmd_table		*initialize_command_table(t_shell *shell);
+void			set_rin(t_shell *shell, t_cmd *cmd, char *filename);
+void			set_rout(t_shell *shell, t_cmd *cmd, char *filename, int append);
+void			free_command_table(t_cmd_table *table);\
+
+t_cmd_table		*create_command_table(t_shell *shell, t_token_node *tokens);
+void			process_token_nodes(t_shell *shell, t_cmd_table *table,
+				t_token_node *tokens);
+void			update_token_node(t_token_node **ct);
+t_cmd			*process_command_set(t_shell *shell, t_cmd_table *table,
+				t_token_node **ct, int *pipe_exist);
+void			update_head(t_cmd *current_command, t_cmd_table *table);
+void			pipe_modify_fin_fout(t_token_node *current_token, t_cmd *cc,
+				int *pipe_exist);
+t_cmd			*create_command_entry(t_shell *shell, char *name);
+void			add_argument(t_shell *shell, t_cmd *cmd, char *arg);
+t_cmd			*create_command_set(t_shell *shell, t_token_node *node);
+void			handle_token(t_shell *shell, t_token_node *ct, t_cmd *cc);
+
+
 /*
 ** :: EXIT ::
 */

@@ -94,7 +94,7 @@ int	is_token_type_present(t_token_node *head, int type)
 
 int	get_token_list_length(t_token_node *head)
 {
-	int			length;
+	int				length;
 	t_token_node	*current;
 
 	length = 0;

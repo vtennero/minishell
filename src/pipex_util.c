@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-
-
 char	*find_env_path(char **envp)
 {
 	while (envp && *envp)
@@ -95,4 +93,3 @@ char	*ft_strjoin_nconst(char *s1, char *s2)
 		res[i + j] = s2[j];
 	return (res);
 }
-
