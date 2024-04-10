@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	printTokens(TokenNode *head)
+void	print_tokens(TokenNode *head)
 {
 	TokenNode	*current;
 
@@ -90,4 +90,19 @@ int	is_token_type_present(TokenNode *head, int type)
 		current = current->next;
 	}
 	return (0);
+}
+
+int	get_token_list_length(TokenNode *head)
+{
+	int			length;
+	TokenNode	*current;
+
+	length = 0;
+	current = head;
+	while (current != NULL)
+	{
+		length++;
+		current = current->next;
+	}
+	return (length);
 }

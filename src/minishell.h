@@ -191,33 +191,36 @@ void	setup_signals(t_shell *shell);
 void		create_tokens(t_shell *shell, const char *s);
 void		add_token(t_shell *shell, const char *value, int type);
 TokenType	get_token_type(const char *token_text);
-char	*parse_tokens(t_shell *shell, const char *s);
-int 	isspace_not_eol(int ch);
-void	set_token_commands(t_shell *shell);
-int is_valid_cmd(t_shell* shell,char* cmd_name);
-int	is_only_spaces(char *str);
-int	is_special(const char *str);
-int	is_redirect(int type, int *after_redirect);
+char		*parse_tokens(t_shell *shell, const char *s);
+int			isspace_not_eol(int ch);
+void		set_token_commands(t_shell *shell);
+int			is_valid_cmd(t_shell* shell,char* cmd_name);
+int			is_only_spaces(char *str);
+int			is_special(const char *str);
+int			is_redirect(int type, int *after_redirect);
 /*
 ** -- QUOTES --
 */
-char	*process_quoting(t_shell *shell, const char **s, char *result);
-char	*process_single_quote(t_shell *shell, const char **s);
-char	*process_double_quote(const char **s, t_shell *shell);
-int		get_non_expanded_var_length(char *var);
+char		*process_quoting(t_shell *shell, const char **s, char *result);
+char		*process_single_quote(t_shell *shell, const char **s);
+char		*process_double_quote(const char **s, t_shell *shell);
+int			get_non_expanded_var_length(char *var);
 /*
 ** -- VARIABLE EXPANSION --
 */
-char	*expand_var_one(t_shell *shell, const char *input);
-char	*expand_var_two(t_shell *shell, const char *input,
-		size_t *adv_pos);
+char		*expand_var_one(t_shell *shell, const char *input);
+char		*expand_var_two(t_shell *shell, const char *input, size_t *adv_pos);
+t_env_var	*find_return_env_var(t_env_var *head, const char *key);
+void		handle_exit_code(t_shell *shell, const char **input, char **output);
+int			calc_expanded_len(t_shell *shell, const char *input, t_env_var *env_vars);
+char		*cpy_exit_code(char *str, int n);
 /*
 ** -- HEREDOC --
 */
-void	parse_heredoc(t_shell *shell);
-void prepare_heredocs_in_command_table(CommandTable* table);
-void handle_heredoc_for_commands(t_shell *shell, CommandTable* table);
-void cleanup_heredocs_in_command_table(CommandTable* table);
+void		parse_heredoc(t_shell *shell);
+void 		prepare_heredocs_in_command_table(CommandTable* table);
+void 		handle_heredoc_for_commands(t_shell *shell, CommandTable* table);
+void 		cleanup_heredocs_in_command_table(CommandTable* table);
 /*
 ** ================== COMMANDS ==================
 */
@@ -225,18 +228,16 @@ void cleanup_heredocs_in_command_table(CommandTable* table);
 ** -- COMMAND TABLE --
 */
 CommandTable	*create_command_table(t_shell *shell, TokenNode *tokens);
-void	execute_command_table(t_shell *shell, CommandTable *table);
-void	free_command_table(CommandTable *table);
-// void	execute_ext_command(Command *cmd);
-void execute_ext_command(t_shell *shell, Command *cmd);
+void			execute_command_table(t_shell *shell, CommandTable *table);
+void			free_command_table(CommandTable *table);
 /*
 ** -- BUILT_IN COMMANDS --
 */
-int	builtin_cd(t_shell *shell, char **args, int n_args);
-int	builtin_pwd(void);
-int	builtin_echo(t_shell *shell, char **args, int n_args,Command* cmd);
-int	builtin_unset(t_shell *shell, char **args, int n_args);
-int	builtin_env(t_shell *shell);
+int				builtin_cd(t_shell *shell, char **args, int n_args);
+int				builtin_pwd(void);
+int				builtin_echo(t_shell *shell, char **args, int n_args,Command* cmd);
+int				builtin_unset(t_shell *shell, char **args, int n_args);
+int				builtin_env(t_shell *shell);
 /*
 ** :: EXIT ::
 */
@@ -255,6 +256,11 @@ void	add_new_var(t_shell *shell, const char *key, const char *value);
 void	decl_new_var(t_shell *shell, const char *key);
 void	remove_var(t_shell *shell, const char *key, int nchar);
 void	print_export(t_shell *shell, int is_export);
+int		handle_incompl_alloc_str(t_shell *shell, const char *key, int nchar);
+int		handle_decl_str(t_shell *shell, const char *key, int nchar);
+int		handle_alloc_str(t_shell *shell, const char *key, int nchar);
+int		is_alloc_str(const char *str);
+int		is_valid_var_name(const char *str, int n);
 /*
 ** ================== MEMORY ==================
 */
@@ -278,9 +284,9 @@ int	is_directory(const char *path);
 /*
 ** -- DEBUG --
 */
-void	printTokens(TokenNode *head);
+void	print_tokens(TokenNode *head);
 void	print_command_table(const CommandTable *table);
-int is_token_type_present(TokenNode *head, int type);
+int 	is_token_type_present(TokenNode *head, int type);
 void	print_command(const Command *cmd);
 
 // pipex_and pipex_util

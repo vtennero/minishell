@@ -24,6 +24,7 @@ OBJ_DIR = obj
 # Source files for minishell
 MINISHELL_SRC = main.c \
 tokens.c \
+tokens_utils.c \
 tokens_set_cmds.c \
 signals.c \
 commands.c \
@@ -35,17 +36,22 @@ commands_exit.c \
 commands_export.c \
 commands_pwd.c \
 commands_unset.c \
+commands_utils.c \
 externalcommands.c \
 execution.c \
 magicmalloc.c \
 magicmalloc_terminate.c \
 heredoc.c \
-env_var.c \
+parse_var.c \
 pipex.c \
 pipex_util.c \
 quotes.c \
+quotes_double.c \
 var_exp.c \
-utils.c \
+var_exp_utils.c \
+var_operations.c \
+var_operations_handlers.c \
+var_operations_utils.c \
 init.c \
 modes.c \
 modes_utils.c

@@ -21,31 +21,19 @@ const char	*skip_delimiters(const char *s, char c)
 	return (s);
 }
 
-int	find_index_char(const char *str, char c)
+int	is_special(const char *str)
 {
-	const char	*found;
-
-	found = ft_strchr(str, c);
-	if (found != NULL)
-	{
-		return (found - str);
-	}
-	return (-1);
-}
-
-int	get_token_list_length(TokenNode *head)
-{
-	int			length;
-	TokenNode	*current;
-
-	length = 0;
-	current = head;
-	while (current != NULL)
-	{
-		length++;
-		current = current->next;
-	}
-	return (length);
+	if (ft_strncmp(str, "|", 1) == 0)
+		return (1);
+	else if (ft_strncmp(str, "<<", 2) == 0)
+		return (2);
+	else if (ft_strncmp(str, ">>", 2) == 0)
+		return (2);
+	else if (ft_strncmp(str, ">", 1) == 0)
+		return (1);
+	else if (ft_strncmp(str, "<", 1) == 0)
+		return (1);
+	return (0);
 }
 
 int	calc_int_len(int num)
@@ -66,4 +54,21 @@ int	calc_int_len(int num)
 int	isspace_not_eol(int c)
 {
 	return (c == ' ' || c == '\f' || c == '\r' || c == '\t' || c == '\v');
+}
+
+TokenType	get_token_type(const char *token_text)
+{
+	if (ft_strcmp(token_text, "<") == 0)
+		return (TOKEN_REDIR_IN);
+	else if (ft_strcmp(token_text, ">") == 0)
+		return (TOKEN_REDIR_OUT);
+	else if (ft_strcmp(token_text, ">>") == 0)
+		return (TOKEN_REDIR_APPEND);
+	else if (ft_strcmp(token_text, "<<") == 0)
+		return (TOKEN_REDIR_HEREDOC);
+	else if (ft_strcmp(token_text, "|") == 0)
+		return (TOKEN_PIPE);
+	else if (ft_strcmp(token_text, "$?") == 0)
+		return (TOKEN_EXIT_STATUS);
+	return (TOKEN_ARG);
 }
