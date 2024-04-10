@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 13:55:26 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:04:38 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,28 +127,21 @@ void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 	int				fd;
 
 	fd = open(argv[1], O_RDONLY);
-	ft_printf("w_arg_mode_read_file %d\n", argc);
-	ft_printf("w_arg_mode_read_file %s\n", argv[0]);
-	ft_printf("w_arg_mode_read_file %s\n", argv[1]);
+
 	(void)argc;
 	if (argv[1])
-	// if (argv[2] && argc == 3)
 	{
 		line = (char **)malloc(sizeof(char *));
 		while ((old_get_next_line(fd, line)) == 1)
 		{
 			create_tokens(shell, *line);
 			command_table = create_command_table(shell, shell->token_head);
-			print_command_table(command_table);
 			execute_command_table(shell, command_table);
-			// printTokens(shell->token_head);
 			free(*line);
+			shell->token_head = NULL;
 		}
 		free(line);
-		// create_tokens(shell, argv[1]);
-		// printTokens(shell->token_head);
-		// command_table = create_command_table(shell, shell->token_head);
-		// execute_command_table(shell, command_table);
+
 	}
 	else
 	{

@@ -215,6 +215,8 @@ CommandTable	*create_command_table(t_shell *shell, TokenNode *tokens)
 
 	table = initialize_command_table(shell);
 	ct = tokens;
+	if (ct==NULL)
+		return table;
 	pipe_exist = 0;
 	cc = NULL;
 	while (ct != NULL)
@@ -231,6 +233,7 @@ CommandTable	*create_command_table(t_shell *shell, TokenNode *tokens)
 			ct = ct->next;
 		update_head(cc, table);
 	}
-	prepare_heredocs_in_command_table(table);
+	if (!table || !table->head)
+		prepare_heredocs_in_command_table(table);
 	return (table);
 }
