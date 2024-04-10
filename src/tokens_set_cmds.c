@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 17:13:35 by root              #+#    #+#             */
-/*   Updated: 2024/04/10 17:36:47 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 18:27:31 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,32 +95,5 @@ void	set_commands_check(t_shell *shell, t_token_node *node,
 		}
 		if (node->token.type == TOKEN_PIPE)
 			*pipe_exist = 1;
-	}
-}
-
-void	set_token_commands(t_shell *shell)
-{
-	t_token_node	*node;
-	int				pipe_exist;
-	int				after_redirect;
-
-	node = shell->token_head;
-	pipe_exist = 1;
-	after_redirect = 0;
-	while (node)
-	{
-		if (!check_if_valid_cmd(node) && (node == shell->token_head))
-			node->token.type = TOKEN_INV_COMMAND;
-		else
-		{
-			while (is_redirect(node->token.type, &after_redirect) && node->next
-				&& node->next->next)
-			{
-				node = node->next->next;
-				after_redirect = 0;
-			}
-		}
-		set_commands_check(shell, node, &after_redirect, &pipe_exist);
-		node = node->next;
 	}
 }

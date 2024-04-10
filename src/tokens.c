@@ -81,3 +81,30 @@ void	create_tokens(t_shell *shell, const char *s)
 	parse_tokens(shell, s);
 	set_token_commands(shell);
 }
+
+void	set_token_commands(t_shell *shell)
+{
+	t_token_node	*node;
+	int				pipe_exist;
+	int				after_redirect;
+
+	node = shell->token_head;
+	pipe_exist = 1;
+	after_redirect = 0;
+	while (node)
+	{
+		if (!check_if_valid_cmd(node) && (node == shell->token_head))
+			node->token.type = TOKEN_INV_COMMAND;
+		else
+		{
+			while (is_redirect(node->token.type, &after_redirect) && node->next
+				&& node->next->next)
+			{
+				node = node->next->next;
+				after_redirect = 0;
+			}
+		}
+		set_commands_check(shell, node, &after_redirect, &pipe_exist);
+		node = node->next;
+	}
+}

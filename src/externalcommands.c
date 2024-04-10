@@ -12,13 +12,29 @@
 
 #include "minishell.h"
 
-int	find_env_var(t_env_var *list, const char *key)
+int	pipe_extension(t_shell *shell, char *input)
 {
-	while (list != NULL)
+	char	*input2;
+	char	*temp;
+
+	input2 = NULL;
+	while (end_with_pipe(input) == 1 && !not_empty(input2))
 	{
-		if (ft_strcmp(list->key, (char *)key) == 0)
-			return (1);
-		list = list->next;
+		if (ft_strnstr(input, "||", ft_strlen(input)))
+		{
+			ft_putstr_fd("syntax error near unexpected token `||'", 2);
+			shell->last_exit_status = 2;
+			return (-1);
+		}
+		input2 = readline("> ");
+		if (not_empty(input2))
+		{
+			temp = ft_strjoin_nconst(input, input2);
+			free(input);
+			input = shell_strdup(shell, temp);
+			free(temp);
+		}
+		input2 = "";
 	}
 	return (0);
 }

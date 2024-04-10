@@ -3,46 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 17:05:03 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 18:33:21 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	pipe_extension(t_shell *shell, char *input)
-{
-	char	*input2;
-	char	*temp;
-
-	input2 = NULL;
-	while (end_with_pipe(input) == 1 && !not_empty(input2))
-	{
-		if (ft_strnstr(input, "||", ft_strlen(input)))
-		{
-			ft_putstr_fd("syntax error near unexpected token `||'", 2);
-			shell->last_exit_status = 2;
-			return (-1);
-		}
-		input2 = readline("> ");
-		if (not_empty(input2))
-		{
-			temp = ft_strjoin_nconst(input, input2);
-			free(input);
-			input = shell_strdup(shell, temp);
-			free(temp);
-		}
-		input2 = "";
-	}
-	return (0);
-}
-
 void	interactive_mode(t_shell *shell)
 {
 	char			*input;
-	t_cmd_table	*command_table;
+	t_cmd_table		*command_table;
 
 	while (1)
 	{
@@ -67,7 +40,7 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 {
 	char			**line;
 	int				fd;
-	t_cmd_table	*command_table;
+	t_cmd_table		*command_table;
 
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
@@ -86,48 +59,13 @@ void	w_arg_mode_c(t_shell *shell, char **argv)
 	execute_command_table(shell, command_table);
 }
 
-// void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
-// {
-// 	t_cmd_table	*command_table;
-// 	char			**line;
-// 	int				fd;
-
-// 	fd = open(argv[1], O_RDONLY);
-// 	ft_printf("w_arg_mode_read_file %d\n", argc);
-// 	ft_printf("w_arg_mode_read_file %s\n", argv[0]);
-// 	ft_printf("w_arg_mode_read_file %s\n", argv[1]);
-// 	(void)argc;
-// 	if (argv[1])
-// 	// if (argv[2] && argc == 3)
-// 	{
-// 		line = (char **)malloc(sizeof(char *));
-// 		while ((old_get_next_line(fd, line)) == 1)
-// 		{
-// 			create_tokens(shell, *line);
-// 			// printt_tokens(shell->token_head);
-// 			free(*line);
-// 		}
-// 		free(line);
-// 		create_tokens(shell, argv[1]);
-// 		printt_tokens(shell->token_head);
-// 		command_table = create_command_table(shell, shell->token_head);
-// 		execute_command_table(shell, command_table);
-// 	}
-// 	else
-// 	{
-// 		ft_putstr_fd("bash: option requires an argument\n", 2);
-// 		return ;
-// 	}
-// }
-
-void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
+void	w_arg_mode_read_file(t_shell *shell, char **argv)
 {
-	t_cmd_table	*command_table;
+	t_cmd_table		*command_table;
 	char			**line;
 	int				fd;
 
 	fd = open(argv[1], O_RDONLY);
-	(void)argc;
 	if (argv[1])
 	{
 		line = (char **)malloc(sizeof(char *));
@@ -144,10 +82,7 @@ void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 		free(line);
 	}
 	else
-	{
 		ft_putstr_fd("bash: option requires an argument\n", 2);
-		return ;
-	}
 }
 
 void	w_arg_mode(t_shell *shell, int argc, char **argv)
@@ -155,13 +90,14 @@ void	w_arg_mode(t_shell *shell, int argc, char **argv)
 	if (ft_strcmp(argv[1], "-c") == 0)
 		w_arg_mode_c(shell, argv);
 	else
-		w_arg_mode_read_file(shell, argc, argv);
+		w_arg_mode_read_file(shell, argv);
+	(void)argc;
 }
 
 void	std_input_mode(int fd, t_shell *shell)
 {
 	char			**line;
-	t_cmd_table	*command_table;
+	t_cmd_table		*command_table;
 
 	line = (char **)malloc(sizeof(char *));
 	while ((old_get_next_line(fd, line)) == 1)

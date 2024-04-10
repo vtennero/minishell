@@ -43,7 +43,11 @@ magicmalloc_terminate.c \
 heredoc.c \
 parse_var.c \
 pipex.c \
+pipex2.c \
+pipex3.c \
+pipex4.c \
 pipex_util.c \
+pipex_utils2.c \
 quotes.c \
 quotes_double.c \
 var_exp.c \

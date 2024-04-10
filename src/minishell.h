@@ -149,7 +149,9 @@ void			w_arg_mode(t_shell *shell, int argc, char **argv);
 void			std_input_mode(int fd, t_shell *shell);
 int				not_empty(const char *str);
 int				end_with_pipe(const char *str);
-/*
+int				pipe_extension(t_shell *shell, char *input);
+
+/**
 ** -- SIGNALS --
 */
 void			sigint_handler(int sig_num);
@@ -204,6 +206,8 @@ void			cleanup_heredocs_in_command_table(t_cmd_table *table);
 t_cmd_table		*create_command_table(t_shell *shell, t_token_node *tokens);
 void			execute_command_table(t_shell *shell, t_cmd_table *table);
 void			free_command_table(t_cmd_table *table);
+void			set_token_commands(t_shell *shell);
+
 /*
 ** -- BUILT_IN COMMANDS --
 */
@@ -239,21 +243,53 @@ int				is_valid_var_name(const char *str, int n);
 /*
 ** ================== PIPES ==================
 */
-char			*check_path(char **envp);
-char			*locate_cmd(char **paths, char *cmd);
-int				find_env_var(t_env_var *list, const char *key);
-char			*find_env_path(char **envp);
-void			free_array(char **v);
-char			*ft_strdup_ignore(const char *s, char ignore);
-int				ft_strchr_count(const char *s, int c);
-char			*ft_strjoin_nconst(char *s1, char *s2);
-int				ft_puterr(char *s, int ret);
-int				execute_command_pipex(int prev_pipe, \
-t_cmd *cmd, t_shell *shell, int parent);
-char			**find_cmd_paths(char **envp);
-int				run_cmd(t_cmd *command, t_shell *shell);
-int				pipex( t_cmd *cmd, t_shell *shell);
 
+
+int	is_custom_cmd(char *name);
+void	check_child_error(t_shell *shell, t_cmd *cmd, char *error);
+int	execute_command_pipex(int prev_pipe, t_cmd *cmd, t_shell *shell, int parent);
+void	last_pipe(t_shell *shell, t_cmd *cmd, int prev_pipe, int *status);
+int	pipex(t_cmd *cmd, t_shell *shell);
+
+//pipex2
+void	free_cmd(t_cmd *cmd);
+int	builtin_cmd(t_cmd *command, t_shell *shell);
+void	run_execv(char **cmd_args, char *cmd_path, t_shell *shell);
+int	custom_cmd(char **cmd_args, char *cmd_path, t_cmd *cmd, t_shell *shell);
+void	prepend_linecount(t_shell *shell);
+
+
+//pipex3
+int	run_cmd(t_cmd *command, t_shell *shell);
+void	pipe_heredoc(t_cmd *cmd, t_shell *shell);
+void	check_finfout(int prev_pipe, t_cmd *cmd, t_shell *shell);
+void	clean_fd(t_shell *shell, int std_in, int std_out, t_cmd *cmd);
+void	handle_status_error(int status, t_cmd *cmd, t_shell *shell);
+
+//pipex 4
+int	assign_cmd_args(t_shell *shell, t_cmd *command, char **envp);
+int	is_directory(const char *path);
+int	check_error(t_cmd *cmd, t_shell *shell, int parent);
+char	*locate_cmd(char **paths, char *cmd);
+char	*check_path(char **envp);
+
+//pipex util
+char	*find_env_path(char **envp);
+void	free_array(char **v);
+char	**find_cmd_paths(char **envp);
+int	ft_strchr_count(const char *s, int c);
+char	*ft_strjoin_nconst(char *s1, char *s2);
+
+//pipex util2
+char	*ft_strdup_ignore(const char *s, char ignore);
+int	ft_puterr(char *s, int ret);
+int	find_env_var(t_env_var *list, const char *key);
+
+
+// set token cmd
+int				check_if_valid_cmd(t_token_node *node);
+void	set_commands_check(t_shell *shell, t_token_node *node,
+		int *after_redirect, int *pipe_exist);
 /*
 ** ================== MEMORY ==================
 */

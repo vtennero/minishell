@@ -12,43 +12,7 @@
 
 #include "minishell.h"
 
-char	*check_path(char **envp)
 
-{
-	while (*envp++ != NULL)
-	{
-		if (ft_strnstr(*envp, "PATH=", 5) != NULL)
-		{
-			return (*(envp));
-		}
-	}
-	return (NULL);
-}
-
-char	*locate_cmd(char **paths, char *cmd)
-{
-	char	*_cmd;
-	char	*cmd_path;
-
-	if (access(cmd, X_OK) >= 0)
-		return (ft_strdup(cmd));
-	_cmd = ft_strjoin("/", cmd);
-	cmd_path = NULL;
-	while (paths && *paths)
-	{
-		cmd_path = ft_strjoin(*paths, _cmd);
-		if (access(cmd_path, X_OK) >= 0)
-		{
-			free(_cmd);
-			return (cmd_path);
-		}
-		free(cmd_path);
-		cmd_path = NULL;
-		paths++;
-	}
-	free(_cmd);
-	return (cmd_path);
-}
 
 char	*find_env_path(char **envp)
 {
@@ -132,34 +96,3 @@ char	*ft_strjoin_nconst(char *s1, char *s2)
 	return (res);
 }
 
-char	*ft_strdup_ignore(const char *s, char ignore)
-{
-	char	*dup;
-	size_t	slen;
-	size_t	i;
-
-	slen = ft_strlen(s);
-	i = ft_strchr_count(s, ignore);
-	dup = (char *)malloc((slen - i + 1) * sizeof(char));
-	if (dup == NULL)
-		return (NULL);
-	i = 0;
-	while (*s)
-	{
-		if (*s != ignore)
-		{
-			dup[i] = *s;
-			i++;
-		}
-		s++;
-	}
-	dup[i] = 0;
-	return (dup);
-}
-
-int	ft_puterr(char *s, int ret)
-{
-	ft_putstr_fd(s, 2);
-	ft_putstr_fd("\n", 2);
-	exit (ret);
-}
