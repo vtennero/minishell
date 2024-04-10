@@ -3,28 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cliew <cliew@student.42.fr>                +#+  +:+       +#+         #
+#    By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/04/10 18:37:20 by cliew             #+#    #+#              #
-#    Updated: 2024/04/10 18:37:20 by cliew            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/02/21 13:24:40 by vitenner          #+#    #+#              #
-#    Updated: 2024/02/26 15:06:24 by toto             ###   ########.fr        #
+#    Created: 2024/04/10 19:18:28 by vitenner          #+#    #+#              #
+#    Updated: 2024/04/10 19:18:28 by vitenner         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Compiler and flags
 CC = gcc -g
-# CFLAGS = -Wall -Wextra -Werror -fsanitize=address -Isrc/
-CFLAGS = -Wall -Wextra -Werror -Isrc/
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -Isrc/
+# CFLAGS = -Wall -Wextra -Werror -Isrc/
 LDFLAGS = -lreadline
 
 # Directories

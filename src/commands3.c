@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands3.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:39:58 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 18:45:47 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 19:52:48 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ t_cmd	*create_command_entry(t_shell *shell, char *name)
 	cmd->name = shell_strdup(shell, name);
 	cmd->fin = 0;
 	cmd->fout = 0;
+	cmd->arg_count = 0;
 	return (cmd);
 }
 
@@ -58,7 +59,7 @@ t_cmd	*create_command_set(t_shell *shell, t_token_node *node)
 	}
 	if (!current_command)
 		ft_puterr("syntax error near unexpected token `newline'", 2);
-	current_command->args = (char **)shell_malloc(shell, (argc + 2)
+	current_command->args = (char **)shell_malloc(shell, (argc + 5)
 			* sizeof(char *));
 	return (current_command);
 }
