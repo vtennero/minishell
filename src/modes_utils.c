@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modes_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 16:38:52 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/07 06:42:53 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 10:45:40 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	isNotEmpty(const char *str)
 	// Check if string is empty or consists of only whitespace characters
 	for (size_t i = 0; str[i] != '\0'; i++)
 	{
-		if (!isspace((unsigned char)str[i]))
+		if (!ft_isspace((unsigned char)str[i]))
 			return (1);
 		// String is not empty and contains non-whitespace characters
 	}
@@ -37,7 +37,7 @@ int	end_with_pipe(const char *str)
 	while (str[i] != '\0')
 		i++; // Move to the end of the string
 	// Move backwards, skipping whitespace characters
-	while (i > 0 && isspace((unsigned char)str[i - 1]))
+	while (i > 0 && ft_isspace((unsigned char)str[i - 1]))
 		i--;
 	// Check if the last non-space character is a pipe symbol
 	if (i > 0 && str[i - 1] == '|')

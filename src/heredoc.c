@@ -170,7 +170,7 @@ void write_heredoc_to_file(int fd, const char* delimiter) {
     char *line;
 
     while ((line = readline("> ")) != NULL) {
-        if (strcmp(line, delimiter) == 0) {
+        if (ft_strcmp(line, delimiter) == 0) {
             free(line);
             break; // Delimiter found, stop reading input
         }

@@ -134,7 +134,7 @@ void	add_new_var(t_shell *shell, const char *key, const char *value)
 		new_var->value = shell_strdup(shell, "\0");
 	new_var->next = NULL;
 	tracer = &shell->env_head;
-	while (*tracer && strcmp((*tracer)->key, key) < 0)
+	while (*tracer && ft_strcmp((*tracer)->key, key) < 0)
 	{
 		tracer = &(*tracer)->next;
 	}
@@ -152,7 +152,7 @@ void	decl_new_var(t_shell *shell, const char *key)
 	new_var->value = "";
 	new_var->next = NULL;
 	tracer = &shell->env_head;
-	while (*tracer && strcmp((*tracer)->key, key) < 0)
+	while (*tracer && ft_strcmp((*tracer)->key, key) < 0)
 	{
 		tracer = &(*tracer)->next;
 	}

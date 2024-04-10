@@ -56,7 +56,7 @@ char	*find_env_path(char **envp)
 {
 	while (envp && *envp)
 	{
-		if (strncmp(*envp, "PATH=", 5) == 0)
+		if (ft_strncmp(*envp, "PATH=", 5) == 0)
 		{
 			return (ft_strdup(&(*envp)[5]));
 		}
