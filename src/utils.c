@@ -2,9 +2,12 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
+/*                                                    +:+ +:+        
+	+:+     */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+      
+	+#+        */
+/*                                                +#+#+#+#+#+  
+	+#+           */
 /*   Created: 2024/03/15 14:05:36 by vitenner          #+#    #+#             */
 /*   Updated: 2024/03/31 21:49:03 by vitenner         ###   ########.fr       */
 /*                                                                            */
@@ -14,8 +17,7 @@
 
 const char	*skip_delimiters(const char *s, char c)
 {
-	while (*s == ' ' || *s == '\f' || *s == '\r' || \
-	*s == '\t' || *s == '\v'
+	while (*s == ' ' || *s == '\f' || *s == '\r' || *s == '\t' || *s == '\v'
 		|| *s == '\n')
 		s++;
 	(void)c;
@@ -64,8 +66,7 @@ int	calc_int_len(int num)
 	return (length);
 }
 
-int isspace_not_eol(int ch)
+int	isspace_not_eol(int c)
 {
-    return (ch == ' ' || ch == '\f' || ch == '\r' || \
-	ch == '\t' || ch == '\v');
+	return (c == ' ' || c == '\f' || c == '\r' || c == '\t' || c == '\v');
 }

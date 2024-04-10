@@ -3,46 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/08 13:07:34 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/08 22:11:47 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int pipe_extension(t_shell* shell,char*input)
+int	pipe_extension(t_shell *shell, char *input)
 {
-	char			*input2;
-	char			*temp;
+	char	*input2;
+	char	*temp;
 
 	input2 = NULL;
-	while (end_with_pipe(input) == 1 && !isNotEmpty(input2))
-	 {
-
-			if (ft_strnstr(input, "||",ft_strlen(input)))
-			{
-				ft_putstr_fd("syntax error near unexpected token `||'",2);
-				shell->last_exit_status=2;
-				return -1;
-			}
-			input2 = readline("> ");
-			if (isNotEmpty(input2))
-			{
-				temp = ft_strjoin_nconst(input, input2);
-				free(input);
-				input = shell_strdup(shell, temp);
-				free(temp);
-			}
-			input2 = "";
+	while (end_with_pipe(input) == 1 && !not_empty(input2))
+	{
+		if (ft_strnstr(input, "||", ft_strlen(input)))
+		{
+			ft_putstr_fd("syntax error near unexpected token `||'", 2);
+			shell->last_exit_status = 2;
+			return (-1);
+		}
+		input2 = readline("> ");
+		if (not_empty(input2))
+		{
+			temp = ft_strjoin_nconst(input, input2);
+			free(input);
+			input = shell_strdup(shell, temp);
+			free(temp);
+		}
+		input2 = "";
 	}
-	return 0;
+	return (0);
 }
 
-/*
-Interactive mode but with arguments
-*/
 void	interactive_mode(t_shell *shell)
 {
 	char			*input;
@@ -56,7 +52,7 @@ void	interactive_mode(t_shell *shell)
 			ft_printf("exit\n");
 			break ;
 		}
-		if (ft_strlen(input) > 0 && pipe_extension(shell,input) !=-1)
+		if (ft_strlen(input) > 0 && pipe_extension(shell, input) != -1)
 		{
 			add_history(input);
 			create_tokens(shell, input);
@@ -109,9 +105,6 @@ void	w_arg_mode_read_file(t_shell *shell, int argc, char **argv)
 	}
 }
 
-/*
-Non-interactive mode but with arguments
-*/
 void	w_arg_mode(t_shell *shell, int argc, char **argv)
 {
 	if (ft_strcmp(argv[1], "-c") == 0)
@@ -120,9 +113,6 @@ void	w_arg_mode(t_shell *shell, int argc, char **argv)
 		w_arg_mode_read_file(shell, argc, argv);
 }
 
-/*
-Non-interactive mode due to input or output redirection
-*/
 void	std_input_mode(int fd, t_shell *shell)
 {
 	char			**line;

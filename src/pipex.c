@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/07 08:56:08 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/08 21:05:40 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	free_cmd(Command *cmd)
 {
 	free(cmd->cmd_path);
 }
+
 int	builtin_cmd(Command *command, t_shell *shell)
 {
 	int	exit_code;
@@ -29,16 +30,18 @@ int	builtin_cmd(Command *command, t_shell *shell)
 		exit_code = builtin_export(shell, command->args, command->arg_count);
 	else if (ft_strcmp(command->name, "exit") == 0)
 		exit_code = builtin_exit(shell, command->args, command->arg_count);
-	// else if (ft_strcmp(command->name, "echo") == 0 && (!find_env_var(shell->env_head, "PATH")))
-	// 	exit_code = builtin_echo(shell, command->args, command->arg_count, command);
-	// else if (ft_strcmp(command->name, "env") == 0 && (!find_env_var(shell->env_head, "PATH")))
-	// 	exit_code =builtin_env(shell);
-	// else if (ft_strcmp(command->name, "pwd") == 0 && (!find_env_var(shell->env_head, "PATH")))
-	// 	exit_code = builtin_pwd();
 	if (exit_code == -99999)
 		return (0);
 	shell->last_exit_status = exit_code;
 	return (1);
+}
+
+void	run_execv(char **cmd_args, char *cmd_path, t_shell *shell)
+{
+	execve(cmd_path, cmd_args, shell->envp);
+	free(cmd_path);
+	free_array(cmd_args);
+	exit(EXIT_FAILURE);
 }
 
 int	custom_cmd(char **cmd_args, char *cmd_path, Command *cmd, t_shell *shell)
@@ -63,15 +66,10 @@ int	custom_cmd(char **cmd_args, char *cmd_path, Command *cmd, t_shell *shell)
 	if (exit_code != -999)
 		exit(exit_code);
 	else if (cmd_path)
-	{
-		execve(cmd_path, cmd_args, shell->envp);
-		free(cmd_path);
-		free_array(cmd_args);
-		exit(EXIT_FAILURE);	
-		
-	}
+		run_execv(cmd_args, cmd_path, shell);
 	else
 		return (0);
+	return (0);
 }
 
 int	run_cmd(Command *command, t_shell *shell)
@@ -88,25 +86,24 @@ int	run_cmd(Command *command, t_shell *shell)
 	return (0);
 }
 
-
-void pipe_heredoc(Command *cmd, t_shell *shell)
+void	pipe_heredoc(Command *cmd, t_shell *shell)
 {
-	// int fd;
+	int	fd;
+
 	cmd->redirect_in = shell_strdup(shell, cmd->heredoc_temp_path);
-    int fd = open(cmd->heredoc_temp_path, O_RDWR);
-	if (fd!=(-1))
-		cmd->fin=fd;
-	dup2(cmd->fin,STDIN_FILENO);
+	fd = open(cmd->heredoc_temp_path, O_RDWR);
+	if (fd != (-1))
+		cmd->fin = fd;
+	dup2(cmd->fin, STDIN_FILENO);
 	close(cmd->fin);
 }
-
 
 void	check_finfout(int prev_pipe, Command *cmd, t_shell *shell)
 {
 	if (cmd->fin == -99 && prev_pipe != STDIN_FILENO)
 		dup2(prev_pipe, STDIN_FILENO);
-	else if(cmd->fin==-9)
-		pipe_heredoc(cmd,shell);
+	else if (cmd->fin == -9)
+		pipe_heredoc(cmd, shell);
 	else if (cmd->fin != 0)
 	{
 		dup2(cmd->fin, STDIN_FILENO);
@@ -183,7 +180,7 @@ int	is_directory(const char *path)
 	return (1);
 }
 
-int	check_error(Command *cmd, t_shell *shell,int parent)
+int	check_error(Command *cmd, t_shell *shell, int parent)
 {
 	if (is_directory(cmd->name) == 1)
 	{
@@ -196,20 +193,21 @@ int	check_error(Command *cmd, t_shell *shell,int parent)
 		if (builtin_cmd(cmd, shell))
 			return (1);
 	}
-
 	return (0);
 }
 
-int is_custom_cmd(char *name)
+int	is_custom_cmd(char *name)
 {
-if ((ft_strcmp(name,"cd")==0) ||  (ft_strcmp(name,"env")==0) || (ft_strcmp(name,"exit")==0)|| (ft_strcmp(name,"unset")==0)|| (ft_strcmp(name,"export")==0)|| (ft_strcmp(name,"echo")==0)|| (ft_strcmp(name,"pwd")==0))
-	return 1;
-else 
-	return 0;
-
+	if ((ft_strcmp(name, "cd") == 0) || (ft_strcmp(name, "env") == 0)
+		|| (ft_strcmp(name, "exit") == 0) || (ft_strcmp(name, "unset") == 0)
+		|| (ft_strcmp(name, "export") == 0) || (ft_strcmp(name, "echo") == 0)
+		|| (ft_strcmp(name, "pwd") == 0))
+		return (1);
+	else
+		return (0);
 }
 
-void	check_child_error(t_shell* shell, Command *cmd, char *error)
+void	check_child_error(t_shell *shell, Command *cmd, char *error)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
@@ -219,57 +217,28 @@ void	check_child_error(t_shell* shell, Command *cmd, char *error)
 	else if (cmd->fout == -1)
 		ft_puterr(ft_strjoin_nconst(cmd->redirect_out,
 				" : File not exists/permission error"), 1);
-	else if (!find_env_var(shell->env_head, "PATH") && !is_custom_cmd(cmd->name))
+	else if (!find_env_var(shell->env_head, "PATH")
+		&& !is_custom_cmd(cmd->name))
 	{
-		error = ft_strjoin_nconst(cmd->name,
-				" : Command not found\n");
+		error = ft_strjoin_nconst(cmd->name, " : Command not found\n");
 		shell->last_exit_status = 127;
-		
 	}
 	if (error != NULL)
 	{
 		ft_putstr_fd(error, 2);
 		free(error);
-		// free_cmd(cmd);
 		exit(1);
 	}
 }
 
-// int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell)
-// {
-// 	pid_t	pid;
-// 	char	*error;
-
-// 	error = NULL;
-// 	if (check_error(cmd, shell))
-// 		return (1);
-// 	assign_cmd_args(shell, cmd, shell->envp);
-// 	pid = fork();
-// 	if (pid < 0)
-// 		return (write(STDOUT_FILENO, "Error forking\n", 15));
-// 	if (pid == 0)
-// 	{
-// 		check_child_error(shell,cmd, error);
-// 		check_finfout(prev_pipe, cmd, shell);
-// 		run_cmd(cmd, shell);
-// 		exit(1);
-// 	}
-// 	else
-// 	{
-// 		shell->pid = pid;
-// 		return (0);
-// 	}
-// }
-
-
-
-int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell, int parent)
+int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell,
+		int parent)
 {
 	pid_t	pid;
 	char	*error;
 
 	error = NULL;
-	if (check_error(cmd, shell,parent))
+	if (check_error(cmd, shell, parent))
 		return (1);
 	assign_cmd_args(shell, cmd, shell->envp);
 	pid = fork();
@@ -277,11 +246,10 @@ int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell, int paren
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
 	if (pid == 0)
 	{
-
-	check_child_error(shell,cmd, error);
-	check_finfout(prev_pipe, cmd, shell);
-	run_cmd(cmd, shell);
-	exit(1);
+		check_child_error(shell, cmd, error);
+		check_finfout(prev_pipe, cmd, shell);
+		run_cmd(cmd, shell);
+		exit(1);
 	}
 	else
 	{
@@ -290,55 +258,31 @@ int	execute_command_pipex(int prev_pipe, Command *cmd, t_shell *shell, int paren
 	}
 }
 
-// int	execute_command_pipex_built_in_parent(int prev_pipe, Command *cmd, t_shell *shell)
-// {
-// 	pid_t	pid;
-// 	char	*error;
-
-// 	error = NULL;
-// 	if (check_error(cmd, shell))
-// 		return (1);
-// 	assign_cmd_args(shell, cmd, shell->envp);
-// 	pid = fork();
-// 	if (pid < 0)
-// 		return (write(STDOUT_FILENO, "Error forking\n", 15));
-// 	if (pid == 0)
-// 	{
-// 		check_child_error(shell,cmd, error);
-// 		check_finfout(prev_pipe, cmd, shell);
-// 		run_cmd(cmd, shell);
-// 		exit(1);
-// 	}
-// 	else
-// 	{
-// 		shell->pid = pid;
-// 		return (0);
-// 	}
-// }
-
-void last_pipe(t_shell*shell,Command *cmd,int prev_pipe,int *status)
+void	last_pipe(t_shell *shell, Command *cmd, int prev_pipe, int *status)
 {
-	if  (shell->table->command_count!=1)
+	if (shell->table->command_count != 1)
 	{
-		if (!execute_command_pipex(prev_pipe, cmd, shell,0))
+		if (!execute_command_pipex(prev_pipe, cmd, shell, 0))
 		{
 			waitpid(shell->pid, status, WUNTRACED);
 			handle_status_error(*status, cmd, shell);
 		}
 	}
-	else {
-			if (!execute_command_pipex(prev_pipe, cmd, shell,1))
+	else
+	{
+		if (!execute_command_pipex(prev_pipe, cmd, shell, 1))
 		{
 			waitpid(shell->pid, status, WUNTRACED);
 			handle_status_error(*status, cmd, shell);
 		}
 	}
 }
+
 int	pipex(Command *cmd, t_shell *shell)
 {
 	int	status;
 	int	prev_pipe;
-   	// signal(SIGTTIN, SIG_IGN);
+
 	prev_pipe = cmd->fin;
 	while (cmd->next)
 	{
@@ -346,23 +290,17 @@ int	pipex(Command *cmd, t_shell *shell)
 			return (write(STDOUT_FILENO, "Error creating pipe\n", 20));
 		if (cmd->fout == 0)
 		{
-			if (!execute_command_pipex(prev_pipe, cmd, shell,0))
+			if (!execute_command_pipex(prev_pipe, cmd, shell, 0))
 				waitpid(shell->pid, &status, WUNTRACED);
 		}
 		else
-			execute_command_pipex(prev_pipe, cmd, shell,0);
+			execute_command_pipex(prev_pipe, cmd, shell, 0);
 		prev_pipe = shell->pipefd[0];
 		close(shell->pipefd[1]);
 		free_cmd(cmd);
 		*cmd = *(cmd->next);
 	}
-	last_pipe(shell,cmd,prev_pipe,&status);
-	// if (!execute_command_pipex(prev_pipe, cmd, shell))
-	// {
-	// 	waitpid(shell->pid, &status, WUNTRACED);
-	// 	handle_status_error(status, cmd, shell);
-	// }
+	last_pipe(shell, cmd, prev_pipe, &status);
 	clean_fd(shell, shell->std_in, shell->std_out, cmd);
 	return (0);
 }
-

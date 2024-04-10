@@ -39,10 +39,8 @@ char	*locate_cmd(char **paths, char *cmd)
 		cmd_path = ft_strjoin(*paths, _cmd);
 		if (access(cmd_path, X_OK) >= 0)
 		{
-			// free(cmd_path);
 			free(_cmd);
 			return (cmd_path);
-			// break ;
 		}
 		free(cmd_path);
 		cmd_path = NULL;
@@ -92,7 +90,6 @@ char	**find_cmd_paths(char **envp)
 	return (paths);
 }
 
-
 int	ft_strchr_count(const char *s, int c)
 {
 	int	count;
@@ -108,6 +105,7 @@ int	ft_strchr_count(const char *s, int c)
 	}
 	return (count);
 }
+
 char	*ft_strjoin_nconst(char *s1, char *s2)
 {
 	char	*res;
@@ -133,6 +131,7 @@ char	*ft_strjoin_nconst(char *s1, char *s2)
 		res[i + j] = s2[j];
 	return (res);
 }
+
 char	*ft_strdup_ignore(const char *s, char ignore)
 {
 	char	*dup;
@@ -157,6 +156,7 @@ char	*ft_strdup_ignore(const char *s, char ignore)
 	dup[i] = 0;
 	return (dup);
 }
+
 int	ft_puterr(char *s, int ret)
 {
 	ft_putstr_fd(s, 2);

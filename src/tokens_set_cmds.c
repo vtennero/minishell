@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 17:13:35 by root              #+#    #+#             */
-/*   Updated: 2024/04/10 10:46:02 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/10 10:48:34 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	is_only_spaces(char *str)
 {
 	int	length;
+	int	i;
 
 	length = ft_strlen(str);
 	if ((str[0] == '\'' && str[length - 1] == '\'') || (str[0] == '"' && str[length - 1] == '"')) {
@@ -32,4 +33,3 @@ int	is_only_spaces(char *str)
 
 	return 0;
 }
-

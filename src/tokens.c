@@ -3,6 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   tokens.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/08 22:49:02 by cliew             #+#    #+#             */
+/*   Updated: 2024/04/08 22:49:02 by cliew            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokens.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
 /*   By: toto <toto@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:24:32 by toto              #+#    #+#             */
@@ -12,7 +24,7 @@
 
 #include "minishell.h"
 
-int	isSpecialOperator(const char *str)
+int	is_special(const char *str)
 {
 	if (ft_strncmp(str, "|", 1) == 0)
 		return (1);
@@ -141,21 +153,19 @@ int	get_non_expanded_var_length(char *var)
 // 	return (count);
 // }
 
-
-
 char	*quotevar(t_shell *shell, const char **s)
 {
 	char	*result;
 
 	result = shell_strdup(shell, "");
-	if (!isSpecialOperator(*s))
+	if (!is_special(*s))
 	{
 		result = process_quoting(shell, s, result);
 	}
-	else if (isSpecialOperator(*s))
+	else if (is_special(*s))
 	{
-		result = shell_strndup(shell, (*s), isSpecialOperator(*s));
-		*s += isSpecialOperator(*s);
+		result = shell_strndup(shell, (*s), is_special(*s));
+		*s += is_special(*s);
 	}
 	return (result);
 }
@@ -187,17 +197,17 @@ char	*parse_tokens(t_shell *shell, const char *s)
 
 void	add_token(t_shell *shell, const char *value, int type)
 {
-	TokenNode	*newNode;
+	TokenNode	*new_node;
 	TokenNode	*current;
 
-	newNode = (TokenNode *)shell_malloc(shell, sizeof(TokenNode));
-	if (!newNode)
+	new_node = (TokenNode *)shell_malloc(shell, sizeof(TokenNode));
+	if (!new_node)
 		return ;
-	newNode->token.value = shell_strdup(shell, value); // Use shell_strdup
-	newNode->token.type = type;
-	newNode->next = NULL;
+	new_node->token.value = shell_strdup(shell, value);
+	new_node->token.type = type;
+	new_node->next = NULL;
 	if (shell->token_head == NULL)
-		shell->token_head = newNode;
+		shell->token_head = new_node;
 	else
 	{
 		current = shell->token_head;
@@ -205,7 +215,7 @@ void	add_token(t_shell *shell, const char *value, int type)
 		{
 			current = current->next;
 		}
-		current->next = newNode;
+		current->next = new_node;
 	}
 }
 
@@ -251,7 +261,6 @@ int	is_valid_cmd(t_shell *shell, char *cmd_name)
 	paths = find_cmd_paths(shell->envp);
 	cmd_path = locate_cmd(paths, cmd_name);
 	free_array(paths);
-	// ft_putstr_fd(ft_strjoin_nconst("cmd path is ",cmd_path),2);
 	if ((cmd_path != NULL && is_directory(cmd_path) != 1) || is_custom_cmd == 1)
 		return (1);
 	else
@@ -261,7 +270,7 @@ int	is_valid_cmd(t_shell *shell, char *cmd_name)
 void	set_commands_check(t_shell *shell, TokenNode *node, int *after_redirect,
 		int *pipe_exist)
 {
-	if (node && isNotEmpty(node->token.value))
+	if (node && not_empty(node->token.value))
 	{
 		if (!*after_redirect && (node == shell->token_head))
 		{
@@ -278,6 +287,7 @@ void	set_commands_check(t_shell *shell, TokenNode *node, int *after_redirect,
 			*pipe_exist = 1;
 	}
 }
+
 void	set_token_commands(t_shell *shell)
 {
 	TokenNode	*node;
