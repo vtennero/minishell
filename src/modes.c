@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/13 07:42:56 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/10 19:50:04 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,10 @@ void	interactive_mode(t_shell *shell)
 		{
 			add_history(input);
 			create_tokens(shell, input);
-			print_tokens(shell->token_head);
 			command_table = create_command_table(shell, shell->token_head);
-		}
-		// print_command_table(command_table);
-
-		if (command_table)
 			execute_command_table(shell, command_table);
-		shell->token_head = NULL;
+			shell->token_head = NULL;
+		}
 	}
 }
 
