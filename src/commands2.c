@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:40:14 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 18:46:00 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/13 07:48:05 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_cmd	*process_command_set(t_shell *shell, t_cmd_table *table,
 	cc = NULL;
 	if (*pipe_exist == 1 || table->head == NULL)
 		cc = create_command_set(shell, *ct);
-	while (*ct != NULL && (*ct)->token.type != TOKEN_PIPE)
+	while (*ct != NULL && (*ct)->token.type != TOKEN_PIPE && cc)
 	{
 		handle_token(shell, *ct, cc);
 		pipe_modify_fin_fout(*ct, cc, pipe_exist);
@@ -62,11 +62,12 @@ void	process_token_nodes(t_shell *shell, t_cmd_table *table,
 
 	pipe_exist = 0;
 	ct = tokens;
-	while (ct != NULL)
+	while (ct != NULL && cc!=NULL)
 	{
 		cc = process_command_set(shell, table, &ct, &pipe_exist);
 		update_token_node(&ct);
-		update_head(cc, table);
+		if (cc!=NULL)
+			update_head(cc, table);
 	}
 }
 
