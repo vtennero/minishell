@@ -12,8 +12,8 @@
 
 # Compiler and flags
 CC = gcc -g
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -Isrc/
-# CFLAGS = -Wall -Wextra -Werror -Isrc/
+# CFLAGS = -Wall -Wextra -Werror -fsanitize=address -Isrc/
+CFLAGS = -Wall -Wextra -Werror -Isrc/
 LDFLAGS = -lreadline
 
 # Directories
