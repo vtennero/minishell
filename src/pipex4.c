@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex4.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:27:16 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 18:27:16 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/13 09:37:58 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ int	is_directory(const char *path)
 
 int	check_error(t_cmd *cmd, t_shell *shell, int parent)
 {
+	if (cmd->name==NULL)
+		return(0);
 	if (is_directory(cmd->name) == 1)
 	{
 		ft_putstr_fd("is a directory\n", 2);
