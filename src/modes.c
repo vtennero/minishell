@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/13 08:28:55 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/13 09:28:10 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ int check_tokens( t_token_node *node)
 		if (temp->token.type==6 && temp->next && temp->next->token.type==6 )
 			return 1;
 		if (is_redirect(temp->token.type, &empty) && temp->next && is_redirect(temp->next ->token.type, &empty))
+			return 1;
+		if (is_redirect(temp->token.type, &empty) && !temp->next )
 			return 1;
 		
 		temp = temp->next;
@@ -53,15 +55,19 @@ void	interactive_mode(t_shell *shell)
 		{
 			add_history(input);
 			create_tokens(shell, input);
+			print_tokens(shell->token_head);
+
 		}
 		if (!check_tokens(shell->token_head))
 		{
 			command_table = create_command_table(shell, shell->token_head);
+			print_command_table(command_table);
+
 			execute_command_table(shell, command_table);
 		}
 		else 
 		{
-			ft_putstr_fd("syntax error near unexpected token `newline' \n", 2);
+			ft_putstr_fd("syntax error near unexpected token \n", 2);
 			// shell_cleanup(shell);
 		}
 		shell->token_head = NULL;

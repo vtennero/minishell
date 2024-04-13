@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:39:58 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/13 08:16:13 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/13 09:23:01 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,13 @@ t_cmd	*create_command_set(t_shell *shell, t_token_node *node)
 	t_cmd			*current_command;
 	t_token_node	*temp;
 	int				argc;
+	// int				have_redirection;
 
 	current_command = NULL;
 	temp = node;
 	argc = 0;
+	// have_redirection=0;
+
 	while (temp && temp != NULL && temp->token.type != TOKEN_PIPE)
 	{
 		if (temp->token.type == TOKEN_COMMAND || temp->token.type == 13)
@@ -56,7 +59,15 @@ t_cmd	*create_command_set(t_shell *shell, t_token_node *node)
 			}
 		}
 		temp = temp->next;
+
 	}
+	if (!current_command)
+		current_command = create_command_entry(shell, NULL);
+	// 	if (is_redirect(& temp->token.type,&have_redirection))
+	// 		temp = temp->next;
+	// if have_redirection && temp->next->token.type = TOKEN_PIPE
+	// 	temp = temp->next;
+
 	// if (!current_command)
 	// 	ft_puterr("syntax error near unexpected token `newline'", 2);
 	current_command->args = (char **)shell_malloc(shell, (argc + 5)
