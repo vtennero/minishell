@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:39:58 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/13 09:23:01 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/13 09:33:43 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ t_cmd	*create_command_entry(t_shell *shell, char *name)
 		ft_putstr_fd("Failed to allocate t_cmd", 2);
 		exit(EXIT_FAILURE);
 	}
-	cmd->name = shell_strdup(shell, name);
+	if (name !=NULL)
+		cmd->name = shell_strdup(shell, name);
+	else
+		cmd->name = NULL ;
 	cmd->fin = 0;
 	cmd->fout = 0;
 	cmd->arg_count = 0;
