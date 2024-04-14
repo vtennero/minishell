@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:27:16 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/14 08:48:28 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/14 10:52:36 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ int	is_directory(const char *path)
 
 int	check_error(t_cmd *cmd, t_shell *shell, int parent)
 {
-	if (cmd->name==NULL)
+	if (cmd->name == NULL)
 	{
 		if (cmd->fin == -1 || cmd->fout == -1)
 			ft_putstr_fd(" File not exists/permission error\n", 2);
-		return(1);
+		return (1);
 	}
 	if (is_directory(cmd->name) == 1)
 	{
@@ -64,8 +64,7 @@ int	check_error(t_cmd *cmd, t_shell *shell, int parent)
 		return (1);
 	}
 	if (parent && builtin_cmd(cmd, shell))
-
-			return (1);
+		return (1);
 	return (0);
 }
 

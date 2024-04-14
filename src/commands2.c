@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:40:14 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/14 09:05:41 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/14 10:55:39 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,6 @@ t_cmd_table	*create_command_table(t_shell *shell, t_token_node *tokens)
 	if (tokens == NULL)
 		return (table);
 	process_token_nodes(shell, table, tokens);
-	// if (!table || !table->head)
-	// 	prepare_heredocs_in_command_table(table);
 	if (table->head->heredoc_delimiter)
 		prepare_heredocs_in_command_table(table);
 	return (table);

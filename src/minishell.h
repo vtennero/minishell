@@ -151,6 +151,7 @@ void			std_input_mode(int fd, t_shell *shell);
 int				not_empty(const char *str);
 int				end_with_pipe(const char *str);
 int				pipe_extension(t_shell *shell, char *input);
+int				check_tokens( t_token_node *node);
 
 /**
 ** -- SIGNALS --

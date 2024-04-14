@@ -6,38 +6,12 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/14 08:13:29 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/14 11:03:56 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int check_tokens( t_token_node *node)
- {
-	
-	t_token_node* temp;
-	int empty;
-	// int count;
-	temp = node;
-
-	// count = 0;
-
-
-	while (temp && temp != NULL)
-	{
-		if (temp->token.type==6 && temp->next && temp->next->token.type==6 )
-			return 1;
-		if (is_redirect(temp->token.type, &empty) && temp->next && is_redirect(temp->next ->token.type, &empty))
-			return 1;
-		if (is_redirect(temp->token.type, &empty) && !temp->next )
-			return 1;
-		
-		temp = temp->next;
-		// count++;
-	}
-	return 0;
-	
-}
 void	interactive_mode(t_shell *shell)
 {
 	char			*input;
@@ -61,11 +35,9 @@ void	interactive_mode(t_shell *shell)
 			command_table = create_command_table(shell, shell->token_head);
 			execute_command_table(shell, command_table);
 		}
-		else 
+		else
 			ft_putstr_fd("syntax error near unexpected token \n", 2);
 		shell->token_head = NULL;
-
-		
 	}
 }
 
@@ -142,5 +114,3 @@ void	std_input_mode(int fd, t_shell *shell)
 	command_table = create_command_table(shell, shell->token_head);
 	execute_command_table(shell, command_table);
 }
-
-
