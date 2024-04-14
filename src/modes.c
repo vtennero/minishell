@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/14 07:57:48 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/14 08:13:29 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,21 +55,14 @@ void	interactive_mode(t_shell *shell)
 		{
 			add_history(input);
 			create_tokens(shell, input);
-			print_tokens(shell->token_head);
-
 		}
 		if (!check_tokens(shell->token_head))
 		{
 			command_table = create_command_table(shell, shell->token_head);
-			print_command_table(command_table);
-
 			execute_command_table(shell, command_table);
 		}
 		else 
-		{
 			ft_putstr_fd("syntax error near unexpected token \n", 2);
-			// shell_cleanup(shell);
-		}
 		shell->token_head = NULL;
 
 		
