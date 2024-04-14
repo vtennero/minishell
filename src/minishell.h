@@ -98,6 +98,7 @@ typedef struct s_cmd
 	int				fd_out;
 	int				fin;
 	int				fout;
+	int				heredoc;
 	struct s_cmd	*next;
 }	t_cmd;
 
