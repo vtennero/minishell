@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex3.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:27:00 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/10 18:27:12 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/14 08:01:00 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	handle_status_error(int status, t_cmd *cmd, t_shell *shell)
 {
 	int	status2;
 
-	if (WIFEXITED(status) && ft_strcmp(cmd->name, "exit") != 0)
+	if (WIFEXITED(status) && (cmd->name==NULL || ft_strcmp(cmd->name, "exit") != 0))
 	{
 		status2 = WEXITSTATUS(status);
 		shell->last_exit_status = status2;
