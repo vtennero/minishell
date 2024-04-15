@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:39:58 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/14 10:51:50 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/16 06:57:57 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ t_cmd	*create_command_entry(t_shell *shell, char *name)
 	cmd->fin = 0;
 	cmd->fout = 0;
 	cmd->arg_count = 0;
+	cmd->redirect_in=NULL;
+	cmd->redirect_out=NULL;
+	cmd->redirect_app=NULL;
 	return (cmd);
 }
 

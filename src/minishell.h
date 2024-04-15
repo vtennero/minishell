@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/10 10:57:25 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 10:57:25 by vitenner         ###   ########.fr       */
+/*   Created: 2024/04/16 06:58:24 by cliew             #+#    #+#             */
+/*   Updated: 2024/04/16 06:58:24 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ typedef struct s_cmd
 	int				arg_count;
 	char			*redirect_in;
 	char			*redirect_out;
-	char			*redirect_append;
+	char			*redirect_app;
 	char			*heredoc_delimiter;
 	char			*heredoc_temp_path;
 	int				fd_in;
@@ -307,6 +307,8 @@ char			*ft_strjoin_nconst(char *s1, char *s2);
 char			*ft_strdup_ignore(const char *s, char ignore);
 int				ft_puterr(char *s, int ret);
 int				find_env_var(t_env_var *list, const char *key);
+void			set_fd(t_cmd *cmd);
+
 // set token cmd
 int				check_if_valid_cmd(t_token_node *node);
 void			set_commands_check(t_shell *shell, t_token_node *node, \

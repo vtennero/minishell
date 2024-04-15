@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/14 10:56:22 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/16 07:18:10 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void	check_child_error(t_shell *shell, t_cmd *cmd, char *error)
 	}
 }
 
+
 int	execute_command_pipex(int prev_pipe, t_cmd *cmd, t_shell *shell, int parent)
 {
 	pid_t	pid;
@@ -55,6 +56,7 @@ int	execute_command_pipex(int prev_pipe, t_cmd *cmd, t_shell *shell, int parent)
 	error = NULL;
 	if (check_error(cmd, shell, parent))
 		return (1);
+	set_fd(cmd);
 	assign_cmd_args(shell, cmd, shell->envp);
 	pid = fork();
 	if (pid < 0)
