@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/14 11:03:56 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/16 07:28:45 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	interactive_mode(t_shell *shell)
 		if (!check_tokens(shell->token_head))
 		{
 			command_table = create_command_table(shell, shell->token_head);
+			// print_command_table(command_table);
 			execute_command_table(shell, command_table);
 		}
 		else
