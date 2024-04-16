@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
 
 t_cmd_table	*initialize_command_table(t_shell *shell)
