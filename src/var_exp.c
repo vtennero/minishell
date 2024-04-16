@@ -57,7 +57,7 @@ size_t	parse_var(t_shell *shell, const char *in, char *out, t_env_var *env_v)
 	{
 		if (*in == '$')
 			p_dol(shell, &in, &out, env_v);
-		else if (*in == '\"' || *in == '\'' || isspace_not_eol(*in) == 1)
+		else if (*in == '\"' || isspace_not_eol(*in) == 1)
 			break ;
 		else
 			*out++ = *in++;
