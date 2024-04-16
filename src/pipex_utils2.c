@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:24:55 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/16 10:06:34 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/16 10:09:16 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,4 @@ void	set_fd(t_cmd *cmd)
 			fd = open(cmd->redirect_out, O_RDWR | O_CREAT | O_TRUNC, 0666);
 		cmd->fout = fd;
 	}
-	print_command(cmd);
 }
