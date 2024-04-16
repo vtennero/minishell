@@ -18,10 +18,7 @@ static int	echo_wo_nl(t_shell *shell, char **args, int n_args, t_cmd *cmd)
 
 	i = 1;
 	if (n_args == 1)
-	{
-		ft_printf("\n");
 		return (0);
-	}
 	while (i < n_args)
 	{
 		if (cmd->fin == 0 && cmd->fout == 0 && ft_strcmp(args[i], "0") == 0)

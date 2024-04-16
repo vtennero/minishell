@@ -27,7 +27,7 @@ void	setup_signals(t_shell *shell)
 	struct sigaction	sa_int;
 	struct sigaction	sa_ignore;
 
-	if (shell->nesting_level == 0)
+	if (shell->nested_shell == 0)
 	{
 		sa_int.sa_handler = sigint_handler;
 		sigemptyset(&sa_int.sa_mask);
