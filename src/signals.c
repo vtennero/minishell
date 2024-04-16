@@ -19,6 +19,7 @@ void	sigint_handler(int sig_num)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
+	g_signal_received = 0;
 }
 
 void	setup_signals(t_shell *shell)
@@ -26,10 +27,13 @@ void	setup_signals(t_shell *shell)
 	struct sigaction	sa_int;
 	struct sigaction	sa_ignore;
 
-	sa_int.sa_handler = sigint_handler;
-	sigemptyset(&sa_int.sa_mask);
-	sa_int.sa_flags = 0;
-	sigaction(SIGINT, &sa_int, NULL);
+	if (shell->nesting_level == 0)
+	{
+		sa_int.sa_handler = sigint_handler;
+		sigemptyset(&sa_int.sa_mask);
+		sa_int.sa_flags = 0;
+		sigaction(SIGINT, &sa_int, NULL);
+	}
 	sa_ignore.sa_handler = SIG_IGN;
 	sigemptyset(&sa_ignore.sa_mask);
 	sa_ignore.sa_flags = 0;

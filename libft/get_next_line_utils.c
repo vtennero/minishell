@@ -14,7 +14,7 @@
 
 void	*ft_calloc_set_zero(size_t nmemb, size_t size)
 {
-	void    *ptr;
+	void	*ptr;
 	size_t	i;
 	char	*str;
 

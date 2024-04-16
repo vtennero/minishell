@@ -130,6 +130,7 @@ typedef struct s_shell
 	int					std_out;
 	int					line_count;
 	char				*readfile;
+	int					nested_shell;
 	pid_t				pid;
 	t_memtracker		mem_tracker;
 	t_token_node		*token_head;
