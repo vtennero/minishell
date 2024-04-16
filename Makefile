@@ -137,7 +137,7 @@ ft_strdel.c
 
 # Adding directory prefix to source files
 SRC = $(addprefix $(SRC_DIR)/, $(MINISHELL_SRC)) \
-      $(addprefix $(LIBFT_DIR)/, $(LIBFT_FILES))
+	  $(addprefix $(LIBFT_DIR)/, $(LIBFT_FILES))
 
 # Object files for minishell
 OBJ = $(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.c=.o)))

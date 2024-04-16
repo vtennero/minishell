@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/10 19:00:18 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 19:00:18 by vitenner         ###   ########.fr       */
+/*   Created: 2024/04/16 06:51:32 by cliew             #+#    #+#             */
+/*   Updated: 2024/04/16 06:51:32 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	set_rout(t_shell *shell, t_cmd *cmd, char *filename, int append)
 		}
 		if (append)
 		{
-			cmd->redirect_out = shell_strdup(shell, filename);
+			cmd->redirect_app = shell_strdup(shell, filename);
 			fd = open(filename, O_RDWR | O_CREAT | O_APPEND, 0666);
 		}
 		else
@@ -83,7 +83,7 @@ void	free_command_table(t_cmd_table *table)
 		free(cmd->args);
 		free(cmd->redirect_in);
 		free(cmd->redirect_out);
-		free(cmd->redirect_append);
+		free(cmd->redirect_app);
 		free(cmd);
 		cmd = next_cmd;
 	}

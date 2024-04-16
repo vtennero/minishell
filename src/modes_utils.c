@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modes_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 16:38:52 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 10:48:50 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/14 11:05:28 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,24 @@ int	end_with_pipe(const char *str)
 		return (1);
 	else
 		return (0);
+}
+
+int	check_tokens( t_token_node *node)
+{
+	t_token_node	*t;
+	int				et;
+
+	t = node;
+	while (t && t != NULL)
+	{
+		if (t->token.type == 6 && t->next && t->next->token.type == 6)
+			return (1);
+		if (is_redirect(t->token.type, &et) && t->next && \
+		is_redirect(t->next ->token.type, &et))
+			return (1);
+		if (is_redirect(t->token.type, &et) && !t->next)
+			return (1);
+		t = t->next;
+	}
+	return (0);
 }

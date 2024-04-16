@@ -45,8 +45,8 @@ void	print_command(const t_cmd *cmd)
 		ft_printf("Input redirected from: %s\n", cmd->redirect_in);
 	if (cmd->redirect_out)
 		ft_printf("Output redirected to: %s\n", cmd->redirect_out);
-	if (cmd->redirect_append)
-		ft_printf("Output appended to: %s\n", cmd->redirect_append);
+	if (cmd->redirect_app)
+		ft_printf("Output appended to: %s\n", cmd->redirect_app);
 	if (cmd->heredoc_delimiter)
 		ft_printf("Heredoc delimiter: %s\n", cmd->heredoc_delimiter);
 	if (cmd->heredoc_temp_path)
