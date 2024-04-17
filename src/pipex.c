@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/17 22:10:31 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/18 00:26:46 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,14 @@ int	is_custom_cmd(char *name)
 
 void	check_child_error(t_shell *shell, t_cmd *cmd, char *error)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	// sigset_t sigset;
+
+	// sigemptyset(&sigset); // Initialize sigset to be empty
+	// sigaddset(&sigset, SIGINT);
+	// signal(SIGQUIT, SIG_DFL);
+
+	// signal(SIGINT, SIG_DFL);
+	// signal(SIGQUIT, SIG_DFL);
 	if (cmd->fin == -1)
 		error = ft_strjoin_nconst(cmd->redirect_in,
 				" : File not exists/permission error");
@@ -57,6 +63,10 @@ int	execute_command_pipex(int prev_pipe, t_cmd *cmd, t_shell *shell, int parent)
 		return (1);
 	set_fd(cmd);
 	assign_cmd_args(shell, cmd, shell->envp);
+
+	// sigemptyset(&sigset); // Initialize sigset to be empty
+	// sigaddset(&sigset, SIGINT);
+	// signal(SIGQUIT, SIG_DFL);
 	pid = fork();
 	if (pid < 0)
 		return (write(STDOUT_FILENO, "Error forking\n", 15));
@@ -69,6 +79,7 @@ int	execute_command_pipex(int prev_pipe, t_cmd *cmd, t_shell *shell, int parent)
 	}
 	else
 	{
+		deactivate_signals(shell);
 		shell->pid = pid;
 		return (0);
 	}
@@ -82,6 +93,7 @@ void	last_pipe(t_shell *shell, t_cmd *cmd, int prev_pipe, int *status)
 		{
 			waitpid(shell->pid, status, WUNTRACED);
 			handle_status_error(*status, cmd, shell);
+			setup_signals(shell);
 		}
 	}
 	else
@@ -90,6 +102,8 @@ void	last_pipe(t_shell *shell, t_cmd *cmd, int prev_pipe, int *status)
 		{
 			waitpid(shell->pid, status, WUNTRACED);
 			handle_status_error(*status, cmd, shell);
+			setup_signals(shell);
+
 		}
 	}
 }

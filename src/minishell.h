@@ -159,6 +159,10 @@ int				check_tokens( t_token_node *node);
 */
 void			sigint_handler(int sig_num);
 void			setup_signals(t_shell *shell);
+void sigint_handler_mia(int signum) ;
+
+void	deactivate_signals(t_shell *shell);
+
 
 /*
 ** ================== PARSING ==================
