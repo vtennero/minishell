@@ -58,7 +58,7 @@ void	set_rout(t_shell *shell, t_cmd *cmd, char *filename, int append)
 		else
 		{
 			cmd->redirect_out = shell_strdup(shell, filename);
-			cmd->redirect_app=NULL;
+			cmd->redirect_app = NULL;
 			fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
 		}
 		cmd->fout = fd;
