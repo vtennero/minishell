@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:24:55 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/16 10:09:16 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/17 21:23:55 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	set_fd(t_cmd *cmd)
 
 	if (cmd->redirect_in != NULL)
 		fd = open(cmd->redirect_in, O_RDWR);
-	if (cmd->fin != -1 && cmd->fin != 0 && cmd->fin != -99)
+	if (cmd->fin != -1 && cmd->fin != 0 && cmd->fin != -99 && cmd->fin != -9)
 		cmd->fin = fd;
 	if (cmd->fin == -1)
 		return ;
