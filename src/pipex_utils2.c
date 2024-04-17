@@ -6,7 +6,7 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:24:55 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/17 21:23:55 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/18 01:35:39 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,11 @@ void	set_fd(t_cmd *cmd)
 			fd = open(cmd->redirect_out, O_RDWR | O_CREAT | O_TRUNC, 0666);
 		cmd->fout = fd;
 	}
+}
+
+void	parent_activity(t_shell *shell, pid_t pid)
+{
+	deactivate_signals(shell);
+	shell->pid = pid;
+	shell->child_pid[(shell->child_num) - 1] = pid;
 }

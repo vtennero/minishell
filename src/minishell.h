@@ -116,6 +116,7 @@ typedef struct s_env_var
 	char				*value;
 	struct s_env_var	*next;
 }	t_env_var;
+
 /*
 ** -- MAIN --
 */
@@ -136,6 +137,9 @@ typedef struct s_shell
 	t_memtracker		mem_tracker;
 	t_token_node		*token_head;
 	t_cmd_table			*table;
+	int					child_num;
+	pid_t				child_pid[100000];
+
 }	t_shell;
 /*
 ** ================== INITIALIZATION ==================
@@ -219,6 +223,7 @@ t_cmd_table		*create_command_table(t_shell *shell, t_token_node *tokens);
 void			execute_command_table(t_shell *shell, t_cmd_table *table);
 void			free_command_table(t_cmd_table *table);
 void			set_token_commands(t_shell *shell);
+void			kill_children(t_shell *shell);
 
 /*
 ** -- BUILT_IN COMMANDS --
@@ -311,7 +316,7 @@ char			*ft_strdup_ignore(const char *s, char ignore);
 int				ft_puterr(char *s, int ret);
 int				find_env_var(t_env_var *list, const char *key);
 void			set_fd(t_cmd *cmd);
-
+void			parent_activity(t_shell *shell, pid_t pid);
 // set token cmd
 int				check_if_valid_cmd(t_token_node *node);
 void			set_commands_check(t_shell *shell, t_token_node *node, \
