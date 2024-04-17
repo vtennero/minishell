@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/16 10:06:53 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/17 22:10:31 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,8 @@ int	pipex(t_cmd *cmd, t_shell *shell)
 		close(shell->pipefd[1]);
 		free_cmd(cmd);
 		*cmd = *(cmd->next);
+		// kill(shell->pid,SIGTERM);
+
 	}
 	last_pipe(shell, cmd, prev_pipe, &status);
 	clean_fd(shell, shell->std_in, shell->std_out, cmd);

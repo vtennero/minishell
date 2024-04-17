@@ -6,11 +6,12 @@
 /*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:45:10 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/17 21:01:49 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/17 22:18:20 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 
 void	interactive_mode(t_shell *shell)
 {
@@ -18,7 +19,8 @@ void	interactive_mode(t_shell *shell)
 	t_cmd_table		*command_table;
 
 	while (1)
-	{
+	{    
+
 		input = readline("$ ");
 		if (input == NULL)
 		{
@@ -33,7 +35,7 @@ void	interactive_mode(t_shell *shell)
 		if (!check_tokens(shell->token_head))
 		{
 			command_table = create_command_table(shell, shell->token_head);
-			print_command_table(command_table);
+			//print_command_table(command_table);
 			execute_command_table(shell, command_table);
 		}
 		else
