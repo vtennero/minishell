@@ -326,7 +326,6 @@ int *after_redirect, int *pipe_exist);
 */
 void			shexit(t_shell *shell, int exit_code);
 void			*shell_malloc(t_shell *shell, size_t size);
-void			shell_free(t_shell *shell, void *ptr);
 void			shell_cleanup(t_shell *shell);
 char			*shell_strdup(t_shell *shell, const char *s);
 char			*shell_strndup(t_shell *shell, const char *s, size_t n);

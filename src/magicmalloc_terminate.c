@@ -12,26 +12,6 @@
 
 #include "minishell.h"
 
-void	shell_free(t_shell *shell, void *ptr)
-{
-	t_memnode	**current;
-	t_memnode	*entry;
-
-	current = &shell->mem_tracker.head;
-	while (*current)
-	{
-		entry = *current;
-		if (entry->ptr == ptr)
-		{
-			*current = entry->next;
-			free(entry->ptr);
-			free(entry);
-			return ;
-		}
-		current = &entry->next;
-	}
-}
-
 void	shell_cleanup(t_shell *shell)
 {
 	t_memnode	*current;

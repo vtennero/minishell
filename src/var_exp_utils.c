@@ -6,7 +6,7 @@
 /*   By: vitenner <vitenner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 14:22:35 by vitenner          #+#    #+#             */
-/*   Updated: 2024/04/10 14:24:37 by vitenner         ###   ########.fr       */
+/*   Updated: 2024/04/19 11:48:25 by vitenner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	calc_expanded_len(t_shell *shell, const char *input, t_env_var *env_vars)
 					inc(&input, &len, 1, 1);
 			}
 			else
-				inc(&input, &len, 1, get_env_var_len(shell, &input, env_vars));
+				inc(&input, &len, 0, get_env_var_len(shell, &input, env_vars));
 		}
 		else
 			inc(&input, &len, 1, 1);
