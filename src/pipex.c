@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cliew <cliew@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: cliew <cliew@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:17:01 by cliew             #+#    #+#             */
-/*   Updated: 2024/04/19 08:26:45 by cliew            ###   ########.fr       */
+/*   Updated: 2024/04/19 12:01:28 by cliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	is_custom_cmd(char *name)
 	if ((ft_strcmp(name, "cd") == 0) || (ft_strcmp(name, "env") == 0)
 		|| (ft_strcmp(name, "exit") == 0) || (ft_strcmp(name, "unset") == 0)
 		|| (ft_strcmp(name, "export") == 0) || (ft_strcmp(name, "echo") == 0)
-		|| (ft_strcmp(name, "pwd") == 0) || (access(name,X_OK)>=0))
+		|| (ft_strcmp(name, "pwd") == 0) || (access(name, X_OK) >= 0))
 		return (1);
 	else
 		return (0);
