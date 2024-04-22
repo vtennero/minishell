@@ -1,4 +1,4 @@
-# C Minishell Project
+# C Minishell
 
 This is a shell implementation in C that replicates bash. It supports a variety of features including quoting, redirections, pipes, environment variables handling, and several built-in commands.
 
@@ -49,4 +49,10 @@ To compile the shell, use the following command:
 
 ```bash
 make
+```
+
+then run:
+
+```bash
+./minishell
 ```
